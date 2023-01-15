@@ -69,7 +69,7 @@ function MixedFactorGraph(){
       d3.select('g.gMixedFactorGraph').attr("transform",transform);
       // apply transform to the scales of the axes
       const sc_xz = transform.rescaleX(sc_x);
-      const sc_yz = transform.rescaleX(sc_y);
+      const sc_yz = transform.rescaleY(sc_y);
       d3selections.axesScales.select(".Xaxis-top").call(xaxis_bot.scale(sc_xz));
       d3selections.axesScales.select(".Xaxis-bottom").call(xaxis_top.scale(sc_xz));
       d3selections.axesScales.select(".Yaxis-left").call(yaxis_left.scale(sc_yz));
