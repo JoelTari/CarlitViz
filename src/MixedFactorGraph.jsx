@@ -23,6 +23,7 @@ function MixedFactorGraph(){
   onMount(() =>{
     // register d3 selections (those element contents will be under d3 jurisdiction, not solidjs)
     d3selections.svg = d3.select("svg#MixedFactorGraph");
+    d3selections.grid = d3.select("svg#MixedFactorGraph g.grid");
     d3selections.axesScales = d3.select("svg#MixedFactorGraph g.axes-scales");
 
     // register svg size
@@ -61,6 +62,51 @@ function MixedFactorGraph(){
       d3selections.axesScales.select(".Yaxis-left").call(yaxis_left).attr("transform",`translate(${w},0)`);
     })
 
+    // grid
+    createEffect(()=>{
+      d3selections.grid
+        .call((g)=>
+          g.selectAll(".x")
+          .data(sc_x.ticks())
+          .join(
+            (enter) =>
+              enter
+                .append("line")
+                .attr("class", "x")
+                .attr("y1",0)
+                .attr("y2", svgSize().h)
+                .style("stroke","grey")
+                .style("stroke-width","1px")
+                .style("opacity","20%")
+            ,
+            (update) => update.attr("y2", svgSize().h),
+            (exit) => exit.remove()
+          )
+          .attr("x1", (d) => sc_x(d))
+          .attr("x2", (d) => sc_x(d))
+        )
+        .call((g)=>
+          g.selectAll(".y")
+          .data(sc_y.ticks())
+          .join(
+            (enter) =>
+              enter
+                .append("line")
+                .attr("class", "y")
+                .attr("x1",0)
+                .attr("x2", svgSize().w)
+                .style("stroke","grey")
+                .style("stroke-width","1px")
+                .style("opacity","20%")
+            ,
+            (update) => update.attr("x2", svgSize().w),
+            (exit) => exit.remove()
+          )
+          .attr("y1", (d) => sc_y(d))
+          .attr("y2", (d) => sc_y(d))
+        )
+    })
+
     // zoom
     d3selections.svg.call(d3.zoom().on("zoom",zoomed));
     // zoom callback
@@ -87,6 +133,7 @@ function MixedFactorGraph(){
 
   return <svg id="MixedFactorGraph"
     >
+    <g class="grid"></g>
     <g class="axes-scales">
       <g class="Xaxis-top"></g>
       <g class="Xaxis-bottom"></g>
