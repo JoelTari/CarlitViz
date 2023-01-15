@@ -4,7 +4,6 @@ import { MixedFactorGraphData } from "./stores/MixedFactorGraphData"
 import './MixedFactorGraph.css'
 
 function MixedFactorGraph(){
-
   const initSvgSize = { w: 1000, h: 1000 };
   const [ svgSize, setSvgSize ] = createSignal(initSvgSize);
 
@@ -31,39 +30,31 @@ function MixedFactorGraph(){
     // re-register svg size values whenever client gets resized
     window.addEventListener("resize",()=>{
       setSvgSize({w: d3selections.svg.nodes()[0].clientWidth, h: d3selections.svg.nodes()[0].clientHeight});
-      // console.log(`client svg resize: ${svgSize().w}x${svgSize().h}`)
     })
 
-    // define the scales
-    let sc_x = d3.scaleLinear().range([0, svgSize().w]).domain([0,svgSize().w]);
-    let sc_y = d3.scaleLinear().range([0, svgSize().h]).domain([0,svgSize().h]);
-
-    // define axes objects, associated with the scales
-    const xaxis_bot = d3.axisBottom(sc_x);
-    const yaxis_right = d3.axisRight(sc_y);
-    const yaxis_left = d3.axisLeft(sc_y);
-    const xaxis_top = d3.axisTop(sc_x);
+    const [ ZoomTransform, setZoomTransform ] = createSignal(d3.zoomIdentity);
 
     createEffect(()=>{
       // reactive variables
       const h=svgSize().h;
       const w=svgSize().w;
-      // readjust the scales, then the axes generation functions, then regenerate the axes elements
-      sc_x = d3.scaleLinear().range([0, w]).domain([0,w])
-      sc_y = d3.scaleLinear().range([0, h]).domain([0,h])
-      xaxis_bot.scale(sc_x);
-      xaxis_top.scale(sc_x);
-      yaxis_right.scale(sc_y);
-      yaxis_left.scale(sc_y)
-      // console.log(`effect triggered with w=${w}`)
+      let sc_x = d3.scaleLinear().range([0, w]).domain([0,w])
+      let sc_y = d3.scaleLinear().range([0, h]).domain([0,h])
+      // apply the drag/zoom transform
+      const ztransform = ZoomTransform();
+      sc_x = ztransform.rescaleX(sc_x);
+      sc_y = ztransform.rescaleY(sc_y);
+      // define, using the scales, the d3 objects that have the tooling to generate the axes 
+      const xaxis_bot = d3.axisBottom(sc_x);
+      const yaxis_right = d3.axisRight(sc_y);
+      const yaxis_left = d3.axisLeft(sc_y);
+      const xaxis_top = d3.axisTop(sc_x);
+      // call those d3 objects to populate existing axes group elements (note that top <-> bot)
       d3selections.axesScales.select(".Xaxis-top").call(xaxis_bot);
       d3selections.axesScales.select(".Xaxis-bottom").call(xaxis_top).attr("transform",`translate(0,${h})`);
       d3selections.axesScales.select(".Yaxis-right").call(yaxis_right);
       d3selections.axesScales.select(".Yaxis-left").call(yaxis_left).attr("transform",`translate(${w},0)`);
-    })
-
-    // grid
-    createEffect(()=>{
+      // grid
       d3selections.grid
         .call((g)=>
           g.selectAll(".x")
@@ -74,16 +65,21 @@ function MixedFactorGraph(){
                 .append("line")
                 .attr("class", "x")
                 .attr("y1",0)
-                .attr("y2", svgSize().h)
+                .attr("y2", h)
+                .attr("x1", (d) => sc_x(d))
+                .attr("x2", (d) => sc_x(d))
                 .style("stroke","grey")
                 .style("stroke-width","1px")
-                .style("opacity","20%")
+                .style("opacity","30%")
             ,
-            (update) => update.attr("y2", svgSize().h),
+            (update) => 
+              update
+                .attr("x1", (d) => sc_x(d))
+                .attr("x2", (d) => sc_x(d))
+                .attr("y2", h)
+            ,
             (exit) => exit.remove()
           )
-          .attr("x1", (d) => sc_x(d))
-          .attr("x2", (d) => sc_x(d))
         )
         .call((g)=>
           g.selectAll(".y")
@@ -94,16 +90,21 @@ function MixedFactorGraph(){
                 .append("line")
                 .attr("class", "y")
                 .attr("x1",0)
-                .attr("x2", svgSize().w)
+                .attr("x2", w)
+                .attr("y1", (d) => sc_y(d))
+                .attr("y2", (d) => sc_y(d))
                 .style("stroke","grey")
                 .style("stroke-width","1px")
-                .style("opacity","20%")
+                .style("opacity","30%")
             ,
-            (update) => update.attr("x2", svgSize().w),
+            (update) => 
+              update
+                .attr("x2", w)
+                .attr("y1", (d) => sc_y(d))
+                .attr("y2", (d) => sc_y(d))
+            ,
             (exit) => exit.remove()
           )
-          .attr("y1", (d) => sc_y(d))
-          .attr("y2", (d) => sc_y(d))
         )
     })
 
@@ -113,13 +114,7 @@ function MixedFactorGraph(){
     function zoomed({transform}){
       // the zoom transform is applied to factor graph group (not the whole svg)
       d3.select('g.gMixedFactorGraph').attr("transform",transform);
-      // apply transform to the scales of the axes
-      const sc_xz = transform.rescaleX(sc_x);
-      const sc_yz = transform.rescaleY(sc_y);
-      d3selections.axesScales.select(".Xaxis-top").call(xaxis_bot.scale(sc_xz));
-      d3selections.axesScales.select(".Xaxis-bottom").call(xaxis_top.scale(sc_xz));
-      d3selections.axesScales.select(".Yaxis-left").call(yaxis_left.scale(sc_yz));
-      d3selections.axesScales.select(".Yaxis-right").call(yaxis_right.scale(sc_yz));
+      setZoomTransform(transform);
     }
 
   })
@@ -141,7 +136,7 @@ function MixedFactorGraph(){
       <g class="Yaxis-right"></g>
     </g>
     <g class="gMixedFactorGraph">
-      <rect x="50%" y="50%" width="100" height="100"/>
+      <rect x="800" y="500" width="100" height="100"/>
       <circle cx="0" cy="0" r="1000" fill="none" stroke="red"/>
       <circle cx="0" cy="0" r="100" fill="none" stroke="blue"/>
     </g>
