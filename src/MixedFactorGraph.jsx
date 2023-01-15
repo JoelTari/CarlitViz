@@ -7,10 +7,6 @@ function MixedFactorGraph(){
 
   const initSvgSize = { w: 1000, h: 1000 };
   const [ svgSize, setSvgSize ] = createSignal(initSvgSize);
-  window.addEventListener("resize",()=>{
-    setSvgSize({w: d3selections.svg.nodes()[0].clientWidth, h: d3selections.svg.nodes()[0].clientHeight});
-    console.log(`client svg resize: ${svgSize().w}x${svgSize().h}`)
-  })
 
   // reactive memo on the graph data
   const CopiedMixedFactorGraphData = createMemo(() =>{
@@ -29,11 +25,13 @@ function MixedFactorGraph(){
     d3selections.svg = d3.select("svg#MixedFactorGraph");
     d3selections.axesScales = d3.select("svg#MixedFactorGraph g.axes-scales");
 
-    // set svg size
+    // register svg size
     setSvgSize({w: d3selections.svg.nodes()[0].clientWidth, h: d3selections.svg.nodes()[0].clientHeight});
-
-    console.log(`client svg size: ${svgSize().w}x${svgSize().h}`)
-
+    // re-register svg size values whenever client gets resized
+    window.addEventListener("resize",()=>{
+      setSvgSize({w: d3selections.svg.nodes()[0].clientWidth, h: d3selections.svg.nodes()[0].clientHeight});
+      // console.log(`client svg resize: ${svgSize().w}x${svgSize().h}`)
+    })
 
     // define the scales
     let sc_x = d3.scaleLinear().range([0, svgSize().w]).domain([0,svgSize().w]);
@@ -42,15 +40,25 @@ function MixedFactorGraph(){
     // define axes objects, associated with the scales
     const xaxis_bot = d3.axisBottom(sc_x);
     const yaxis_right = d3.axisRight(sc_y);
+    const yaxis_left = d3.axisLeft(sc_y);
+    const xaxis_top = d3.axisTop(sc_x);
 
     createEffect(()=>{
-      sc_x = d3.scaleLinear().range([0, svgSize().w]).domain([0,svgSize().w])
-      sc_y = d3.scaleLinear().range([0, svgSize().h]).domain([0,svgSize().h])
+      // reactive variables
+      const h=svgSize().h;
+      const w=svgSize().w;
+      // readjust the scales, then the axes generation functions, then regenerate the axes elements
+      sc_x = d3.scaleLinear().range([0, w]).domain([0,w])
+      sc_y = d3.scaleLinear().range([0, h]).domain([0,h])
       xaxis_bot.scale(sc_x);
+      xaxis_top.scale(sc_x);
       yaxis_right.scale(sc_y);
-      console.log(`effect triggered with w=${svgSize().w}`)
+      yaxis_left.scale(sc_y)
+      // console.log(`effect triggered with w=${w}`)
       d3selections.axesScales.select(".Xaxis-top").call(xaxis_bot);
+      d3selections.axesScales.select(".Xaxis-bottom").call(xaxis_top).attr("transform",`translate(0,${h})`);
       d3selections.axesScales.select(".Yaxis-right").call(yaxis_right);
+      d3selections.axesScales.select(".Yaxis-left").call(yaxis_left).attr("transform",`translate(${w},0)`);
     })
 
     // zoom
@@ -59,10 +67,13 @@ function MixedFactorGraph(){
     function zoomed({transform}){
       // the zoom transform is applied to factor graph group (not the whole svg)
       d3.select('g.gMixedFactorGraph').attr("transform",transform);
-      // // apply transform to the scales of the axes
+      // apply transform to the scales of the axes
       const sc_xz = transform.rescaleX(sc_x);
+      const sc_yz = transform.rescaleX(sc_y);
       d3selections.axesScales.select(".Xaxis-top").call(xaxis_bot.scale(sc_xz));
-      d3selections.axesScales.select(".Yaxis-right").call(yaxis_right.scale(sc_xz));
+      d3selections.axesScales.select(".Xaxis-bottom").call(xaxis_top.scale(sc_xz));
+      d3selections.axesScales.select(".Yaxis-left").call(yaxis_left.scale(sc_yz));
+      d3selections.axesScales.select(".Yaxis-right").call(yaxis_right.scale(sc_yz));
     }
 
   })
