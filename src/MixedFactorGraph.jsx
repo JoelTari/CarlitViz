@@ -1,11 +1,17 @@
 import * as d3 from "d3"
-import { createMemo, createEffect, onCleanup, onMount, createSignal } from "solid-js"
+import { createMemo, createEffect, onMount, createSignal } from "solid-js"
 import { MixedFactorGraphData } from "./stores/MixedFactorGraphData"
 import './MixedFactorGraph.css'
+import { join_enter_covariance, join_update_covariance } from "./update_patterns/covariances"
+import { join_enter_vertex, join_update_vertex } from "./update_patterns/vertices"
+import { join_enter_factor, join_update_factor, join_exit_factor } from "./update_patterns/factors"
+import { objectify_marginals, objectify_factors, compute_factor_set,  estimation_data_massage } 
+from "./update_patterns/graph_massage"
 
 function MixedFactorGraph(){
   const initSvgSize = { w: 1000, h: 1000 };
   const [ svgSize, setSvgSize ] = createSignal(initSvgSize);
+  const [ ZoomTransform, setZoomTransform ] = createSignal(d3.zoomIdentity);
 
   // reactive memo on the graph data
   const CopiedMixedFactorGraphData = createMemo(() =>{
@@ -24,6 +30,7 @@ function MixedFactorGraph(){
     d3selections.svg = d3.select("svg#MixedFactorGraph");
     d3selections.grid = d3.select("svg#MixedFactorGraph g.grid");
     d3selections.axesScales = d3.select("svg#MixedFactorGraph g.axes-scales");
+    d3selections.graph= d3.select("svg#MixedFactorGraph g.gMixedFactorGraph");
 
     // register svg size
     setSvgSize({w: d3selections.svg.nodes()[0].clientWidth, h: d3selections.svg.nodes()[0].clientHeight});
@@ -32,7 +39,6 @@ function MixedFactorGraph(){
       setSvgSize({w: d3selections.svg.nodes()[0].clientWidth, h: d3selections.svg.nodes()[0].clientHeight});
     })
 
-    const [ ZoomTransform, setZoomTransform ] = createSignal(d3.zoomIdentity);
 
     createEffect(()=>{
       // reactive variables
@@ -111,34 +117,131 @@ function MixedFactorGraph(){
     // zoom
     d3selections.svg.call(d3.zoom().on("zoom",zoomed));
     // zoom callback
-    function zoomed({transform}){
+    function zoomed({transform, hasTransition}){
+      console.log(transform)
       // the zoom transform is applied to factor graph group (not the whole svg)
-      d3.select('g.gMixedFactorGraph').attr("transform",transform);
+      if (hasTransition){
+        d3.select('g.gMixedFactorGraph')
+          .transition().duration(1500)
+          .attr("transform",transform);
+      }
+      else d3.select('g.gMixedFactorGraph').attr("transform",transform);
       setZoomTransform(transform);
     }
+
+    // reactive to data: CopiedMixedFactorGraphData()
+    createEffect(()=>{
+      console.log("new data:")
+      console.log(CopiedMixedFactorGraphData());
+      const graph = CopiedMixedFactorGraphData();
+
+      const GlobalUI = new Object(); // temporary
+
+      // base unit graph is a coefficient to help size the components of the graph
+      // different graphs requires different size of vertex circle, stroke-width etc..
+      // The graph can have such a coefficient in the header, otherwise a value is computed
+      if (graph.header.base_unit != null) {
+        GlobalUI.base_unit_graph = graph.header.base_unit;
+      } else {
+        // compute the base unit graph based on the median calculation of all distances
+        // between connected nodes
+        const node_distances = graph.factors.map((f) => {
+          if (f.type === "odometry") {
+            return sqDist(
+              graph.marginals.find((v) => v.var_id === f.vars_id[0]),
+              graph.marginals.find((v) => v.var_id === f.vars_id[1])
+            );
+          }
+        });
+        node_distances.sort((a, b) => a - b);
+        const half = Math.floor(node_distances.length / 2);
+        const median = Math.sqrt(node_distances[half]);
+        // for a median distance of 1 between nodes, 0.15 is the coefficient
+        GlobalUI.base_unit_graph = 0.15 * median;
+      }
+
+      // This part define a zoom transform that is relevant, based on the new data,
+      //        get, for this graph, the left/right/top/bottom-most values.
+      const [mx, Mx, my, My] = graph.marginals.reduce(
+        (tmp_bb, cur) => [
+          Math.min(tmp_bb[0], cur.mean.x),
+          Math.max(tmp_bb[1], cur.mean.x),
+          Math.min(tmp_bb[2], cur.mean.y),
+          Math.max(tmp_bb[3], cur.mean.y),
+        ],
+        [Infinity, -Infinity, Infinity, -Infinity] // initial extreme values
+      );
+
+      console.log(`Bounding box is [${mx.toFixed(2)}, ${my.toFixed(2)}, ${Mx.toFixed(2)}, ${My.toFixed(2)}]`)
+
+      // // apply the zoom transform
+      // // zoomed({transform: d3.zoomIdentity.translate(9.3, 25).scale(200), hasTransition: true});
+      // // TODO: use svgSize and bounding box to compute correct translate&scale values
+      // // do it like this (verified, except dont use these hard coded values of course)
+      // DONT REMOVE
+      // d3selections
+      //   .svg
+      //   .call(
+      //     // this reset the zoom behavior
+      //     d3.zoom().on("zoom",zoomed).transform,
+      //     d3.zoomIdentity.translate(9.3, 25).scale(200));
+
+      // massage data
+      graph.obj_marginals = objectify_marginals(graph.marginals);
+      graph.obj_factors = objectify_factors(graph.factors);
+      compute_factor_set(graph);
+      estimation_data_massage(graph);
+
+      // graph 
+      // (d3's infamous general update pattern)
+      // first the covariances
+      // then the factors (therefore on top of the cov)
+      // then the vertices (therefore on top of the factors)
+      // 
+      if (graph.header.exclude == null || ! graph.header.exclude.includes('covariance'))
+      {
+        d3selections.graph
+          .select("g.covariances_group")
+          .selectAll(".covariance")
+          .data(graph.marginals)
+          .join(join_enter_covariance, join_update_covariance); // TODO: exit covariance
+      }
+      d3selections.graph
+        .select("g.factors_group")
+        .selectAll(".factor")
+        .data(graph.factors, (d) => d.factor_id)
+        .join(join_enter_factor, join_update_factor, join_exit_factor);
+      d3selections.graph
+        .select("g.vertices_group")
+        .selectAll(".vertex")
+        .data(graph.marginals, (d)=> d.var_id)
+        .join(join_enter_vertex,join_update_vertex);
+    })
 
   })
 
   // reactive to UI: (UI options not yet imported)
   createEffect(()=>{})
 
-  // reactive to data: CopiedMixedFactorGraphData()
-  createEffect(()=>{})
 
-
+  // TODO: UI solid-if opts on grid and axes-scales
   return <svg id="MixedFactorGraph"
     >
     <g class="grid"></g>
+    <g class="gMixedFactorGraph">
+      <g class="covariances_group"/>
+      <g class="factors_group"/>
+      <g class="vertices_group"/>
+      <rect x="800" y="500" width="100" height="100"/>
+      <circle cx="0" cy="0" r="1000" fill="none" stroke="red"/>
+      <circle cx="0" cy="0" r="100" fill="none" stroke="blue"/>
+      <circle cx="300" cy="300" r="25" fill="black" stroke="green"/>
+    </g>
     <g class="axes-scales">
       <g class="Xaxis-top"></g>
       <g class="Xaxis-bottom"></g>
       <g class="Yaxis-left"></g>
       <g class="Yaxis-right"></g>
-    </g>
-    <g class="gMixedFactorGraph">
-      <rect x="800" y="500" width="100" height="100"/>
-      <circle cx="0" cy="0" r="1000" fill="none" stroke="red"/>
-      <circle cx="0" cy="0" r="100" fill="none" stroke="blue"/>
     </g>
   </svg>
 }
