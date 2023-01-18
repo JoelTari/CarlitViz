@@ -9,3 +9,7 @@ svg{
   background-color: var(--bg);
 }
 
+.lines text{
+  stroke: none;
+  fill: black;
+}

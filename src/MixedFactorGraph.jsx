@@ -7,11 +7,18 @@ import { join_enter_vertex, join_update_vertex } from "./update_patterns/vertice
 import { join_enter_factor, join_update_factor, join_exit_factor } from "./update_patterns/factors"
 import { objectify_marginals, objectify_factors, compute_factor_set,  estimation_data_massage } 
 from "./update_patterns/graph_massage"
+import AxesWithScales from "./components/AxesWithScales"
+import TicksGrid from "./components/TicksGrid"
 
 function MixedFactorGraph(){
+  // define & initialize some signals
   const initSvgSize = { w: 1000, h: 1000 };
   const [ svgSize, setSvgSize ] = createSignal(initSvgSize);
+  const [Scales, setScales] = createSignal(
+      { x: d3.scaleLinear().range([0, svgSize().w]).domain([0,svgSize().w]),
+        y: d3.scaleLinear().range([0, svgSize().h]).domain([0,svgSize().h]) });
   const [ ZoomTransform, setZoomTransform ] = createSignal(d3.zoomIdentity);
+  const [adjustedScales, setAdjustedScales] = createSignal( { });
 
   // reactive memo on the graph data
   const CopiedMixedFactorGraphData = createMemo(() =>{
@@ -19,12 +26,8 @@ function MixedFactorGraph(){
     return JSON.parse(JSON.stringify(MixedFactorGraphData()))
   })
 
-  // on mount: 
-    // - affect to d3selections variable to the mounted elements
-    // - populate axes with d3 scales generation schemes
-    // - zoom
-    // - make axes scale and reach reactive to resize and drag/zoom
   const d3selections = new Object();
+
   onMount(() =>{
     // register d3 selections (those element contents will be under d3 jurisdiction, not solidjs)
     d3selections.svg = d3.select("svg#MixedFactorGraph");
@@ -40,85 +43,39 @@ function MixedFactorGraph(){
     })
 
 
+    // causal graph of scales (graphviz syntax):
+    // digraph{
+    //  svgSize -> scale
+    //  { drag/zoom, scale } -> adjusted_scale
+    //
+    // }
+
+    // Observe: svgSize  &  Impact: Scales
     createEffect(()=>{
       // reactive variables
       const h=svgSize().h;
       const w=svgSize().w;
-      let sc_x = d3.scaleLinear().range([0, w]).domain([0,w])
-      let sc_y = d3.scaleLinear().range([0, h]).domain([0,h])
-      // apply the drag/zoom transform
-      const ztransform = ZoomTransform();
-      sc_x = ztransform.rescaleX(sc_x);
-      sc_y = ztransform.rescaleY(sc_y);
-      // define, using the scales, the d3 objects that have the tooling to generate the axes 
-      const xaxis_bot = d3.axisBottom(sc_x);
-      const yaxis_right = d3.axisRight(sc_y);
-      const yaxis_left = d3.axisLeft(sc_y);
-      const xaxis_top = d3.axisTop(sc_x);
-      // call those d3 objects to populate existing axes group elements (note that top <-> bot)
-      d3selections.axesScales.select(".Xaxis-top").call(xaxis_bot);
-      d3selections.axesScales.select(".Xaxis-bottom").call(xaxis_top).attr("transform",`translate(0,${h})`);
-      d3selections.axesScales.select(".Yaxis-right").call(yaxis_right);
-      d3selections.axesScales.select(".Yaxis-left").call(yaxis_left).attr("transform",`translate(${w},0)`);
-      // grid
-      d3selections.grid
-        .call((g)=>
-          g.selectAll(".x")
-          .data(sc_x.ticks())
-          .join(
-            (enter) =>
-              enter
-                .append("line")
-                .attr("class", "x")
-                .attr("y1",0)
-                .attr("y2", h)
-                .attr("x1", (d) => sc_x(d))
-                .attr("x2", (d) => sc_x(d))
-                .style("stroke","grey")
-                .style("stroke-width","1px")
-                .style("opacity","30%")
-            ,
-            (update) => 
-              update
-                .attr("x1", (d) => sc_x(d))
-                .attr("x2", (d) => sc_x(d))
-                .attr("y2", h)
-            ,
-            (exit) => exit.remove()
-          )
-        )
-        .call((g)=>
-          g.selectAll(".y")
-          .data(sc_y.ticks())
-          .join(
-            (enter) =>
-              enter
-                .append("line")
-                .attr("class", "y")
-                .attr("x1",0)
-                .attr("x2", w)
-                .attr("y1", (d) => sc_y(d))
-                .attr("y2", (d) => sc_y(d))
-                .style("stroke","grey")
-                .style("stroke-width","1px")
-                .style("opacity","30%")
-            ,
-            (update) => 
-              update
-                .attr("x2", w)
-                .attr("y1", (d) => sc_y(d))
-                .attr("y2", (d) => sc_y(d))
-            ,
-            (exit) => exit.remove()
-          )
-        )
+      // TODO: observe ticks number
+      setScales({x: d3.scaleLinear().range([0, w]).domain([0,w]),
+                 y: d3.scaleLinear().range([0, h]).domain([0,h])})
     })
+    // Observe:  Scales and Ztransform  &  Impact: AdjustedScales
+    createEffect(()=>{
+      const ztransform = ZoomTransform();
+      const sc_x = Scales().x;
+      const sc_y = Scales().y;
+      setAdjustedScales(
+        {
+          x: ztransform.rescaleX(sc_x),
+          y: ztransform.rescaleY(sc_y)
+        });
+    });
 
     // zoom
     d3selections.svg.call(d3.zoom().on("zoom",zoomed));
     // zoom callback
     function zoomed({transform, hasTransition}){
-      console.log(transform)
+      // console.log(transform)
       // the zoom transform is applied to factor graph group (not the whole svg)
       if (hasTransition){
         d3.select('g.gMixedFactorGraph')
@@ -223,26 +180,20 @@ function MixedFactorGraph(){
   // reactive to UI: (UI options not yet imported)
   createEffect(()=>{})
 
-
   // TODO: UI solid-if opts on grid and axes-scales
   return <svg id="MixedFactorGraph"
     >
-    <g class="grid"></g>
+    <TicksGrid adjustedScales={adjustedScales()} svgSize={svgSize()}/>
     <g class="gMixedFactorGraph">
       <g class="covariances_group"/>
       <g class="factors_group"/>
       <g class="vertices_group"/>
       <rect x="800" y="500" width="100" height="100"/>
       <circle cx="0" cy="0" r="1000" fill="none" stroke="red"/>
-      <circle cx="0" cy="0" r="100" fill="none" stroke="blue"/>
+      <circle r="100" fill="none" stroke="blue"/>
       <circle cx="300" cy="300" r="25" fill="black" stroke="green"/>
     </g>
-    <g class="axes-scales">
-      <g class="Xaxis-top"></g>
-      <g class="Xaxis-bottom"></g>
-      <g class="Yaxis-left"></g>
-      <g class="Yaxis-right"></g>
-    </g>
+    <AxesWithScales adjustedScales={adjustedScales()} svgSize={svgSize()}/>
   </svg>
 }
 
