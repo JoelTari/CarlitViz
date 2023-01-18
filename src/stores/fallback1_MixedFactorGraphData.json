@@ -300,14 +300,10 @@
     },
     {
       "var_id": "x25",
-      "mean": {
-        "x": 7.11384363633772,
-        "y": 1.9587573988237492,
-        "th": 1.5652725177857163
-      },
+      "mean": { "x": 5, "y": 2, "th": 1.5652725177857163 },
       "covariance": {
         "sigma": [0.2603132444035424, 0.14224011787192728],
-        "rot": 0.18854395241820004
+        "rot": 1.74854395241820004
       }
     },
     {
@@ -381,7 +377,6 @@
     { "factor_id": "f30", "type": "odometry", "vars_id": ["x25", "x26"] },
     { "factor_id": "f31", "type": "odometry", "vars_id": ["x26", "x27"] },
     { "factor_id": "f32", "type": "odometry", "vars_id": ["x19", "x27"] },
-    { "factor_id": "f33", "type": "odometry", "vars_id": ["x19", "x2609"] },
     { "factor_id": "f34", "type": "prior", "vars_id": ["x0"] }
   ]
 }
