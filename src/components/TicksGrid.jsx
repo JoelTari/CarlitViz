@@ -25,11 +25,8 @@ function TicksGrid(props){
                 .attr("class", "x")
                 .attr("y1",0)
                 .attr("y2", h)
-                .style("stroke","grey")
-                .style("stroke-width","1px")
-                .style("opacity","30%")
             ,
-            (update) => 
+            (update) =>
               update
                 .attr("y2", h)
             ,
@@ -48,11 +45,8 @@ function TicksGrid(props){
                 .attr("class", "y")
                 .attr("x1",0)
                 .attr("x2", w)
-                .style("stroke","grey")
-                .style("stroke-width","1px")
-                .style("opacity","30%")
             ,
-            (update) => 
+            (update) =>
               update
                 .attr("x2", w)
             ,
@@ -64,9 +58,15 @@ function TicksGrid(props){
     })
 
   })
-  
+
+  // trick: define some attribute at the group level, the lines inside the group
+  // will inherit
   return (
-    <g class="TicksGrid"></g>
+    <g class="TicksGrid"
+      stroke="grey"
+      stroke-width="1px"
+      stroke-opacity="30%">
+    </g>
   )
 }
 
