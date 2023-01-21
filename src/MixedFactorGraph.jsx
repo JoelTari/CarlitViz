@@ -42,16 +42,18 @@ function MixedFactorGraph(){
 
 
   // UI input to change base unit (increment/decrement by 10% of baseline)
-  let unit_graph_coef = 1;
   d3.select("body").on("keydown",(e)=>{
     console.log(`keypress: ${e.key}`);
     if (e.key === "Backspace"){
-      unit_graph_coef = Math.max(unit_graph_coef-0.1,0.1)
-      setAppliedUnitGraph(unit_graph_coef*baseUnitGraph());
+      setAppliedUnitGraph(appliedUnitGraph()/1.5);
     }
     else if(e.key === "s"){
       unit_graph_coef += 0.1
-      setAppliedUnitGraph(unit_graph_coef*baseUnitGraph());
+      setAppliedUnitGraph(appliedUnitGraph()*1.5);
+    }
+    else if(e.key === " "){
+      // reset
+      setAppliedUnitGraph(baseUnitGraph());
     }
   })
 
