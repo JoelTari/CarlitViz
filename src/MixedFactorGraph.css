@@ -9,7 +9,6 @@ svg{
   background-color: var(--bg);
 }
 
-.lines text{
-  stroke: none;
-  fill: black;
+svg .gMixedFactorGraph{
+  transition: transform 0.2s;
 }

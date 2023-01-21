@@ -17,7 +17,7 @@ function AxesWithScales(props){
       const h=props.svgSize.h;
       const w=props.svgSize.w;
       // define, using the scales, the d3 objects that have the tooling to generate the axes 
-      const xaxis_bot = d3.axisBottom(sc_x);
+      const xaxis_bot = d3.axisBottom(sc_x); // .tickSizeInner(h); cheap grid lol
       const yaxis_right = d3.axisRight(sc_y);
       const yaxis_left = d3.axisLeft(sc_y);
       const xaxis_top = d3.axisTop(sc_x);

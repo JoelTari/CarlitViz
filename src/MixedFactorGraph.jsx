@@ -5,10 +5,12 @@ import './MixedFactorGraph.css'
 import { join_enter_covariance, join_update_covariance } from "./update_patterns/covariances"
 import { join_enter_vertex, join_update_vertex } from "./update_patterns/vertices"
 import { join_enter_factor, join_update_factor, join_exit_factor } from "./update_patterns/factors"
-import { objectify_marginals, objectify_factors, compute_factor_set,  estimation_data_massage } 
-from "./update_patterns/graph_massage"
+import {  objectify_marginals, objectify_factors, compute_factor_set,  estimation_data_massage } from "./update_patterns/graph_massage"
+import { get_graph_bbox, graph_center_transform, infer_base_unit_graph, mean_distance_neighbours} from "./update_patterns/graph_analysis"
 import AxesWithScales from "./components/AxesWithScales"
 import TicksGrid from "./components/TicksGrid"
+import { SlamVizUI_opts, setSlamVizUI_opts } from "./stores/SlamVizUI"
+import DummyTurnkeyGraph from "./stores/dummy_turnkey_graph"
 
 function MixedFactorGraph(){
   // define & initialize some signals
@@ -18,6 +20,7 @@ function MixedFactorGraph(){
       { x: d3.scaleLinear().range([0, svgSize().w]).domain([0,svgSize().w]),
         y: d3.scaleLinear().range([0, svgSize().h]).domain([0,svgSize().h]) });
   const [ ZoomTransform, setZoomTransform ] = createSignal(d3.zoomIdentity);
+  const [ graphZoomTransform, setGraphZoomTransform ] = createSignal(d3.zoomIdentity); // graph specific
   const [adjustedScales, setAdjustedScales] = createSignal( { });
 
   // reactive memo on the graph data
@@ -26,13 +29,32 @@ function MixedFactorGraph(){
     return JSON.parse(JSON.stringify(MixedFactorGraphData()))
   })
 
+  // base unit graph:
+  // - Basis for elements dimension, is different for every graph
+  //  A graph (A - B) where space between A and B is 100m while not have same "base_unit_graph"
+  //  as a graph (A - B) where that space is 1m.
+  //  That is why we use the data in the graph to infer a value (if a value is not given)
+  // - When we are zoomed however, the user might want to declutter, i.e. compute a new value
+  // for the base_unit_graph wrt ztransform scale and initial "base_unit_graph" value, this is
+  // what I call the unified scaling coefficient
+  const [baseUnitGraph, setBaseUnitGraph] = createSignal(1); // 0.15
+  const [unifiedScalingCoefficient, setUnifiedScalingCoefficient] = createSignal(1);
+
+  // change unified scaling coefficient (i.e. on declutter button push)
+  const change_usc = function(){
+    // TODO: make it only triggered via UI button push
+    setUnifiedScalingCoefficient(baseUnitGraph()*ZoomTransform().k/graphZoomTransform().k);
+    console.log(`usc: ${unifiedScalingCoefficient()}`);
+  }
+
+
   const d3selections = new Object();
 
   onMount(() =>{
     // register d3 selections (those element contents will be under d3 jurisdiction, not solidjs)
     d3selections.svg = d3.select("svg#MixedFactorGraph");
-    d3selections.grid = d3.select("svg#MixedFactorGraph g.grid");
-    d3selections.axesScales = d3.select("svg#MixedFactorGraph g.axes-scales");
+    // d3selections.grid = d3.select("svg#MixedFactorGraph g.grid");
+    // d3selections.axesScales = d3.select("svg#MixedFactorGraph g.axes-scales");
     d3selections.graph= d3.select("svg#MixedFactorGraph g.gMixedFactorGraph");
 
     // register svg size
@@ -43,19 +65,11 @@ function MixedFactorGraph(){
     })
 
 
-    // causal graph of scales (graphviz syntax):
-    // digraph{
-    //  svgSize -> scale
-    //  { drag/zoom, scale } -> adjusted_scale
-    //
-    // }
-
     // Observe: svgSize  &  Impact: Scales
     createEffect(()=>{
       // reactive variables
       const h=svgSize().h;
       const w=svgSize().w;
-      // TODO: observe ticks number
       setScales({x: d3.scaleLinear().range([0, w]).domain([0,w]),
                  y: d3.scaleLinear().range([0, h]).domain([0,h])})
     })
@@ -71,11 +85,18 @@ function MixedFactorGraph(){
         });
     });
 
-    // zoom
+    let {h,w} = svgSize();
+    // I do
+    createEffect(()=> {
+      h= svgSize().h;
+      w= svgSize().w;
+    });
+
+    // // zoom (with initial value)
     d3selections.svg.call(d3.zoom().on("zoom",zoomed));
     // zoom callback
     function zoomed({transform, hasTransition}){
-      // console.log(transform)
+      console.log(transform);
       // the zoom transform is applied to factor graph group (not the whole svg)
       if (hasTransition){
         d3.select('g.gMixedFactorGraph')
@@ -85,69 +106,50 @@ function MixedFactorGraph(){
       else d3.select('g.gMixedFactorGraph').attr("transform",transform);
       setZoomTransform(transform);
     }
+    // set an initial zoom transform centered (before any graph data)
+    // because it makes it so much easy to reason about when moving graph
+    const zero_center_transform = d3.zoomIdentity.translate(w/2,h/2);
+    d3selections.svg.call(
+      d3.zoom().on("zoom",zoomed).transform,
+      zero_center_transform);
 
-    // reactive to data: CopiedMixedFactorGraphData()
+
+
+    // reactive to graph data (only data, I dont want to repeat this costly routine whenever svg size changes)
     createEffect(()=>{
       console.log("new data:")
       console.log(CopiedMixedFactorGraphData());
       const graph = CopiedMixedFactorGraphData();
 
-      const GlobalUI = new Object(); // temporary
+      // get the spatial bounding box of this graph
+      const [mx, Mx, my, My] = get_graph_bbox(graph);
+      console.log(`Graph Bounding box is 
+        [${mx.toFixed(2)}, ${my.toFixed(2)}, ${Mx.toFixed(2)}, ${My.toFixed(2)}]`);
+      
+      // zoom-in to this graph: takes the 0-center transform (a pure translation transform)
+      //   and translate and scale according to the graph bbox
+      const graph_zoom_transform = graph_center_transform({}, [mx, Mx, my, My],w,h);
+      setGraphZoomTransform(graph_zoom_transform);
+      d3selections.svg.call(
+        d3.zoom().on("zoom",zoomed).transform,
+        graph_zoom_transform);
 
-      // base unit graph is a coefficient to help size the components of the graph
-      // different graphs requires different size of vertex circle, stroke-width etc..
-      // The graph can have such a coefficient in the header, otherwise a value is computed
-      if (graph.header.base_unit != null) {
-        GlobalUI.base_unit_graph = graph.header.base_unit;
-      } else {
-        // compute the base unit graph based on the median calculation of all distances
-        // between connected nodes
-        const node_distances = graph.factors.map((f) => {
-          if (f.type === "odometry") {
-            return sqDist(
-              graph.marginals.find((v) => v.var_id === f.vars_id[0]),
-              graph.marginals.find((v) => v.var_id === f.vars_id[1])
-            );
-          }
-        });
-        node_distances.sort((a, b) => a - b);
-        const half = Math.floor(node_distances.length / 2);
-        const median = Math.sqrt(node_distances[half]);
-        // for a median distance of 1 between nodes, 0.15 is the coefficient
-        GlobalUI.base_unit_graph = 0.15 * median;
-      }
+      // compute the base unit given the mean euclidian distance between connected nodes in
+      // the graph
+      const canonical_base_unit = mean_distance_neighbours(graph)/9;
+      // // the biggest/ideal base unit (ignoring )
+      // const ideal_base_unit = Math.sqrt((Mx-mx)**2+[My-my]**2)/5;
+      setBaseUnitGraph(canonical_base_unit); // change
+      console.log(`base graph unit set to : ${canonical_base_unit}`);
 
-      // This part define a zoom transform that is relevant, based on the new data,
-      //        get, for this graph, the left/right/top/bottom-most values.
-      const [mx, Mx, my, My] = graph.marginals.reduce(
-        (tmp_bb, cur) => [
-          Math.min(tmp_bb[0], cur.mean.x),
-          Math.max(tmp_bb[1], cur.mean.x),
-          Math.min(tmp_bb[2], cur.mean.y),
-          Math.max(tmp_bb[3], cur.mean.y),
-        ],
-        [Infinity, -Infinity, Infinity, -Infinity] // initial extreme values
-      );
-
-      console.log(`Bounding box is [${mx.toFixed(2)}, ${my.toFixed(2)}, ${Mx.toFixed(2)}, ${My.toFixed(2)}]`)
-
-      // // apply the zoom transform
-      // // zoomed({transform: d3.zoomIdentity.translate(9.3, 25).scale(200), hasTransition: true});
-      // // TODO: use svgSize and bounding box to compute correct translate&scale values
-      // // do it like this (verified, except dont use these hard coded values of course)
-      // DONT REMOVE
-      // d3selections
-      //   .svg
-      //   .call(
-      //     // this reset the zoom behavior
-      //     d3.zoom().on("zoom",zoomed).transform,
-      //     d3.zoomIdentity.translate(9.3, 25).scale(200));
 
       // massage data
+      console.log("[Data Massage]: start");
       graph.obj_marginals = objectify_marginals(graph.marginals);
       graph.obj_factors = objectify_factors(graph.factors);
       compute_factor_set(graph);
       estimation_data_massage(graph);
+      console.log("[Data Massage]: done");
 
       // graph 
       // (d3's infamous general update pattern)
@@ -178,23 +180,29 @@ function MixedFactorGraph(){
   })
 
   // reactive to UI: (UI options not yet imported)
+  // d3.selectAll(circle).attr(r, HERE )
   createEffect(()=>{})
 
   // TODO: UI solid-if opts on grid and axes-scales
-  return <svg id="MixedFactorGraph"
-    >
+  return (
+  <svg id="MixedFactorGraph" >
     <TicksGrid adjustedScales={adjustedScales()} svgSize={svgSize()}/>
     <g class="gMixedFactorGraph">
       <g class="covariances_group"/>
       <g class="factors_group"/>
       <g class="vertices_group"/>
       <rect x="800" y="500" width="100" height="100"/>
-      <circle cx="0" cy="0" r="1000" fill="none" stroke="red"/>
-      <circle r="100" fill="none" stroke="blue"/>
+      <circle cx="6" cy="4" r={baseUnitGraph()} fill="red"/>
+      <g class="chold" stroke="silver" stroke-width="5">
+        <circle r={3*unifiedScalingCoefficient()} fill="blue" stroke="none"/>
+        <circle cx="125" r={0.1*Math.sqrt(svgSize().h**2 + svgSize().w**2)/2} fill="blue" />
+      </g>
       <circle cx="300" cy="300" r="25" fill="black" stroke="green"/>
+      <DummyTurnkeyGraph/>
     </g>
     <AxesWithScales adjustedScales={adjustedScales()} svgSize={svgSize()}/>
   </svg>
+  )
 }
 
 export default MixedFactorGraph;
