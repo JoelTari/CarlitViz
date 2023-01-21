@@ -9,10 +9,27 @@ svg{
   background-color: var(--bg);
 }
 
+
 svg{
   transform: scaleY(-1);
 }
-
 svg text{
   transform: scaleY(-1);
+}
+
+svg vertices-group{
+  cursor: pointer;
+}
+
+svg factors-group circle{
+  cursor: pointer;
+}
+
+svg .covariances-group ellipse.highlight{
+  fill: #ece281;
+}
+
+svg .factors-group .factor.link_highlight,
+svg .vertices-group .vertex.link_highlight{
+  stroke: #d16d4b;
 }

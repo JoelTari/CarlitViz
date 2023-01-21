@@ -10,7 +10,7 @@ import { get_graph_bbox, graph_center_transform, infer_base_unit_graph, mean_dis
 import AxesWithScales from "./components/AxesWithScales"
 import TicksGrid from "./components/TicksGrid"
 import { SlamVizUI_opts, setSlamVizUI_opts } from "./stores/SlamVizUI"
-import DummyTurnkeyGraph from "./stores/dummy_turnkey_graph"
+import { DummyTurnkeyVertices, DummyTurnkeyFactors, DummyTurnkeyCovariances } from "./stores/dummy_turnkey_graph"
 
 function MixedFactorGraph(){
   // define & initialize some signals
@@ -48,7 +48,6 @@ function MixedFactorGraph(){
       setAppliedUnitGraph(appliedUnitGraph()/1.5);
     }
     else if(e.key === "s"){
-      unit_graph_coef += 0.1
       setAppliedUnitGraph(appliedUnitGraph()*1.5);
     }
     else if(e.key === " "){
@@ -175,18 +174,18 @@ function MixedFactorGraph(){
       if (graph.header.exclude == null || ! graph.header.exclude.includes('covariance'))
       {
         d3selections.graph
-          .select("g.covariances_group")
+          .select("g.covariances-group")
           .selectAll(".covariance")
           .data(graph.marginals)
           .join(join_enter_covariance, join_update_covariance); // TODO: exit covariance
       }
       d3selections.graph
-        .select("g.factors_group")
+        .select("g.factors-group")
         .selectAll(".factor")
         .data(graph.factors, (d) => d.factor_id)
         .join(join_enter_factor, join_update_factor, join_exit_factor);
       d3selections.graph
-        .select("g.vertices_group")
+        .select("g.vertices-group")
         .selectAll(".vertex")
         .data(graph.marginals, (d)=> d.var_id)
         .join(join_enter_vertex,join_update_vertex);
@@ -198,28 +197,37 @@ function MixedFactorGraph(){
   // d3.selectAll(circle).attr(r, HERE )
   createEffect(()=>{})
 
-  // TODO: UI solid-if opts on grid and axes-scales
   return (
   <svg id="MixedFactorGraph" >
     <TicksGrid adjustedScales={adjustedScales()} svgSize={svgSize()}/>
     <g class="gMixedFactorGraph">
-      <g class="covariances_group"/>
-      <g class="factors_group"/>
-      <g class="vertiices_group"
-          font-size={0.75*appliedUnitGraph()} 
-          stroke-width={0.12*appliedUnitGraph()} 
-          stroke="grey" 
-          style="text-anchor: middle;font-family: monospace;alignment-baseline: central;"
-          fill="#f9f5d7">
-        <DummyTurnkeyGraph r={appliedUnitGraph()}/>
+      <g class="covariances-group">
       </g>
-      <rect x="800" y="500" width="100" height="100"/>
-      <circle cx="6" cy="4" r={baseUnitGraph()} fill="red"/>
-      <g class="chold" stroke="silver" stroke-width="5">
-        <circle r={3*appliedUnitGraph()} fill="blue" stroke="none"/>
-        <circle cx="125" r={0.1*Math.sqrt(svgSize().h**2 + svgSize().w**2)/2} fill="blue" />
+      <g class="factors-group">
       </g>
-      <circle cx="300" cy="300" r="25" fill="black" stroke="green"/>
+      <g class="vertiices-group">
+      </g>
+      <g class="covariiances-group" 
+        style="display: inherit;"
+        stroke-width={0.03*appliedUnitGraph()} 
+        stroke="black" 
+        fill="none">
+        <DummyTurnkeyCovariances/>
+      </g>
+      <g class="factoors-group" 
+        stroke="grey"
+        stroke-width={0.3*appliedUnitGraph()}
+        fill="#333">
+        <DummyTurnkeyFactors r={0.3*appliedUnitGraph()}/>
+      </g>
+      <g class="vertiices-group"
+        font-size={0.75*appliedUnitGraph()} 
+        stroke-width={0.12*appliedUnitGraph()} 
+        stroke="grey" 
+        style="text-anchor: middle;font-family: monospace;dominant-baseline: middle;"
+        fill="#f9f5d7">
+        <DummyTurnkeyVertices r={appliedUnitGraph()}/>
+      </g>
     </g>
     <AxesWithScales adjustedScales={adjustedScales()} svgSize={svgSize()}/>
   </svg>
