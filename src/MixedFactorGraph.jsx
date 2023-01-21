@@ -209,6 +209,7 @@ function MixedFactorGraph(){
           font-size={0.75*appliedUnitGraph()} 
           stroke-width={0.12*appliedUnitGraph()} 
           stroke="grey" 
+          style="text-anchor: middle;font-family: monospace;alignment-baseline: central;"
           fill="#f9f5d7">
         <DummyTurnkeyGraph r={appliedUnitGraph()}/>
       </g>
