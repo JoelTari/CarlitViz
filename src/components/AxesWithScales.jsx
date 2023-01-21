@@ -22,8 +22,8 @@ function AxesWithScales(props){
       const yaxis_left = d3.axisLeft(sc_y);
       const xaxis_top = d3.axisTop(sc_x);
       // call those d3 objects to populate existing axes group elements (note that top <-> bot)
-      elTop.call(xaxis_bot);
-      elBottom.call(xaxis_top).attr("transform",`translate(0,${h})`);
+      elBottom.call(xaxis_bot).attr("transform",`translate(0,${h})`);
+      elTop.call(xaxis_top);
       elRight.call(yaxis_right);
       elLeft.call(yaxis_left).attr("transform",`translate(${w},0)`);
     })
