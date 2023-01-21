@@ -38,14 +38,22 @@ function MixedFactorGraph(){
   // for the base_unit_graph wrt ztransform scale and initial "base_unit_graph" value, this is
   // what I call the unified scaling coefficient
   const [baseUnitGraph, setBaseUnitGraph] = createSignal(1); // 0.15
-  const [unifiedScalingCoefficient, setUnifiedScalingCoefficient] = createSignal(1);
+  const [appliedUnitGraph, setAppliedUnitGraph] = createSignal(1);
 
-  // change unified scaling coefficient (i.e. on declutter button push)
-  const change_usc = function(){
-    // TODO: make it only triggered via UI button push
-    setUnifiedScalingCoefficient(baseUnitGraph()*ZoomTransform().k/graphZoomTransform().k);
-    console.log(`usc: ${unifiedScalingCoefficient()}`);
-  }
+
+  // UI input to change base unit (increment/decrement by 10% of baseline)
+  let unit_graph_coef = 1;
+  d3.select("body").on("keydown",(e)=>{
+    console.log(`keypress: ${e.key}`);
+    if (e.key === "Backspace"){
+      unit_graph_coef = Math.max(unit_graph_coef-0.1,0.1)
+      setAppliedUnitGraph(unit_graph_coef*baseUnitGraph());
+    }
+    else if(e.key === "s"){
+      unit_graph_coef += 0.1
+      setAppliedUnitGraph(unit_graph_coef*baseUnitGraph());
+    }
+  })
 
 
   const d3selections = new Object();
@@ -96,7 +104,7 @@ function MixedFactorGraph(){
     d3selections.svg.call(d3.zoom().on("zoom",zoomed));
     // zoom callback
     function zoomed({transform, hasTransition}){
-      console.log(transform);
+      // console.log(transform);
       // the zoom transform is applied to factor graph group (not the whole svg)
       if (hasTransition){
         d3.select('g.gMixedFactorGraph')
@@ -112,7 +120,6 @@ function MixedFactorGraph(){
     d3selections.svg.call(
       d3.zoom().on("zoom",zoomed).transform,
       zero_center_transform);
-
 
 
     // reactive to graph data (only data, I dont want to repeat this costly routine whenever svg size changes)
@@ -143,12 +150,10 @@ function MixedFactorGraph(){
       // compute the base unit given the mean euclidian distance between connected nodes in
       // the graph
       const canonical_base_unit = mean_distance_neighbours(graph)/9;
-      // canonical base unit is also the max unit value (in the graph domain metric, ie not the viewport)
-      // But when we zoom we want to declutter (only after pushing a button, it is too costly to do otherwise)
-      // // the biggest/ideal base unit (ignoring )
-      // const ideal_base_unit = Math.sqrt((Mx-mx)**2+[My-my]**2)/5;
-      setBaseUnitGraph(canonical_base_unit); // change
+      setBaseUnitGraph(canonical_base_unit);
       console.log(`base graph unit set to : ${canonical_base_unit}`);
+      // initially the applied base unit is the canonical
+      setAppliedUnitGraph(canonical_base_unit);
 
 
       // massage data
@@ -198,17 +203,20 @@ function MixedFactorGraph(){
     <g class="gMixedFactorGraph">
       <g class="covariances_group"/>
       <g class="factors_group"/>
-      <g class="vertices_group"/>
+      <g class="vertiices_group"
+          font-size={0.75*appliedUnitGraph()} 
+          stroke-width={0.12*appliedUnitGraph()} 
+          stroke="grey" 
+          fill="#f9f5d7">
+        <DummyTurnkeyGraph r={appliedUnitGraph()}/>
+      </g>
       <rect x="800" y="500" width="100" height="100"/>
       <circle cx="6" cy="4" r={baseUnitGraph()} fill="red"/>
       <g class="chold" stroke="silver" stroke-width="5">
-        <circle r={3*unifiedScalingCoefficient()} fill="blue" stroke="none"/>
+        <circle r={3*appliedUnitGraph()} fill="blue" stroke="none"/>
         <circle cx="125" r={0.1*Math.sqrt(svgSize().h**2 + svgSize().w**2)/2} fill="blue" />
       </g>
       <circle cx="300" cy="300" r="25" fill="black" stroke="green"/>
-      <g class="dummies" font-size="0.1" stroke-width="0.018" stroke="grey" fill="#f9f5d7">
-        <DummyTurnkeyGraph r={baseUnitGraph()}/>
-      </g>
     </g>
     <AxesWithScales adjustedScales={adjustedScales()} svgSize={svgSize()}/>
   </svg>
@@ -216,3 +224,30 @@ function MixedFactorGraph(){
 }
 
 export default MixedFactorGraph;
+
+
+// canonical base unit is also the max unit value (in the graph domain metric, ie not the viewport)
+// But when we zoom we want to declutter (only after pushing a button, it is too costly to do continously)
+// the decluttered_base_unit is set so that:
+//   1) close nodes are spatially distinguishable (declutter) 
+//      => implies the size diminishes with the ratio graphZoomTransform.k/ZoomTransform().k
+//   2) the unit need to be big enough so that it is readalbe 
+//                 (which is not the objective of the canonical_base_unit)
+//      E.g. we want the unit to not be smaller than x% of screen width
+//      => implies the size diminishing of (1) is mitigated by a lower bound of the screen/viewport
+//   3) but the dbu can't be greater than the canonical_base_unit. This overrule (2)
+//      => implies a min(canonical_base_unit, declutter_base_unit) at the end
+// Just doing an adjustment by zoom value isnt enough:
+//  declutter_base_unit = canonical_base_unit * k_graph_zoom/k_current_zoom;
+// Because on a large graph (eg M3500), the canonical_base_unit may be too small on the screen/viewport
+const compute_declutter_base_unit = function(k_current_scale, k_graph_scale , base_unit,w,h){
+const current_scale_adjusted_unit = baseUnitGraph()*k_graph_scale/k_current_scale;
+console.log(`current_scale_adjusted_unit: ${current_scale_adjusted_unit}`)
+const svg_span=Math.sqrt(w**2+h**2);
+// point (2): min_unit = 5% of svgspan/scalespan
+const big_enough_adjusted_unit = Math.max(current_scale_adjusted_unit, 0.05*svg_span/k_current_scale);
+console.log(`big_enough_adjusted_unit: ${big_enough_adjusted_unit}`)
+const final_declutter_unit = Math.min(base_unit, big_enough_adjusted_unit);
+console.log(`final_declutter_unit: ${final_declutter_unit}`)
+return final_declutter_unit
+}
