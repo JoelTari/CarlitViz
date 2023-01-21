@@ -9,6 +9,6 @@ svg{
   background-color: var(--bg);
 }
 
-svg .gMixedFactorGraph{
-  transition: transform 0.2s;
-}
+/* svg .gMixedFactorGraph{ */
+/*   transition: transform 0.2s; */
+/* } */

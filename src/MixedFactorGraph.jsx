@@ -128,15 +128,23 @@ function MixedFactorGraph(){
       
       // zoom-in to this graph: takes the 0-center transform (a pure translation transform)
       //   and translate and scale according to the graph bbox
-      const graph_zoom_transform = graph_center_transform({}, [mx, Mx, my, My],w,h);
+      const graph_zoom_transform = graph_center_transform([mx, Mx, my, My],w,h);
       setGraphZoomTransform(graph_zoom_transform);
-      d3selections.svg.call(
-        d3.zoom().on("zoom",zoomed).transform,
-        graph_zoom_transform);
+      // d3selections.svg.transition().duration(1000).call(
+      //   d3.zoom().on("zoom",zoomed).transform,
+      //   graph_zoom_transform);
+      d3selections.svg
+        .transition("b").duration(200)
+        .call(d3.zoom().on("zoom",zoomed).translateTo,graph_zoom_transform.x,graph_zoom_transform.y)
+        .transition("a").duration(700)
+        .call(d3.zoom().on("zoom",zoomed).scaleTo,graph_zoom_transform.k)
+        ;
 
       // compute the base unit given the mean euclidian distance between connected nodes in
       // the graph
       const canonical_base_unit = mean_distance_neighbours(graph)/9;
+      // canonical base unit is also the max unit value (in the graph domain metric, ie not the viewport)
+      // But when we zoom we want to declutter (only after pushing a button, it is too costly to do otherwise)
       // // the biggest/ideal base unit (ignoring )
       // const ideal_base_unit = Math.sqrt((Mx-mx)**2+[My-my]**2)/5;
       setBaseUnitGraph(canonical_base_unit); // change
@@ -198,7 +206,9 @@ function MixedFactorGraph(){
         <circle cx="125" r={0.1*Math.sqrt(svgSize().h**2 + svgSize().w**2)/2} fill="blue" />
       </g>
       <circle cx="300" cy="300" r="25" fill="black" stroke="green"/>
-      <DummyTurnkeyGraph/>
+      <g class="dummies" font-size="0.1" stroke-width="0.018" stroke="grey" fill="#f9f5d7">
+        <DummyTurnkeyGraph r={baseUnitGraph()}/>
+      </g>
     </g>
     <AxesWithScales adjustedScales={adjustedScales()} svgSize={svgSize()}/>
   </svg>

@@ -80,27 +80,17 @@ const infer_base_unit_graph = function(graph, svgSize){
 // compute the transform to center the graph given:
 // - the zero transform (ie the transform that makes 0 appear at the center of svg)
 // - the bounding box
-const graph_center_transform = function(zero_center_transform={}, graph_bbox, w_svg, h_svg){
+const graph_center_transform = function(graph_bbox, w_svg, h_svg){
   const [mx,Mx,my,My] = graph_bbox;
-  // console.log("zero_center_transform:")
-  // console.log(zero_center_transform)
-  // const x0world= zero_center_transform.x;
-  // const y0world= zero_center_transform.y;
-  // const k0world= zero_center_transform.k; // most likely 1
-  // console.log(k0world)
-  // center
-  // const x0graph= Mx-mx;
-  // const y0graph= My-my;
+  const xc = (Mx-mx)/2;
+  const yc = (My-my)/2;
+  const xmargin = (Mx-mx)*1.2; // 10% margin on top & bot
+  const ymargin = (My-my)*1.2; // 10% margin on L&R
+  const [x,y,X,Y] = [mx-xmargin,Mx+xmargin,my-ymargin,My+ymargin];
   // scale
-  const graph_span = Math.sqrt((Mx-mx)**2+(My-my)**2);//*1.1; // 10% margin
-  // console.log(`graph span: ${graph_span}`);
+  const graph_span = Math.sqrt((X-x)**2+(Y-y)**2); // 10% margin
   const svg_span=Math.sqrt(w_svg**2+h_svg**2);
-  const transform_graph = d3.zoomIdentity
-                          .translate(mx,my)
-                          .scale((svg_span/1)/graph_span);
-  // console.log("transform graph:")
-  console.log(transform_graph)
-  return transform_graph;
+  return {x: xc, y: yc, k: svg_span/graph_span};
 }
 
 export { get_graph_bbox, mean_distance_neighbours, infer_base_unit_graph, graph_center_transform}
