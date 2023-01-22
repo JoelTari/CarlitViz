@@ -1,6 +1,6 @@
 import * as d3 from "d3"
 
-const join_enter_factor = function(radius){
+const join_enter_factor = function(radius,elDivTooltip){
   return function(enter){
       // Imho best way to avoid to define those transitions everywhere is to
     // transform those functions in classes of which the transitions are members
@@ -54,7 +54,7 @@ const join_enter_factor = function(radius){
               .attr( "r", 2 * radius) // *2 is transitory
               // on hover, dot-circle of factor grows and tooltip displays
               // define remotely for clarity
-              .call(factor_hover)
+              .call(factor_hover(elDivTooltip))
               .transition("fc")
               .duration(2200)
               .attr("r",radius);
@@ -120,7 +120,69 @@ export { join_enter_factor, join_update_factor, join_exit_factor }
 
 
 
-
-function factor_hover(factor_dot){
-
+function factor_hover(elDivTooltip){
+  return function(factor_dot){
+    factor_dot
+      .on("mouseover", (e, d) => {
+        //circle first
+        factor_dot
+          .attr("r", function(d,i,n){
+            return d3.select(this).attr("r")*1.4
+          })
+          .attr(
+            "stroke-width",
+            function(d,i,n){
+              return d3.select(this.parentNode).attr("stroke-width")*1.4
+            }
+          )
+          .raise();
+        d.vars_id.forEach((var_str) =>
+          d3.select(`.vertex.${var_str}`).classed("link_highlight", true).raise()
+        );
+        // // raise this factor, as well as the connected nodes (the .raise() in previous loop)
+        // d3.select(e.currentTarget).raise();
+        // the tooltip
+        elDivTooltip
+          .style("left", `${e.pageX}px`)
+          .style("top", `${e.pageY - 6}px`) // TODO: residual
+          .style("visibility", "visible").html(`<p class="tooltip-title">
+                          <strong><em>${d.factor_id}</em></strong>
+                         </p>
+                         <br>
+                         <span class="tooltip-field"><strong>Type</strong></span>: 
+                         <span class="tooltip-value">${d.type}</span>
+                         <br>
+                         <span class="tooltip-field"><strong>Vars</strong></span>: 
+                         <span class="tooltip-value">${d.vars_id}</span>
+                         `);
+        // cursor pointer
+        d3.select(e.currentTarget).style("cursor", "pointer");
+        // highlight this factor group
+        d3.select(factor_dot.node().parentNode).classed("link_highlight",true)
+      })
+      .on("mousemove", (e) =>
+        elDivTooltip.style("top", e.pageY + "px").style("left", e.pageX + "px")
+      )
+      // on hover out, rebase to default
+      .on("mouseout", (e, d) => {
+        // retract the radius of the factor dot
+        factor_dot
+          .attr("r", function(d,i,n){
+            return d3.select(this).attr("r")/1.4
+          })
+          .attr(
+            "stroke-width",
+            function(d,i,n){
+              return d3.select(this.parentNode).attr("stroke-width")/1.4
+            }
+          );
+        // remove the highlight the factor & on the connected vertices
+        d3.select(factor_dot.node().parentNode).classed("link_highlight",false);
+        d.vars_id.forEach((var_str) =>
+          d3.select(`.vertex.${var_str}`).classed("link_highlight", false)
+        );
+        // hide the tooltip
+        elDivTooltip.style("visibility", "hidden");
+      });
+  }
 }
