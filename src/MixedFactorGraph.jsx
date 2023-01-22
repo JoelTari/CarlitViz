@@ -210,7 +210,11 @@ function MixedFactorGraph(){
   <svg id="MixedFactorGraph" >
     <TicksGrid adjustedScales={adjustedScales()} svgSize={svgSize()}/>
     <g class="gMixedFactorGraph">
-      <g class="covariances-group">
+      <g class="covariances-group"
+        style="display: inherit"
+        stroke-width={0.03*appliedUnitGraph()}
+        stroke="black"
+        fill="none">
       </g>
       <g class="factors-group"
         stroke="grey"
