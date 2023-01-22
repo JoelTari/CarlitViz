@@ -6,8 +6,7 @@ export {join_enter_covariance, join_update_covariance}
 function join_enter_covariance(enter) {
     return enter
       .append("ellipse")
-      .classed("covariance", true)
-      .attr("id", (d) => d.var_id)
+      .attr("class", (d) =>`covariance ${d.var_id}`)
       .attr(
         "transform",
         (d) =>
