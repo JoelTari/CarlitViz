@@ -150,7 +150,7 @@ function MixedFactorGraph(){
 
       // compute the base unit given the mean euclidian distance between connected nodes in
       // the graph
-      const canonical_base_unit = mean_distance_neighbours(graph)/9;
+      const canonical_base_unit = mean_distance_neighbours(graph)/6;
       setBaseUnitGraph(canonical_base_unit);
       console.log(`base graph unit set to : ${canonical_base_unit}`);
       // initially the applied base unit is the canonical
@@ -162,7 +162,7 @@ function MixedFactorGraph(){
       graph.obj_marginals = objectify_marginals(graph.marginals);
       graph.obj_factors = objectify_factors(graph.factors);
       compute_factor_set(graph);
-      estimation_data_massage(graph);
+      estimation_data_massage(graph, canonical_base_unit);
       console.log("[Data Massage]: done");
 
       // graph 
