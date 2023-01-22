@@ -77,20 +77,32 @@ const infer_base_unit_graph = function(graph, svgSize){
   return 1;
 }
 
-// compute the transform to center the graph given:
-// - the zero transform (ie the transform that makes 0 appear at the center of svg)
-// - the bounding box
+// compute the transform to center the graph given
 const graph_center_transform = function(graph_bbox, w_svg, h_svg){
   const [mx,Mx,my,My] = graph_bbox;
-  const xc = (Mx-mx)/2;
-  const yc = (My-my)/2;
-  const xmargin = (Mx-mx)*1.2; // 10% margin on top & bot
-  const ymargin = (My-my)*1.2; // 10% margin on L&R
-  const [x,y,X,Y] = [mx-xmargin,Mx+xmargin,my-ymargin,My+ymargin];
+  const xc = (Mx+mx)/2;
+  const yc = (My+my)/2;
+  const xmargin = (Mx-mx)*.2; // 20% margin on top & bot (both)
+  const ymargin = (My-my)*.2; // 20% margin on L&R (both)
+  const [x,X,y,Y] = [mx-xmargin,Mx+xmargin,my-ymargin,My+ymargin];
   // scale
-  const graph_span = Math.sqrt((X-x)**2+(Y-y)**2); // 10% margin
-  const svg_span=Math.sqrt(w_svg**2+h_svg**2);
-  return {x: xc, y: yc, k: svg_span/graph_span};
+  const ratio_svg = w_svg/h_svg;
+  const ratio_graph = (Mx-mx)/(My-my);
+  // if ratio graph smaller than ratio svg => span on Y axis (otherwise we will overflow on Y)
+  // if ratio graph bigger than ratio svg  => span on X axis (otherwise we will overflow on X)
+  if ( ratio_graph < ratio_svg ){
+    const graph_span = Y-y;
+    const svg_span= h_svg;
+    return {x: xc, y: yc, k: svg_span/graph_span};
+  }
+  else{
+    const graph_span = X-x;
+    const svg_span= w_svg;
+    return {x: xc, y: yc, k: svg_span/graph_span};
+  }
+  // const graph_span = Math.sqrt((X-x)**2+(Y-y)**2);
+  // const svg_span=Math.sqrt(w_svg**2+h_svg**2);
+  // return {x: xc, y: yc, k: svg_span/graph_span};
 }
 
 export { get_graph_bbox, mean_distance_neighbours, infer_base_unit_graph, graph_center_transform}
