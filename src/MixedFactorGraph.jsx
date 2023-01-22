@@ -48,17 +48,20 @@ function MixedFactorGraph(){
       setAppliedUnitGraph(appliedUnitGraph()/1.5);
       // change for d3
       d3.selectAll(".factor circle").attr("r",0.3*appliedUnitGraph());
+      d3.selectAll(".vertex circle").attr("r",appliedUnitGraph());
     }
     else if(e.key === "s"){
       setAppliedUnitGraph(appliedUnitGraph()*1.5);
       // change for d3
       d3.selectAll(".factor circle").attr("r",0.3*appliedUnitGraph());
+      d3.selectAll(".vertex circle").attr("r",appliedUnitGraph());
     }
     else if(e.key === " "){
       // reset
       setAppliedUnitGraph(baseUnitGraph());
       // change for d3
       d3.selectAll(".factor circle").attr("r",0.3*appliedUnitGraph());
+      d3.selectAll(".vertex circle").attr("r",appliedUnitGraph());
     }
   })
 
@@ -194,7 +197,7 @@ function MixedFactorGraph(){
         .select("g.vertices-group")
         .selectAll(".vertex")
         .data(graph.marginals, (d)=> d.var_id)
-        .join(join_enter_vertex,join_update_vertex);
+        .join(join_enter_vertex(canonical_base_unit),join_update_vertex);
     })
 
   })
@@ -214,29 +217,12 @@ function MixedFactorGraph(){
         stroke-width={0.3*appliedUnitGraph()}
         fill="#333">
       </g>
-      <g class="vertiices-group">
-      </g>
-      <g class="covariiances-group" 
-        style="display: inherit;"
-        stroke-width={0.03*appliedUnitGraph()} 
-        stroke="black" 
-        fill="none">
-        <DummyTurnkeyCovariances/>
-      </g>
-      <g class="factoors-group" 
-        display="none"
-        stroke="grey"
-        stroke-width={0.3*appliedUnitGraph()}
-        fill="#333">
-        <DummyTurnkeyFactors r={0.3*appliedUnitGraph()}/>
-      </g>
-      <g class="vertiices-group"
+      <g class="vertices-group"
         font-size={0.75*appliedUnitGraph()} 
         stroke-width={0.12*appliedUnitGraph()} 
         stroke="grey" 
         style="text-anchor: middle;font-family: monospace;dominant-baseline: middle;"
         fill="#f9f5d7">
-        <DummyTurnkeyVertices r={appliedUnitGraph()}/>
       </g>
     </g>
     <AxesWithScales adjustedScales={adjustedScales()} svgSize={svgSize()}/>
@@ -247,28 +233,52 @@ function MixedFactorGraph(){
 export default MixedFactorGraph;
 
 
-// canonical base unit is also the max unit value (in the graph domain metric, ie not the viewport)
-// But when we zoom we want to declutter (only after pushing a button, it is too costly to do continously)
-// the decluttered_base_unit is set so that:
-//   1) close nodes are spatially distinguishable (declutter) 
-//      => implies the size diminishes with the ratio graphZoomTransform.k/ZoomTransform().k
-//   2) the unit need to be big enough so that it is readalbe 
-//                 (which is not the objective of the canonical_base_unit)
-//      E.g. we want the unit to not be smaller than x% of screen width
-//      => implies the size diminishing of (1) is mitigated by a lower bound of the screen/viewport
-//   3) but the dbu can't be greater than the canonical_base_unit. This overrule (2)
-//      => implies a min(canonical_base_unit, declutter_base_unit) at the end
-// Just doing an adjustment by zoom value isnt enough:
-//  declutter_base_unit = canonical_base_unit * k_graph_zoom/k_current_zoom;
-// Because on a large graph (eg M3500), the canonical_base_unit may be too small on the screen/viewport
-const compute_declutter_base_unit = function(k_current_scale, k_graph_scale , base_unit,w,h){
-const current_scale_adjusted_unit = baseUnitGraph()*k_graph_scale/k_current_scale;
-console.log(`current_scale_adjusted_unit: ${current_scale_adjusted_unit}`)
-const svg_span=Math.sqrt(w**2+h**2);
-// point (2): min_unit = 5% of svgspan/scalespan
-const big_enough_adjusted_unit = Math.max(current_scale_adjusted_unit, 0.05*svg_span/k_current_scale);
-console.log(`big_enough_adjusted_unit: ${big_enough_adjusted_unit}`)
-const final_declutter_unit = Math.min(base_unit, big_enough_adjusted_unit);
-console.log(`final_declutter_unit: ${final_declutter_unit}`)
-return final_declutter_unit
-}
+      // // canonical base unit is also the max unit value (in the graph domain metric, ie not the viewport)
+      // // But when we zoom we want to declutter (only after pushing a button, it is too costly to do continously)
+      // // the decluttered_base_unit is set so that:
+      // //   1) close nodes are spatially distinguishable (declutter) 
+      // //      => implies the size diminishes with the ratio graphZoomTransform.k/ZoomTransform().k
+      // //   2) the unit need to be big enough so that it is readalbe 
+      // //                 (which is not the objective of the canonical_base_unit)
+      // //      E.g. we want the unit to not be smaller than x% of screen width
+      // //      => implies the size diminishing of (1) is mitigated by a lower bound of the screen/viewport
+      // //   3) but the dbu can't be greater than the canonical_base_unit. This overrule (2)
+      // //      => implies a min(canonical_base_unit, declutter_base_unit) at the end
+      // // Just doing an adjustment by zoom value isnt enough:
+      // //  declutter_base_unit = canonical_base_unit * k_graph_zoom/k_current_zoom;
+      // // Because on a large graph (eg M3500), the canonical_base_unit may be too small on the screen/viewport
+      // const compute_declutter_base_unit = function(k_current_scale, k_graph_scale , base_unit,w,h){
+      // const current_scale_adjusted_unit = baseUnitGraph()*k_graph_scale/k_current_scale;
+      // console.log(`current_scale_adjusted_unit: ${current_scale_adjusted_unit}`)
+      // const svg_span=Math.sqrt(w**2+h**2);
+      // // point (2): min_unit = 5% of svgspan/scalespan
+      // const big_enough_adjusted_unit = Math.max(current_scale_adjusted_unit, 0.05*svg_span/k_current_scale);
+      // console.log(`big_enough_adjusted_unit: ${big_enough_adjusted_unit}`)
+      // const final_declutter_unit = Math.min(base_unit, big_enough_adjusted_unit);
+      // console.log(`final_declutter_unit: ${final_declutter_unit}`)
+      // return final_declutter_unit
+      // }
+
+      // <g class="covariiances-group" 
+      //   style="display: inherit;"
+      //   stroke-width={0.03*appliedUnitGraph()} 
+      //   stroke="black" 
+      //   fill="none">
+      //   <DummyTurnkeyCovariances/>
+      // </g>
+      // <g class="factoors-group" 
+      //   display="none"
+      //   stroke="grey"
+      //   stroke-width={0.3*appliedUnitGraph()}
+      //   fill="#333">
+      //   <DummyTurnkeyFactors r={0.3*appliedUnitGraph()}/>
+      // </g>
+      // <g class="vertiices-group"
+      //   display="none"
+      //   font-size={0.75*appliedUnitGraph()} 
+      //   stroke-width={0.12*appliedUnitGraph()} 
+      //   stroke="grey" 
+      //   style="text-anchor: middle;font-family: monospace;dominant-baseline: middle;"
+      //   fill="#f9f5d7">
+      //   <DummyTurnkeyVertices r={appliedUnitGraph()}/>
+      // </g>

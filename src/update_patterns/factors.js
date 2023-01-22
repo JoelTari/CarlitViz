@@ -9,8 +9,7 @@ const join_enter_factor = function(radius){
 
     return enter
       .append("g")
-      .classed("factor", true)
-      .classed((d) => d.factor_id,true)
+      .attr("class",(d)=> `factor ${d.factor_id}`)
       .each(function (d) {
         d3.select(this)
           .style("opacity", 0)
