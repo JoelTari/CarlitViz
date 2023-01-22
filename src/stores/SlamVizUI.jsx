@@ -17,4 +17,15 @@ const [SlamVizUI_opts, setSlamVizUI_opts] = createStore(
   }
 )
 
+// covariance on/off
+// grid on/off
+// axes on/off
+// export svg button
+// reset graph-centric pan/zoom
+
+// graph selection (if several)
+// reset all-graph-centric pan/zoom
+
+// router FG/clique tree/matrices (A & H)
+
 export { SlamVizUI_opts, setSlamVizUI_opts }

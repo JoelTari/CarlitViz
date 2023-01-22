@@ -62,11 +62,13 @@ function TicksGrid(props){
   // trick: define some attribute at the group level, the lines inside the group
   // will inherit
   return (
+    <>
     <g class="TicksGrid"
       stroke="grey"
       stroke-width="1px"
       stroke-opacity="10%">
     </g>
+    </>
   )
 }
 

@@ -134,13 +134,15 @@ function factor_hover(elDivTooltip){
             function(d,i,n){
               return d3.select(this.parentNode).attr("stroke-width")*1.4
             }
-          )
-          .raise();
+          );
+        // highlight this factor group
+        d3.select(factor_dot.node().parentNode).classed("link_highlight",true);
+        // raise factor group
+        d3.select(factor_dot.node().parentNode).raise();
+        // raise connected vertices
         d.vars_id.forEach((var_str) =>
           d3.select(`.vertex.${var_str}`).classed("link_highlight", true).raise()
         );
-        // // raise this factor, as well as the connected nodes (the .raise() in previous loop)
-        // d3.select(e.currentTarget).raise();
         // the tooltip
         elDivTooltip
           .style("left", `${e.pageX}px`)
@@ -157,8 +159,6 @@ function factor_hover(elDivTooltip){
                          `);
         // cursor pointer
         d3.select(e.currentTarget).style("cursor", "pointer");
-        // highlight this factor group
-        d3.select(factor_dot.node().parentNode).classed("link_highlight",true)
       })
       .on("mousemove", (e) =>
         elDivTooltip.style("top", e.pageY + "px").style("left", e.pageX + "px")

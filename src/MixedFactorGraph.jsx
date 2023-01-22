@@ -211,14 +211,16 @@ function MixedFactorGraph(){
   // d3.selectAll(circle).attr(r, HERE )
   createEffect(()=>{})
 
+  // style="transform: matrix(1, 0, 0, -1, 0, 0);" equiv to scaleY(-1)
+
   return (
-  <svg id="MixedFactorGraph" >
-    <TicksGrid adjustedScales={adjustedScales()} svgSize={svgSize()}/>
+  <svg id="MixedFactorGraph">
+    <TicksGrid adjustedScales={adjustedScales()} svgSize={svgSize()} invertText={true}/>
     <g class="gMixedFactorGraph">
       <g class="covariances-group"
         style="display: inherit"
-        stroke-width={0.03*appliedUnitGraph()}
-        stroke="black"
+        stroke-width={0.02*appliedUnitGraph()}
+        stroke="#aaa"
         fill="none">
       </g>
       <g class="factors-group"
