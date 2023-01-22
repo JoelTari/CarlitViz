@@ -65,6 +65,28 @@ const compute_factor_set = function({marginals, obj_marginals, factors}){
   marginals.forEach(node => node.factor_set=obj_marginals[node.var_id].factor_set);
 }
 
+// only possible once factor_set is computed
+// perf: one big loop, and one access by key inside each iteration
+const compute_separator_set = function({marginals, obj_marginals, obj_factors}){
+  marginals.forEach(m=>{
+    const separator_set_with_duplicates=[];
+    // fill separator set (duplicates possible)
+    m.factor_set.forEach((factor_id)=>{
+      obj_factors[factor_id].vars_id
+        .filter((var_id)=>{
+          return var_id !== m.var_id
+        })
+        .forEach((var_id)=>{
+          separator_set_with_duplicates.push(var_id);
+        });
+    })
+    // remove duplicates
+    m.separator_set = [...new Set(separator_set_with_duplicates)];
+    // add the separator_set in obj_marginals
+    obj_marginals[m.var_id].separator_set = m.separator_set;
+  })
+}
+
 // In-place method
 // The graph json is supposed to have been augmented by obj_marginals, obj_factors & factor_set.
 // This method comes up with spatial position for the factors, which is easy for a factor connecting
@@ -200,7 +222,8 @@ const estimation_data_massage = function({factors: d_factors, marginals: d_margi
     });
 }
 
-export { objectify_marginals, objectify_factors, compute_factor_set,  estimation_data_massage }
+
+export { objectify_marginals, objectify_factors, compute_factor_set,  estimation_data_massage, compute_separator_set}
 /******************************************************************************
  *                            HELPER
  *****************************************************************************/

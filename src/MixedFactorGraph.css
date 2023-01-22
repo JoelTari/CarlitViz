@@ -33,3 +33,47 @@ svg .factors-group .factor.link_highlight,
 svg .vertices-group .vertex.link_highlight{
   stroke: #d16d4b;
 }
+
+svg .vertices-group text{
+  /* remove some ghost hover effect when zoomed */
+  pointer-events: none;
+}
+
+/******************************************/
+/*                TOOLTIP                 */
+/******************************************/
+div.tooltip {
+  /* tooltip is hidden by default */
+  visibility: hidden;
+  opacity: 0.95;
+  position: absolute;
+  /* width: 60px; */
+  /* height: 28px; */
+  font-family: Monospace;
+  padding: 0.3rem 0.5rem;
+  background: #ccc;
+  border: 2px solid #444;
+  border-radius: 5%;
+  transform: translateX(-50%) translateY(-120%);
+}
+
+div.tooltip .tooltip-title {
+  text-align: center;
+  font-size: 0.9rem;
+  background: #ddd;
+  margin: auto;
+}
+
+div.tooltip .tooltip-field {
+  text-align: left;
+  font-size: 0.8rem;
+}
+
+div.tooltip .tooltip-value {
+  text-align: right;
+  font-size: 0.7rem;
+  /* allows to interpret \n */
+  white-space: pre-line;
+}
+
+

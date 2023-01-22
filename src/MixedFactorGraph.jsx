@@ -5,7 +5,7 @@ import './MixedFactorGraph.css'
 import { join_enter_covariance, join_update_covariance } from "./update_patterns/covariances"
 import { join_enter_vertex, join_update_vertex } from "./update_patterns/vertices"
 import { join_enter_factor, join_update_factor, join_exit_factor } from "./update_patterns/factors"
-import {  objectify_marginals, objectify_factors, compute_factor_set,  estimation_data_massage } from "./update_patterns/graph_massage"
+import {  objectify_marginals, objectify_factors, compute_separator_set, compute_factor_set,  estimation_data_massage } from "./update_patterns/graph_massage"
 import { get_graph_bbox, graph_center_transform, infer_base_unit_graph, mean_distance_neighbours} from "./update_patterns/graph_analysis"
 import AxesWithScales from "./components/AxesWithScales"
 import TicksGrid from "./components/TicksGrid"
@@ -74,6 +74,9 @@ function MixedFactorGraph(){
     // d3selections.grid = d3.select("svg#MixedFactorGraph g.grid");
     // d3selections.axesScales = d3.select("svg#MixedFactorGraph g.axes-scales");
     d3selections.graph= d3.select("svg#MixedFactorGraph g.gMixedFactorGraph");
+    // create a tooltip
+    d3selections.tooltip = d3.select("body").append("div").classed("tooltip", true);
+
 
     // register svg size
     setSvgSize({w: d3selections.svg.nodes()[0].clientWidth, h: d3selections.svg.nodes()[0].clientHeight});
@@ -171,8 +174,10 @@ function MixedFactorGraph(){
       graph.obj_marginals = objectify_marginals(graph.marginals);
       graph.obj_factors = objectify_factors(graph.factors);
       compute_factor_set(graph);
+      compute_separator_set(graph);
       estimation_data_massage(graph, canonical_base_unit);
       console.log("[Data Massage]: done");
+      console.log(graph)
 
       // graph 
       // (d3's infamous general update pattern)
@@ -197,7 +202,7 @@ function MixedFactorGraph(){
         .select("g.vertices-group")
         .selectAll(".vertex")
         .data(graph.marginals, (d)=> d.var_id)
-        .join(join_enter_vertex(canonical_base_unit),join_update_vertex);
+        .join(join_enter_vertex(canonical_base_unit,d3selections.tooltip),join_update_vertex);
     })
 
   })
@@ -225,7 +230,7 @@ function MixedFactorGraph(){
         font-size={0.75*appliedUnitGraph()} 
         stroke-width={0.12*appliedUnitGraph()} 
         stroke="grey" 
-        style="text-anchor: middle;font-family: monospace;dominant-baseline: middle;"
+        style="text-anchor: middle;font-family: monospace;dominant-baseline: middle; cursor: pointer;"
         fill="#f9f5d7">
       </g>
     </g>
