@@ -1,11 +1,15 @@
 import * as d3 from "d3"
 
+const path_pose = function(radius){
+  return `M ${-radius},${.96*radius} L ${1.82*radius} 0 L ${-radius},${-.96*radius} Z`;
+}
+
 const join_enter_vertex = function(radius,elDivTooltip){
   return function(enter){
     // TODO:
     // Imho best way to avoid to define those transitions everywhere is to
     // transform those functions in classes of which the transitions are members
-    const t_vertex_entry = d3.transition().duration(400);
+    const t_vertex_entry = d3.transition().duration(2400);
 
     return enter
       .append("g")
@@ -16,13 +20,30 @@ const join_enter_vertex = function(radius,elDivTooltip){
           "transform",
           "translate(" + d.mean.x + "," + d.mean.y + ")")
           .call(vertex_hover(elDivTooltip));
-        d3.select(this)
-          .append("circle")
-          .attr("r",10 * radius) 
-          .style("opacity", 0)
-          .transition(t_vertex_entry)
-          .attr( "r", radius)
-          .style("opacity", null);
+        // circle or pose ? if it has an orientation -> pose
+        if (d.mean.th!=null){
+          d3.select(this)
+            .append("path")
+            .classed("vertex-shape",true)
+            .attr("r", radius)
+            .attr("d",path_pose(10*radius))
+            .attr("transform",`rotate(${d.mean.th*180/Math.PI})`)
+            .style("opacity", 0)
+            .transition(t_vertex_entry)
+            .attr("d",path_pose(radius))
+            .style("opacity", null);
+        }else
+        {
+          d3.select(this)
+            .append("circle")
+            .classed("vertex-shape",true)
+            .attr("r",10 * radius) 
+            .style("opacity", 0)
+            .transition(t_vertex_entry)
+            .attr( "r", radius)
+            .style("opacity", null);
+        }
+
         // text: variable name inside the circle
         d3.select(this)
           .append("text")
@@ -46,7 +67,10 @@ const join_update_vertex = function(update){
   const t_graph_motion = d3.transition().duration(1000).ease(d3.easeCubicInOut);
   update
     .transition(t_graph_motion)
-    .attr("transform", (d) => `translate(${d.mean.x}, ${d.mean.y})`);
+    .attr("transform", (d) => `translate(${d.mean.x}, ${d.mean.y})`)
+    .select("path.vertex-shape")
+    .attr("transform", (d)=> `rotate(${d.mean.th*180/Math.PI})`);
+  ;
 }
 
 const join_exit_vertex = function(exit){
@@ -54,21 +78,25 @@ const join_exit_vertex = function(exit){
   return exit;
 }
 
-export { join_enter_vertex, join_update_vertex }
+export { join_enter_vertex, join_update_vertex, path_pose }
 
 function vertex_hover(elDivTooltip){
   return function(vertex){
     vertex
     // on hover, the texts and circles of .vertex will grow in size by 1.4
     .on("mouseover", (e, d) => {
-      // grow the vertex circle, raise the element
+      // grow the vertex shape, raise the element
       vertex
-        .select("circle") 
+        .select(".vertex-shape")  // if its a circle
         .attr("r",
           function(d,i,n){
             return d3.select(this).attr("r")*1.4
           }
+        )
+        .attr("d",function(){
+          return path_pose(d3.select(this).attr("r"))}
         );
+      
       // stroke-width & text should grow as well
       // since they are defined at the vertices-group  level (aka parent node of vertex)
       // we pick them from there, grow them, and affect them to our vertex overiding
@@ -130,8 +158,15 @@ function vertex_hover(elDivTooltip){
     // on hover out, rebase to default
     .on("mouseout", (e, d) => {
       vertex
-        .select("circle")
-        .attr( "r", function(d,i,n){ return d3.select(this).attr("r")/1.4 });
+        .select(".vertex-shape")
+        .attr("r",
+          function(d,i,n){
+            return d3.select(this).attr("r")/1.4
+          }
+        )
+        .attr("d",function(){
+          return path_pose(d3.select(this).attr("r"))}
+        );
       // stroke-width & font-size defaults value
       // are defined at vertices-group level, remove those attributes for this
       // vertex so that we inherit the defaults again
@@ -155,18 +190,3 @@ function vertex_hover(elDivTooltip){
     });
   }
 }
-// compute the separator set of a marginal
-function compute_separator(d_marginal){
-  const separator_set=[];
-  d_marginal.factor_set.forEach(
-    factor_id => 
-    separator_set.push(
-      d3.select(`.factor.${factor_id}`)
-        .datum()
-        .vars_id
-        .filter(node_id => node_id !== d_marginal.var_id )
-    )
-  )
-  return separator_set;
-}
-

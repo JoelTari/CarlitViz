@@ -3,7 +3,7 @@ import { createMemo, createEffect, onMount, createSignal } from "solid-js"
 import { MixedFactorGraphData } from "./stores/MixedFactorGraphData"
 import './MixedFactorGraph.css'
 import { join_enter_covariance, join_update_covariance } from "./update_patterns/covariances"
-import { join_enter_vertex, join_update_vertex } from "./update_patterns/vertices"
+import { join_enter_vertex, join_update_vertex, path_pose } from "./update_patterns/vertices"
 import { join_enter_factor, join_update_factor, join_exit_factor } from "./update_patterns/factors"
 import {  objectify_marginals, objectify_factors, compute_separator_set, compute_factor_set,  estimation_data_massage } from "./update_patterns/graph_massage"
 import { get_graph_bbox, graph_center_transform, infer_base_unit_graph, mean_distance_neighbours} from "./update_patterns/graph_analysis"
@@ -48,20 +48,29 @@ function MixedFactorGraph(){
       setAppliedUnitGraph(appliedUnitGraph()/1.5);
       // change for d3
       d3.selectAll(".factor circle").attr("r",0.3*appliedUnitGraph());
-      d3.selectAll(".vertex circle").attr("r",appliedUnitGraph());
+      d3.selectAll(".vertex .vertex-shape").attr("r",appliedUnitGraph())
+        .attr("d",function(){
+          return path_pose(d3.select(this).attr("r"))}
+        );
     }
     else if(e.key === "s"){
       setAppliedUnitGraph(appliedUnitGraph()*1.5);
       // change for d3
       d3.selectAll(".factor circle").attr("r",0.3*appliedUnitGraph());
-      d3.selectAll(".vertex circle").attr("r",appliedUnitGraph());
+      d3.selectAll(".vertex .vertex-shape").attr("r",appliedUnitGraph())
+        .attr("d",function(){
+          return path_pose(d3.select(this).attr("r"))}
+        );
     }
     else if(e.key === " "){
       // reset
       setAppliedUnitGraph(baseUnitGraph());
       // change for d3
       d3.selectAll(".factor circle").attr("r",0.3*appliedUnitGraph());
-      d3.selectAll(".vertex circle").attr("r",appliedUnitGraph());
+      d3.selectAll(".vertex .vertex-shape").attr("r",appliedUnitGraph())
+        .attr("d",function(){
+          return path_pose(d3.select(this).attr("r"))}
+        );
     }
   })
 
@@ -162,7 +171,7 @@ function MixedFactorGraph(){
 
       // compute the base unit given the mean euclidian distance between connected nodes in
       // the graph
-      const canonical_base_unit = mean_distance_neighbours(graph)/6;
+      const canonical_base_unit = mean_distance_neighbours(graph)/8;
       setBaseUnitGraph(canonical_base_unit);
       console.log(`base graph unit set to : ${canonical_base_unit}`);
       // initially the applied base unit is the canonical
@@ -231,7 +240,7 @@ function MixedFactorGraph(){
       <g class="vertices-group"
         font-size={0.75*appliedUnitGraph()} 
         stroke-width={0.12*appliedUnitGraph()} 
-        stroke="grey" 
+        stroke="#aaa" 
         style="text-anchor: middle;font-family: monospace;dominant-baseline: middle; cursor: pointer;"
         fill="#f9f5d7">
       </g>
