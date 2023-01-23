@@ -4,6 +4,8 @@ A visualization system of graphical models for back-end SLAM applications.
 
 ## Upcoming features: 
 
+- doc on the `.json` compatible structure
+
 - make it an electron app:
   - graph comes as file argument or fed via stdin
   - graph spawns an MQTT listener with the argument `--listen`
@@ -25,7 +27,7 @@ A visualization system of graphical models for back-end SLAM applications.
 
 - SE2 icons instead of circles keys (when relevant)
 
-- additional in factor tootip: residual, measure value (when available)
+- additional info in factor tootip: residual, measure value (when available)
 
 - multiple graphs (multi agents systems)
 
