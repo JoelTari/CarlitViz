@@ -251,12 +251,12 @@ function MixedFactorGraph(){
         .select("g.factors-group")
         .selectAll(".factor")
         .data(graph.factors, (d) => d.factor_id)
-        .join(join_enter_factor(0.3*canonical_base_unit,d3selections.tooltip), join_update_factor, join_exit_factor);
+        .join(join_enter_factor(0.3*canonical_base_unit,d3selections.tooltip,1000), join_update_factor, join_exit_factor);
       d3selections.graph
         .select("g.vertices-group")
         .selectAll(".vertex")
         .data(graph.marginals, (d)=> d.var_id)
-        .join(join_enter_vertex(canonical_base_unit,d3selections.tooltip),join_update_vertex);
+        .join(join_enter_vertex(canonical_base_unit,d3selections.tooltip,1000),join_update_vertex);
       // REFACTOR_SEVERAL_GRAPHS: move this paragraph to graph-group
     })
 
