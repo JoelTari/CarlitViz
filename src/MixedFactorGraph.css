@@ -38,10 +38,6 @@ svg .vertices-group .vertex.link_highlight{
   stroke: #d16d4b;
 }
 
-path.vertex-shape{
-  transform: rotate(90);
-}
-
 svg .vertices-group text{
   /* remove some ghost hover effect when zoomed */
   pointer-events: none;

@@ -19,17 +19,19 @@ import * as fallback2_MixedFactorGraphData from "./stores/fallback2_M3500_solved
 
 // set store: if no data, use fallback data
 setMixedFactorGraphData( window.MixedFactorGraphData == null ?
-  fallback1_MixedFactorGraphData : window.MixedFactorGraphData
+  fallback_MixedFactorGraphData : window.MixedFactorGraphData
 )
 
 // setInterval(
 //   ()=>{
+//     console.log("[Interval tests] new data t1");
 //     setMixedFactorGraphData(fallback_MixedFactorGraphData)
 //     setTimeout(()=>{
+//       console.log("[Interval tests] new data t2");
 //       setMixedFactorGraphData(fallback1_MixedFactorGraphData)
-//     },1500)
+//     },2500)
 //   }
-//   ,3000
+//   ,5000
 // ) 
 
 render(() => <MixedFactorGraph />, document.getElementById('root'));

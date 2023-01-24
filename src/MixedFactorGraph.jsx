@@ -16,18 +16,31 @@ function MixedFactorGraph(){
   // define & initialize some signals
   const initSvgSize = { w: 1000, h: 1000 };
   const [ svgSize, setSvgSize ] = createSignal(initSvgSize);
+  // REFACTOR_SEVERAL_GRAPHS: this stays here (svg size)
   const [Scales, setScales] = createSignal(
       { x: d3.scaleLinear().range([0, svgSize().w]).domain([0,svgSize().w]),
         y: d3.scaleLinear().range([0, svgSize().h]).domain([0,svgSize().h]) });
+  // REFACTOR_SEVERAL_GRAPHS: this stays here (scales)
   const [ ZoomTransform, setZoomTransform ] = createSignal(d3.zoomIdentity);
+  // REFACTOR_SEVERAL_GRAPHS: ZoomTransform stays here but is not set here (set in graph-group)
+  //                          Used to track the current transform (is modified by 'zoomed' callback)
+  //                          So that the scales can react on it.
   const [ graphZoomTransform, setGraphZoomTransform ] = createSignal(d3.zoomIdentity); // graph specific
+  // REFACTOR_SEVERAL_GRAPHS: graphZoomTransform definition stays here but is not set here 
+  //                             ( pass as props and set in graph-group)
+  //                          I need to add a createEffect to track change, then call a zoomed on that.
+  //                          This one is just a store value for x,y,k, setting it doesn't 'move'
+  //                          It not a d3 transform object proper.
+  //
   const [adjustedScales, setAdjustedScales] = createSignal( { });
+  // REFACTOR_SEVERAL_GRAPHS: adjustedScales stays here
 
   // reactive memo on the graph data
   const CopiedMixedFactorGraphData = createMemo(() =>{
     // TODO: perhaps massage the data here ?
     return JSON.parse(JSON.stringify(MixedFactorGraphData()))
   })
+  // REFACTOR_SEVERAL_GRAPHS: this paragraph stays here but the data is different (larger object with key for each graph /gt)
 
   // base unit graph:
   // - Basis for elements dimension, is different for every graph
@@ -39,6 +52,7 @@ function MixedFactorGraph(){
   // what I call the unified scaling coefficient
   const [baseUnitGraph, setBaseUnitGraph] = createSignal(1); // 0.15
   const [appliedUnitGraph, setAppliedUnitGraph] = createSignal(1);
+  // REFACTOR_SEVERAL_GRAPHS: this paragraph goes in the graph-group
 
 
   // UI input to change base unit (increment/decrement by 10% of baseline)
@@ -73,9 +87,11 @@ function MixedFactorGraph(){
         );
     }
   })
+  // REFACTOR_SEVERAL_GRAPHS: this paragraph goes in graph-group because of dependency on UnitGraph (WARNING: test though !)
 
 
   const d3selections = new Object();
+  // REFACTOR_SEVERAL_GRAPHS: this stays here
 
   onMount(() =>{
     // register d3 selections (those element contents will be under d3 jurisdiction, not solidjs)
@@ -85,6 +101,8 @@ function MixedFactorGraph(){
     d3selections.graph= d3.select("svg#MixedFactorGraph g.gMixedFactorGraph");
     // create a tooltip
     d3selections.tooltip = d3.select("body").append("div").classed("tooltip", true);
+    // REFACTOR_SEVERAL_GRAPHS: this paragraph stays here, except the graph
+    //                          also mind the consequences on the tooltip behavior
 
 
     // register svg size
@@ -93,6 +111,7 @@ function MixedFactorGraph(){
     window.addEventListener("resize",()=>{
       setSvgSize({w: d3selections.svg.nodes()[0].clientWidth, h: d3selections.svg.nodes()[0].clientHeight});
     })
+    // REFACTOR_SEVERAL_GRAPHS: this paragraph stays here
 
 
     // Observe: svgSize  &  Impact: Scales
@@ -121,6 +140,7 @@ function MixedFactorGraph(){
       h= svgSize().h;
       w= svgSize().w;
     });
+    // REFACTOR_SEVERAL_GRAPHS: this paragraph stays here
 
     // // zoom (with initial value)
     d3selections.svg.call(d3.zoom().on("zoom",zoomed));
@@ -134,40 +154,47 @@ function MixedFactorGraph(){
           .attr("transform",transform);
       }
       else d3.select('g.gMixedFactorGraph').attr("transform",transform);
+      // record current transform for scales/axes/grid reactivity
       setZoomTransform(transform);
     }
-    // set an initial zoom transform centered (before any graph data)
-    // because it makes it so much easy to reason about when moving graph
-    const zero_center_transform = d3.zoomIdentity.translate(w/2,h/2);
-    d3selections.svg.call(
-      d3.zoom().on("zoom",zoomed).transform,
-      zero_center_transform);
+    // REFACTOR_SEVERAL_GRAPHS: this paragraph stays here, mind the .gMixedFactorGraph name
 
+    // be reactive on graphZoom changes
+    //  set initial GoI zoom transform to center zero (translate vlaue depends on svg size - but not reactive to svg size)
+    setGraphZoomTransform({x:w/2,y:h/2,k:1});
+    createEffect(()=>{
+      d3selections.svg
+        .transition("b").duration(200)
+        .call(d3.zoom().on("zoom",zoomed).translateTo,graphZoomTransform().x,graphZoomTransform().y)
+        .transition("a").duration(700)
+        .call(d3.zoom().on("zoom",zoomed).scaleTo,graphZoomTransform().k);
+    })
+    // REFACTOR_SEVERAL_GRAPHS: this paragraph stays here, mind the .gMixedFactorGraph name
 
     // reactive to graph data (only data, I dont want to repeat this costly routine whenever svg size changes)
     createEffect(()=>{
       console.log("new data:")
       console.log(CopiedMixedFactorGraphData());
       const graph = CopiedMixedFactorGraphData();
+      // REFACTOR_SEVERAL_GRAPHS: make it a larges objects of datas (and a Store rather than signal)
+      //                          perhaps, it does not need to onMount
+      //                          Then dispatch the data to group-graphs components that will render it.
 
       // get the spatial bounding box of this graph
       const [mx, Mx, my, My] = get_graph_bbox(graph);
       console.log(`Graph Bounding box is 
         [${mx.toFixed(2)}, ${my.toFixed(2)}, ${Mx.toFixed(2)}, ${My.toFixed(2)}]`);
+      // REFACTOR_SEVERAL_GRAPHS: move this paragraph to graph-group
       
       // zoom-in to this graph: takes the 0-center transform (a pure translation transform)
       //   and translate and scale according to the graph bbox
       const graph_zoom_transform = graph_center_transform([mx, Mx, my, My],w,h);
+      // REFACTOR_SEVERAL_GRAPHS: CONTINUE: here: actually, this should stay here (I dont want my graph-group components to worry about w,h) 
+      //                                   The bbox boundaries [mx,...,My] should be set by graph-group (if GoI) 
+      //                                   when new data is received (computed the bbox always, GoI or not).
       setGraphZoomTransform(graph_zoom_transform);
-      // d3selections.svg.transition().duration(1000).call(
-      //   d3.zoom().on("zoom",zoomed).transform,
-      //   graph_zoom_transform);
-      d3selections.svg
-        .transition("b").duration(200)
-        .call(d3.zoom().on("zoom",zoomed).translateTo,graph_zoom_transform.x,graph_zoom_transform.y)
-        .transition("a").duration(700)
-        .call(d3.zoom().on("zoom",zoomed).scaleTo,graph_zoom_transform.k)
-        ;
+      // REFACTOR_SEVERAL_GRAPHS: setGraphZoomTransform on BBoxoI_store signal (outside onMount) .
+      //                          (this is the most difficult part of the refactor)
 
       // compute the base unit given the mean euclidian distance between connected nodes in
       // the graph
@@ -176,6 +203,7 @@ function MixedFactorGraph(){
       console.log(`base graph unit set to : ${canonical_base_unit}`);
       // initially the applied base unit is the canonical
       setAppliedUnitGraph(canonical_base_unit);
+      // REFACTOR_SEVERAL_GRAPHS: move this paragraph to graph-group
 
 
       // massage data
@@ -187,6 +215,7 @@ function MixedFactorGraph(){
       estimation_data_massage(graph, canonical_base_unit);
       console.log("[Data Massage]: done");
       console.log(graph)
+      // REFACTOR_SEVERAL_GRAPHS: move this paragraph to graph-group
 
       // graph 
       // (d3's infamous general update pattern)
@@ -212,6 +241,7 @@ function MixedFactorGraph(){
         .selectAll(".vertex")
         .data(graph.marginals, (d)=> d.var_id)
         .join(join_enter_vertex(canonical_base_unit,d3selections.tooltip),join_update_vertex);
+      // REFACTOR_SEVERAL_GRAPHS: move this paragraph to graph-group
     })
 
   })
@@ -222,6 +252,7 @@ function MixedFactorGraph(){
 
   // style="transform: matrix(1, 0, 0, -1, 0, 0);" equiv to scaleY(-1)
 
+  // REFACTOR_SEVERAL_GRAPHS: solidjs control flow depending on data + calls to graph group components
   return (
   <svg id="MixedFactorGraph">
     <TicksGrid adjustedScales={adjustedScales()} svgSize={svgSize()} invertText={true}/>
