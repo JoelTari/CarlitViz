@@ -1,20 +1,18 @@
 import * as d3 from "d3"
-import { createMemo, createEffect, onMount, createSignal } from "solid-js"
-import { MixedFactorGraphData } from "./stores/MixedFactorGraphData"
 import './MixedFactorGraph.css'
-import { join_enter_covariance, join_update_covariance } from "./update_patterns/covariances"
-import { join_enter_vertex, join_update_vertex, path_pose } from "./update_patterns/vertices"
-import { join_enter_factor, join_update_factor, join_exit_factor } from "./update_patterns/factors"
-import {  objectify_marginals, objectify_factors, compute_separator_set, compute_factor_set,  estimation_data_massage } from "./update_patterns/graph_massage"
-import { get_graph_bbox, graph_center_transform, infer_base_unit_graph, mean_distance_neighbours} from "./update_patterns/graph_analysis"
+import { createMemo, createEffect, onMount, createSignal } from "solid-js"
+// REFACTOR_SEVERAL_GRAPHS: these imports stays (mind the name of css file)
+
+import { MixedFactorGraphData } from "./stores/MixedFactorGraphData"
 import AxesWithScales from "./components/AxesWithScales"
 import TicksGrid from "./components/TicksGrid"
+import { boundingBoxOfInterest, setBoundingBoxOfInterest, bounding_box_centering_view_transform } from "./stores/BoundingBoxOfInterest"
 import { SlamVizUI_opts, setSlamVizUI_opts } from "./stores/SlamVizUI"
-// REFACTOR_SEVERAL_GRAPHS: these imports stays (mind the name)
+// REFACTOR_SEVERAL_GRAPHS: these imports stays
 
-import { DummyTurnkeyVertices, DummyTurnkeyFactors, DummyTurnkeyCovariances } from "./stores/dummy_turnkey_graph"
+// import { DummyTurnkeyVertices, DummyTurnkeyFactors, DummyTurnkeyCovariances } from "./stores/dummy_turnkey_graph"
 import { join_enter_covariance, join_update_covariance } from "./update_patterns/covariances"
-import { get_graph_bbox, infer_base_unit_graph, mean_distance_neighbours} from "./update_patterns/graph_analysis"
+import { get_graph_bbox, mean_distance_neighbours} from "./update_patterns/graph_analysis"
 import { join_enter_vertex, join_update_vertex, path_pose } from "./update_patterns/vertices"
 import { join_enter_factor, join_update_factor, join_exit_factor } from "./update_patterns/factors"
 import {  objectify_marginals, objectify_factors, compute_separator_set, compute_factor_set,  estimation_data_massage } from "./update_patterns/graph_massage"
@@ -99,7 +97,7 @@ function MixedFactorGraph(){
 
 
   const d3selections = new Object();
-  // REFACTOR_SEVERAL_GRAPHS: this stays here
+  // REFACTOR_SEVERAL_GRAPHS: this stays here, but the graph-group need one also
 
   onMount(() =>{
     // register d3 selections (those element contents will be under d3 jurisdiction, not solidjs)
@@ -167,9 +165,27 @@ function MixedFactorGraph(){
     }
     // REFACTOR_SEVERAL_GRAPHS: this paragraph stays here, mind the .gMixedFactorGraph name
 
-    // be reactive on graphZoom changes
-    //  set initial GoI zoom transform to center zero (translate vlaue depends on svg size - but not reactive to svg size)
+    
+    // be reactive on bounding box of interest changes (=> produce a new zoom transform values)
+    // (depends but not reactive to svg size)
+    createEffect(()=>{
+      if (boundingBoxOfInterest().length==4){ // length is 0 initially
+        const xyk = bounding_box_centering_view_transform(boundingBoxOfInterest(),w,h);
+        setGraphZoomTransform(xyk);
+      }
+    })
+    // REFACTOR_SEVERAL_GRAPHS: stays here (inside onMount)
+
+    //  force initial zoom transform to be centered around zero,
+    //  ie, since 0,0 is top-left by default, we compensate with the size
+    // (depends but not reactive to svg size)
     setGraphZoomTransform({x:w/2,y:h/2,k:1});
+    // REFACTOR_SEVERAL_GRAPHS: stays here (inside onMount)
+
+    // Be reactive on zoom transform changes (=> produce d3 pan/zoom)
+    // the first run is necessarly the centering around 0,0
+    // Note the reactive causal path: 
+    //      bbox_oI -> zoomTransform -> d3 zoom effect
     createEffect(()=>{
       d3selections.svg
         .transition("b").duration(200)
@@ -177,7 +193,7 @@ function MixedFactorGraph(){
         .transition("a").duration(700)
         .call(d3.zoom().on("zoom",zoomed).scaleTo,graphZoomTransform().k);
     })
-    // REFACTOR_SEVERAL_GRAPHS: this paragraph stays here, mind the .gMixedFactorGraph name
+    // REFACTOR_SEVERAL_GRAPHS: this paragraph stays here
 
     // reactive to graph data (only data, I dont want to repeat this costly routine whenever svg size changes)
     createEffect(()=>{
@@ -194,15 +210,8 @@ function MixedFactorGraph(){
         [${mx.toFixed(2)}, ${my.toFixed(2)}, ${Mx.toFixed(2)}, ${My.toFixed(2)}]`);
       // REFACTOR_SEVERAL_GRAPHS: move this paragraph to graph-group
       
-      // zoom-in to this graph: takes the 0-center transform (a pure translation transform)
-      //   and translate and scale according to the graph bbox
-      const graph_zoom_transform = graph_center_transform([mx, Mx, my, My],w,h);
-      // REFACTOR_SEVERAL_GRAPHS: CONTINUE: here: actually, this should stay here (I dont want my graph-group components to worry about w,h) 
-      //                                   The bbox boundaries [mx,...,My] should be set by graph-group (if GoI) 
-      //                                   when new data is received (computed the bbox always, GoI or not).
-      setGraphZoomTransform(graph_zoom_transform);
-      // REFACTOR_SEVERAL_GRAPHS: setGraphZoomTransform on BBoxoI_store signal (outside onMount) .
-      //                          (this is the most difficult part of the refactor)
+      setBoundingBoxOfInterest([mx, Mx, my, My]); // 
+      // REFACTOR_SEVERAL_GRAPHS: goes in graph-group, but only do it if GoI (or UI ok)
 
       // compute the base unit given the mean euclidian distance between connected nodes in
       // the graph
@@ -341,3 +350,4 @@ export default MixedFactorGraph;
       //   fill="#f9f5d7">
       //   <DummyTurnkeyVertices r={appliedUnitGraph()}/>
       // </g>
+
