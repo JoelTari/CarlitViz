@@ -95,7 +95,6 @@ function MixedFactorGraph(){
   })
   // REFACTOR_SEVERAL_GRAPHS: this paragraph goes in graph-group because of dependency on UnitGraph (WARNING: test though !)
 
-
   const d3selections = new Object();
   // REFACTOR_SEVERAL_GRAPHS: this stays here, but the graph-group need one also
 
