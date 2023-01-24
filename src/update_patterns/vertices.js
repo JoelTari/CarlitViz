@@ -1,7 +1,12 @@
 import * as d3 from "d3"
 
 const path_pose = function(radius){
-  return `M ${-radius},${.96*radius} L ${1.82*radius} 0 L ${-radius},${-.96*radius} Z`;
+  const basis=1.1; //.96
+  const triangleLen = 1.9;
+  // Viz X=horizontal and Y=vertical
+  // triangle is dominant in x-axis
+  // Path goes from top to point to bot
+  return `M ${-radius},${basis*radius} L ${triangleLen*radius} 0 L ${-radius},${-basis*radius} Z`;
 }
 
 const join_enter_vertex = function(radius,elDivTooltip){
@@ -81,16 +86,17 @@ const join_exit_vertex = function(exit){
 export { join_enter_vertex, join_update_vertex, path_pose }
 
 function vertex_hover(elDivTooltip){
+  const spatial_growth_value=2.4;
   return function(vertex){
     vertex
-    // on hover, the texts and circles of .vertex will grow in size by 1.4
+    // on hover, the texts and circles of .vertex will grow in size by spatial_growth_value
     .on("mouseover", (e, d) => {
       // grow the vertex shape, raise the element
       vertex
         .select(".vertex-shape")  // if its a circle
         .attr("r",
           function(d,i,n){
-            return d3.select(this).attr("r")*1.4
+            return d3.select(this).attr("r")*spatial_growth_value
           }
         )
         .attr("d",function(){
@@ -104,13 +110,13 @@ function vertex_hover(elDivTooltip){
       vertex.attr(
           "stroke-width",
           function(d,i,n){
-            return d3.select(this.parentNode).attr("stroke-width")*1.4
+            return d3.select(this.parentNode).attr("stroke-width")*spatial_growth_value
           }
         )
         .attr(
           "font-size",
           function(d,i,n){
-            return d3.select(this.parentNode).attr("font-size")*1.4
+            return d3.select(this.parentNode).attr("font-size")*spatial_growth_value
           }
         );
       // fill the covariance
@@ -161,7 +167,7 @@ function vertex_hover(elDivTooltip){
         .select(".vertex-shape")
         .attr("r",
           function(d,i,n){
-            return d3.select(this).attr("r")/1.4
+            return d3.select(this).attr("r")/spatial_growth_value
           }
         )
         .attr("d",function(){

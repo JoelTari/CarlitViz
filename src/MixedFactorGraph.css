@@ -33,9 +33,11 @@ svg .factors-group .factor.link_highlight circle{
   fill: #607d8b;
 }
 
-svg .factors-group .factor.link_highlight,
-svg .vertices-group .vertex.link_highlight{
+svg .factors-group .factor.link_highlight{
   stroke: #d16d4b;
+}
+svg .vertices-group .vertex.link_highlight{
+  fill: #cda091;
 }
 
 svg .vertices-group text{
