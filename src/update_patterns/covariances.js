@@ -19,7 +19,7 @@ function join_enter_covariance(enter) {
 }
 
 function join_update_covariance(update) {
-  const t_graph_motion = d3.transition().duration(1000).ease(d3.easeCubicInOut);
+  const t_graph_motion = d3.transition().duration(600).ease(d3.easeCubicInOut);
   update
     .transition(t_graph_motion)
     .attr(

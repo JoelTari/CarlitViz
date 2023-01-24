@@ -9,12 +9,12 @@ const path_pose = function(radius){
   return `M ${-radius},${basis*radius} L ${triangleLen*radius} 0 L ${-radius},${-basis*radius} Z`;
 }
 
-const join_enter_vertex = function(radius,elDivTooltip){
+const join_enter_vertex = function(radius,elDivTooltip,time_transition_entry){
   return function(enter){
     // TODO:
     // Imho best way to avoid to define those transitions everywhere is to
     // transform those functions in classes of which the transitions are members
-    const t_vertex_entry = d3.transition().duration(2400);
+    const t_vertex_entry = d3.transition().duration(time_transition_entry);
 
     return enter
       .append("g")
@@ -31,21 +31,27 @@ const join_enter_vertex = function(radius,elDivTooltip){
             .append("path")
             .classed("vertex-shape",true)
             .attr("r", radius)
-            .attr("d",path_pose(10*radius))
+            .attr("d",path_pose(6*radius))
             .attr("transform",`rotate(${d.mean.th*180/Math.PI})`)
-            .style("opacity", 0)
+            .style("opacity", "40%")
+            .style("stroke-width", 0.12*radius*6)
+            .style("fill","green")
             .transition(t_vertex_entry)
             .attr("d",path_pose(radius))
+            .style("stroke-width", null)
+            .style("fill",null)
             .style("opacity", null);
         }else
         {
           d3.select(this)
             .append("circle")
             .classed("vertex-shape",true)
-            .attr("r",10 * radius) 
+            .attr("r",6 * radius) 
             .style("opacity", 0)
+            .style("fill","green")
             .transition(t_vertex_entry)
             .attr( "r", radius)
+            .style("fill",null)
             .style("opacity", null);
         }
 
@@ -55,8 +61,10 @@ const join_enter_vertex = function(radius,elDivTooltip){
           .attr("stroke","none")
           .attr("fill","black")
           .text((d) => d.var_id)
-          .style("opacity", 0)
+          .style("opacity", "40%")
+          .style("font-size",radius*0.75*6)
           .transition(t_vertex_entry)
+          .style("font-size",null)
           .style("opacity", null);
         // d3.select(this)
         //   .append("circle")
@@ -69,13 +77,47 @@ const join_enter_vertex = function(radius,elDivTooltip){
 }
 
 const join_update_vertex = function(update){
-  const t_graph_motion = d3.transition().duration(1000).ease(d3.easeCubicInOut);
+  const t_graph_motion = d3.transition().duration(600).ease(d3.easeCubicInOut);
   update
-    .transition(t_graph_motion)
-    .attr("transform", (d) => `translate(${d.mean.x}, ${d.mean.y})`)
-    .select("path.vertex-shape")
-    .attr("transform", (d)=> `rotate(${d.mean.th*180/Math.PI})`);
-  ;
+    .each(function(dd,i,n){
+      // get current transform, 
+      // if it translate OR rotate significantly, applies transition
+      const this_vertex = d3.select(this);
+      const prev_xy = {x: n[i].transform.baseVal.getItem(0).matrix.e,
+                        y: n[i].transform.baseVal.getItem(0).matrix.f};
+      const euclidian_move = ((prev_xy.x-dd.mean.x)**2+(prev_xy.y-dd.mean.y)**2);
+      const prev_angle = d3.select(n[i])
+                            .select("path.vertex-shape")
+                            .node()
+                            .transform.baseVal
+                            .getItem(0)
+                            .angle;
+      // console.log(prev_angle);
+      if (
+        // euclidian distance move condition
+        //    TODO: threshold should depend on base_unit
+        euclidian_move > 0.1 
+        ||
+        // OR rotation move condition (1deg)
+        Math.abs(prev_angle-dd.mean.th*180/Math.PI) > 1.
+      ){
+        this_vertex
+          .style("fill","steelblue")
+          .transition(t_graph_motion)
+          .attr("transform", (d) => `translate(${d.mean.x}, ${d.mean.y})`)
+          .style("fill",null);
+        this_vertex.select("path.vertex-shape")
+                   .transition(t_graph_motion)
+                   .attr("transform", (d)=> `rotate(${d.mean.th*180/Math.PI})`);
+      }
+      // else, (move not significant, dont bother with transition) 
+      else{
+        this_vertex
+          .attr("transform", (d) => `translate(${d.mean.x}, ${d.mean.y})`)
+          .select("path.vertex-shape")
+          .attr("transform", (d)=> `rotate(${d.mean.th*180/Math.PI})`);
+      }
+    });
 }
 
 const join_exit_vertex = function(exit){

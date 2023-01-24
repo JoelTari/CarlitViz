@@ -1,10 +1,10 @@
 import * as d3 from "d3"
 
-const join_enter_factor = function(radius,elDivTooltip){
+const join_enter_factor = function(radius,elDivTooltip, time_transition_entry){
   return function(enter){
       // Imho best way to avoid to define those transitions everywhere is to
     // transform those functions in classes of which the transitions are members
-    const t_factor_entry = d3.transition().duration(400);
+    const t_factor_entry = d3.transition().duration(time_transition_entry);
     const t_graph_motion = d3.transition().duration(1000).ease(d3.easeCubicInOut);
 
     return enter
@@ -22,12 +22,12 @@ const join_enter_factor = function(radius,elDivTooltip){
               d.vars.forEach((v) =>
                 g
                   .append("line")
-                  .attr("x1", d.dot_factor_position.x)
-                  .attr("y1", d.dot_factor_position.y)
-                  .attr("x2", 0.2 * v.mean.x + 0.8 * d.dot_factor_position.x)
-                  .attr("y2", 0.2 * v.mean.y + 0.8 * d.dot_factor_position.y)
-                  .classed(v.var_id, true)
-                  .transition(t_graph_motion)
+                  // .attr("x1", d.dot_factor_position.x)
+                  // .attr("y1", d.dot_factor_position.y)
+                  // .attr("x2", 0.2 * v.mean.x + 0.8 * d.dot_factor_position.x)
+                  // .attr("y2", 0.2 * v.mean.y + 0.8 * d.dot_factor_position.y)
+                  // .classed(v.var_id, true)
+                  // .transition(t_graph_motion)
                   .attr("x1", d.dot_factor_position.x)
                   .attr("y1", d.dot_factor_position.y)
                   .attr("x2", v.mean.x)
@@ -51,12 +51,12 @@ const join_enter_factor = function(radius,elDivTooltip){
               .attr( "cx", (d) => d.dot_factor_position.x)
               .attr( "cy", (d) => d.dot_factor_position.y)
               .attr("stroke","none")
-              .attr( "r", 2 * radius) // *2 is transitory
               // on hover, dot-circle of factor grows and tooltip displays
               // define remotely for clarity
               .call(factor_hover(elDivTooltip))
+              .attr( "r", 6 * radius) // *6 is transitory
               .transition("fc")
-              .duration(2200)
+              .duration(time_transition_entry)
               .attr("r",radius);
           });
       });
@@ -67,7 +67,7 @@ const join_update_factor = function(update){
   // TODO:
   // Imho best way to avoid to define those transitions everywhere is to
   // transform those functions in classes of which the transitions are members
-  const t_graph_motion = d3.transition().duration(1000).ease(d3.easeCubicInOut);
+  const t_graph_motion = d3.transition().duration(600).ease(d3.easeCubicInOut);
 
   update.each(function (d) {
     d3.select(this)
