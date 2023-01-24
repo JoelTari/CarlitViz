@@ -42,3 +42,5 @@ A visualization system of graphical models for back-end SLAM applications.
 - sticky notify receding tooltips when new data
 
 - GPU for really big graphs (difficult)
+
+- katex
