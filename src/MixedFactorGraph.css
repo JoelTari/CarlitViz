@@ -39,6 +39,9 @@ svg .factors-group .factor.link_highlight{
 svg .vertices-group .vertex.link_highlight{
   fill: #cda091;
 }
+svg .vertices-group .vertex .vertex-shape:hover{
+  stroke: #607d8b;
+}
 
 svg .vertices-group text{
   /* remove some ghost hover effect when zoomed */
