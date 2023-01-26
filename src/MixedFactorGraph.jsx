@@ -227,7 +227,7 @@ function MixedFactorGraph(){
     <g class="gMixedFactorGraph">
       <g class="covariances-group"
         style="display: inherit"
-        stroke-width={0.02*appliedUnitGraph()}
+        stroke-width={0.04*appliedUnitGraph()}
         stroke="#aaa"
         fill="none">
       </g>
