@@ -54,7 +54,7 @@ const join_enter_factor = function(radius,elDivTooltip, time_transition_entry){
               // on hover, dot-circle of factor grows and tooltip displays
               // define remotely for clarity
               .call(factor_hover(elDivTooltip))
-              .attr( "r", 6 * radius) // *6 is transitory
+              .attr( "r", 2 * radius) // *2 is transitory
               .transition("fc")
               .duration(time_transition_entry)
               .attr("r",radius);
