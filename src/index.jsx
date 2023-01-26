@@ -25,10 +25,10 @@ setMixedFactorGraphData( window.MixedFactorGraphData == null ?
 // setInterval(
 //   ()=>{
 //     console.log("[Interval tests] new data t1");
-//     setMixedFactorGraphData(fallback_MixedFactorGraphData)
+//     setMixedFactorGraphData(fallback1_MixedFactorGraphData)
 //     setTimeout(()=>{
 //       console.log("[Interval tests] new data t2");
-//       setMixedFactorGraphData(fallback1_MixedFactorGraphData)
+//       setMixedFactorGraphData(fallback_MixedFactorGraphData)
 //     },2500)
 //   }
 //   ,5000
