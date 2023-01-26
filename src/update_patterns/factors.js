@@ -63,42 +63,48 @@ const join_enter_factor = function(radius,elDivTooltip, time_transition_entry){
   }
 }
 
-const join_update_factor = function(update){
-  // TODO:
-  // Imho best way to avoid to define those transitions everywhere is to
-  // transform those functions in classes of which the transitions are members
-  const t_graph_motion = d3.transition().duration(600).ease(d3.easeCubicInOut);
+const join_update_factor = function(radius){
+  return function(update){
+    // TODO:
+    // Imho best way to avoid to define those transitions everywhere is to
+    // transform those functions in classes of which the transitions are members
+    const t_graph_motion = d3.transition().duration(600).ease(d3.easeCubicInOut);
 
-  update.each(function (d) {
-    d3.select(this)
-      .selectAll("line")
-      .each(function (_, i, n) {
-        if (d.vars.length > 1) {
-          // line
-          d3.select(n[i])
-            .transition(t_graph_motion)
-            .attr("x1", d.dot_factor_position.x)
-            .attr("y1", d.dot_factor_position.y)
-            .attr("x2", d.vars[i].mean.x)
-            .attr("y2", d.vars[i].mean.y);
-        } else {
-          // update unary factor
-          d3.select(n[i])
-            .transition(t_graph_motion)
-            .attr("x1", d.vars[0].mean.x)
-            .attr("y1", d.vars[0].mean.y)
-            .attr("x2", d.dot_factor_position.x)
-            .attr("y2", d.dot_factor_position.y);
-        }
-      });
-  });
-  // the little factor circle (to visually differentiate from with MRF)
-  update
-    .select("circle")
-    .transition(t_graph_motion)
-    .attr("cx", (d) => d.dot_factor_position.x)
-    .attr("cy", (d) => d.dot_factor_position.y);
+    update.each(function (d) {
+      d3.select(this)
+        .selectAll("line")
+        .each(function (_, i, n) {
+          if (d.vars.length > 1) {
+            // line
+            d3.select(n[i])
+              .transition(t_graph_motion)
+              .attr("x1", d.dot_factor_position.x)
+              .attr("y1", d.dot_factor_position.y)
+              .attr("x2", d.vars[i].mean.x)
+              .attr("y2", d.vars[i].mean.y);
+          } else {
+            // update unary factor
+            d3.select(n[i])
+              .transition(t_graph_motion)
+              .attr("x1", d.vars[0].mean.x)
+              .attr("y1", d.vars[0].mean.y)
+              .attr("x2", d.dot_factor_position.x)
+              .attr("y2", d.dot_factor_position.y);
+          }
+        });
+     // update radius factor dot
+     d3.select(this)
+      .select("circle")
+      .attr("r",radius);
+    });
+    // the little factor circle (to visually differentiate from with MRF)
+    update
+      .select("circle")
+      .transition(t_graph_motion)
+      .attr("cx", (d) => d.dot_factor_position.x)
+      .attr("cy", (d) => d.dot_factor_position.y);
 
+  }
 }
 const join_exit_factor = function(exit){
   return (

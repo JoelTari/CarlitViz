@@ -77,48 +77,61 @@ const join_enter_vertex = function(radius,elDivTooltip,time_transition_entry){
   }
 }
 
-const join_update_vertex = function(update){
-  const t_graph_motion = d3.transition().duration(600).ease(d3.easeCubicInOut);
-  update
-    .each(function(dd,i,n){
-      // get current transform, 
-      // if it translate OR rotate significantly, applies transition
-      const this_vertex = d3.select(this);
-      const prev_xy = {x: n[i].transform.baseVal.getItem(0).matrix.e,
-                        y: n[i].transform.baseVal.getItem(0).matrix.f};
-      const euclidian_move = ((prev_xy.x-dd.mean.x)**2+(prev_xy.y-dd.mean.y)**2);
-      const prev_angle = d3.select(n[i])
-                            .select("path.vertex-shape")
-                            .node()
-                            .transform.baseVal
-                            .getItem(0)
-                            .angle;
-      // console.log(prev_angle);
-      if (
-        // euclidian distance move condition
-        //    TODO: threshold should depend on base_unit
-        euclidian_move > 0.1 
-        ||
-        // OR rotation move condition (1deg)
-        Math.abs(prev_angle-dd.mean.th*180/Math.PI) > 1.
-      ){
-        this_vertex
-          .style("fill","steelblue")
-          .transition(t_graph_motion)
-          .attr("transform", (d) => `translate(${d.mean.x}, ${d.mean.y})`)
-          .style("fill",null);
-        this_vertex.select("path.vertex-shape")
-                   .transition(t_graph_motion)
-                   .attr("transform", (d)=> `rotate(${d.mean.th*180/Math.PI})`);
-      }
-      // else, (move not significant, dont bother with transition) 
-      else{
-        this_vertex
-          .attr("transform", (d) => `translate(${d.mean.x}, ${d.mean.y})`)
-          .select("path.vertex-shape")
-          .attr("transform", (d)=> `rotate(${d.mean.th*180/Math.PI})`);
-      }
-    });
+const join_update_vertex = function(radius){
+  return function(update){
+    const t_graph_motion = d3.transition().duration(600).ease(d3.easeCubicInOut);
+    update
+      .each(function(dd,i,n){
+        // get current transform, 
+        // if it translate OR rotate significantly, applies transition
+        const this_vertex = d3.select(this);
+        const prev_xy = {x: n[i].transform.baseVal.getItem(0).matrix.e,
+                          y: n[i].transform.baseVal.getItem(0).matrix.f};
+        const euclidian_move = ((prev_xy.x-dd.mean.x)**2+(prev_xy.y-dd.mean.y)**2);
+        const prev_angle = d3.select(n[i])
+                              .select("path.vertex-shape")
+                              .node()
+                              .transform.baseVal
+                              .getItem(0)
+                              .angle;
+        // console.log(prev_angle);
+        if (
+          // euclidian distance move condition
+          //    TODO: threshold should depend on base_unit
+          euclidian_move > 0.1 
+          ||
+          // OR rotation move condition (1deg)
+          Math.abs(prev_angle-dd.mean.th*180/Math.PI) > 1.
+        ){
+          this_vertex
+            .style("fill","steelblue")
+            .transition(t_graph_motion)
+            .attr("transform", (d) => `translate(${d.mean.x}, ${d.mean.y})`)
+            .style("fill",null);
+          this_vertex.select("path.vertex-shape")
+                     .transition(t_graph_motion)
+                     .attr("transform", (d)=> `rotate(${d.mean.th*180/Math.PI})`);
+        }
+        // else, (move not significant, dont bother with transition) 
+        else{
+          this_vertex
+            .attr("transform", (d) => `translate(${d.mean.x}, ${d.mean.y})`)
+            .select("path.vertex-shape")
+            .attr("transform", (d)=> `rotate(${d.mean.th*180/Math.PI})`);
+        }
+
+        // now update the shape's radius (might have changed)
+        if (dd.mean.th!=null ){ // triangle shape (pose)
+          this_vertex.select("path.vertex-shape")
+            .attr("d",path_pose(radius))
+            .attr("r",radius);
+        }
+        else{ // circle shape (2d position)
+          this_vertex.select("path.vertex-shape")
+            .attr("r",radius);
+        }
+      });
+  }
 }
 
 const join_exit_vertex = function(exit){
