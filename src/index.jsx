@@ -10,7 +10,7 @@ import './style.css'
 // import the store
 import { setMixedFactorGraphData } from './stores/MixedFactorGraphData'
 // import the component
-import MixedFactorGraph from './MixedFactorGraph'
+import SlamViz from './SlamViz';
 // import fallback data
 import * as fallback_MixedFactorGraphData from "./stores/fallback_MixedFactorGraphData.json"
 import * as fallback1_MixedFactorGraphData from "./stores/fallback1_MixedFactorGraphData.json"
@@ -34,4 +34,4 @@ setMixedFactorGraphData( window.MixedFactorGraphData == null ?
 //   ,5000
 // ) 
 
-render(() => <MixedFactorGraph />, document.getElementById('root'));
+render(() => <SlamViz />, document.getElementById('root'));
