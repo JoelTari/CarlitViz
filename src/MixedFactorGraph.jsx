@@ -18,55 +18,22 @@ import { join_enter_factor, join_update_factor, join_exit_factor } from "./updat
 import {  objectify_marginals, objectify_factors, compute_separator_set, compute_factor_set,  estimation_data_massage } from "./update_patterns/graph_massage"
 // REFACTOR_SEVERAL_GRAPHS: these import goes in graph-group
 
+//------------------------------------------------------------------//
+//                            component                             //
+//------------------------------------------------------------------//
 function MixedFactorGraph(){
   // define & initialize some signals
   const initSvgSize = { w: 1000, h: 1000 };
   const [ svgSize, setSvgSize ] = createSignal(initSvgSize);
   // REFACTOR_SEVERAL_GRAPHS: this stays here (svg size)
-  // REFACTOR_REACTIVITY: svgSize: this stays unchanged
 
-  // const [Scales, setScales] = createSignal(
-  //     { x: d3.scaleLinear().range([0, svgSize().w]).domain([0,svgSize().w]),
-  //       y: d3.scaleLinear().range([0, svgSize().h]).domain([0,svgSize().h]) });
-  // // REFACTOR_SEVERAL_GRAPHS: this stays here (scales)
-  // // REFACTOR_REACTIVITY: remove scales, replaced by a function
   const [ ZoomTransform, setZoomTransform ] = createSignal(d3.zoomIdentity);
-  // REFACTOR_REACTIVITY: stays there, unchanged
   // REFACTOR_SEVERAL_GRAPHS: ZoomTransform stays here but is not set here (set in graph-group)
   //                          Used to track the current transform (is modified by 'zoomed' callback)
   //                          So that the scales can react on it.
-  const [ graphZoomTransform, setGraphZoomTransform ] = createSignal(d3.zoomIdentity); // graph specific  // REFACTOR_REACTIVITY: remove (replaced by a function)
-  // REFACTOR_SEVERAL_GRAPHS: graphZoomTransform definition stays here but is not set here 
-  //                             ( pass as props and set in graph-group)
-  //                          I need to add a createEffect to track change, then call a zoomed on that.
-  //                          This one is just a store value for x,y,k, setting it doesn't 'move'
-  //                          It not a d3 transform object proper.
-  //
-
-  // const [adjustedScales, setAdjustedScales] = createSignal( { }); // REFACTOR_REACTIVITY: remove (replaced by a memo)
-  // // REFACTOR_SEVERAL_GRAPHS: adjustedScales stays here
-
-  // // reactive memo on the graph data
-  // const CopiedMixedFactorGraphData = createMemo(() =>{
-  //   // TODO: perhaps massage the data here ?
-  //   return JSON.parse(JSON.stringify(MixedFactorGraphData()))
-  // }) // REFACTOR_REACTIVITY: no need for memo as it goes only in 1 place, remove.
-  // const [ massagedGraph, setMassagedGraph ] = createSignal({}); // REFACTOR_REACTIVITY: remove, replaced by createMemo jointly with unit base graph, bbox when new data is availabe
-  // // REFACTOR_SEVERAL_GRAPHS: this paragraph stays here but the data is different (larger object with key for each graph /gt)
-
-  // // base unit graph:
-  // // - Basis for elements dimension, is different for every graph
-  // //  A graph (A - B) where space between A and B is 100m while not have same "base_unit_graph"
-  // //  as a graph (A - B) where that space is 1m.
-  // //  That is why we use the data in the graph to infer a value (if a value is not given)
-  // // - When we are zoomed however, the user might want to declutter, i.e. compute a new value
-  // // for the base_unit_graph wrt ztransform scale and initial "base_unit_graph" value, this is
-  // // what I call the unified scaling coefficient
-  // const [baseUnitGraph, setBaseUnitGraph] = createSignal(null); // 0.15 // REFACTOR_REACTIVITY: remove, replaced by createMemo jointly with graph, bbox when new data is availabe
-  // const [appliedUnitGraph, setAppliedUnitGraph] = createSignal(null);  // REFACTOR_REACTIVITY: remove, replaced by createMemo
-  // // REFACTOR_SEVERAL_GRAPHS: this paragraph goes in the graph-group
 
   const [declutterCoefficient, setDeclutterCoefficient] = createSignal(1);
+  // REFACTOR_SEVERAL_GRAPHS: this stays here, but pass as props to graphs
 
   // UI input to change base unit (increment/decrement by 10% of baseline)
   d3.select("body").on("keydown",(e)=>{
@@ -82,33 +49,14 @@ function MixedFactorGraph(){
       setDeclutterCoefficient(1);
     }
   })
-  // REFACTOR_SEVERAL_GRAPHS: this paragraph goes in graph-group because of dependency 
+  // REFACTOR_SEVERAL_GRAPHS: this paragraph stays
   // on UnitGraph (WARNING: test though !), this should only be triggered if GoI
 
-  // // initial value of appliedUnitGraph
-  // createEffect(()=>{
-  //   console.log("AAAAAAAAAAAAAAAAAA");
-  //   if (baseUnitGraph() != null && appliedUnitGraph() == null) {
-  //     console.log(`Initial set for applied unit graph: ${baseUnitGraph()}`);
-  //     setAppliedUnitGraph(baseUnitGraph());
-  //   }
-  // })
-  // // REFACTOR_REACTIVITY: remove/comment tmp
-
-  // Observe: svgSize  &  Impact: Scales
-  // createEffect(()=>{
-  //   // reactive variables
-  //   const h=svgSize().h;
-  //   const w=svgSize().w;
-  //   setScales({x: d3.scaleLinear().range([0, w]).domain([0,w]),
-  //              y: d3.scaleLinear().range([0, h]).domain([0,h])})
-  // }) // REFACTOR_REACTIVITY: make it a function that returns scales  -> scalesReactSvgSize
   const computeScales = ()=>{
     const {w, h} = svgSize();
     return {x: d3.scaleLinear().range([0, w]).domain([0,w]),
                y: d3.scaleLinear().range([0, h]).domain([0,h])};
   };
-
   // Observe:  Scales and Ztransform  &  Impact: AdjustedScales
   const adjustedScales = createMemo(()=>{
     const ztransform = ZoomTransform();
@@ -118,17 +66,6 @@ function MixedFactorGraph(){
     // console.log(asc)
     return asc
   });
-
-  // createEffect(()=>{
-  //   const ztransform = ZoomTransform();
-  //   const sc_x = Scales().x;
-  //   const sc_y = Scales().y;
-  //   setAdjustedScales(
-  //     {
-  //       x: ztransform.rescaleX(sc_x),
-  //       y: ztransform.rescaleY(sc_y)
-  //     });
-  // }); // REFACTOR_REACTIVITY: make it a memo called adjustedScales, get sc_x and sc_y in a single call
   // REFACTOR_SEVERAL_GRAPHS: this paragraph stays here
 
   const d3selections = new Object();
@@ -178,6 +115,8 @@ function MixedFactorGraph(){
     console.log(`declutter coefficient: ${declutterCoefficient()}`)
     return declutterCoefficient()*unit_base;
   });
+  // REFACTOR_SEVERAL_GRAPHS: this goes in graph-group but GoI might be needed (or do the GoI condition in the prop)
+  //                          i.e. we just want to declutter the GoI graph not the others
 
   onMount(() =>{
     // register d3 selections (those element contents will be under d3 jurisdiction, not solidjs)
@@ -198,15 +137,6 @@ function MixedFactorGraph(){
       setSvgSize({w: d3selections.svg.nodes()[0].clientWidth, h: d3selections.svg.nodes()[0].clientHeight});
     })
     // REFACTOR_SEVERAL_GRAPHS: this paragraph stays here
-    // REFACTOR_REACTIVITY: paragraph doesnt change 
-
-    // let {h,w} = svgSize();  // REFACTOR_REACTIVITY: remove, unecessary thks to untrack()
-    // // I do
-    // createEffect(()=> {
-    //   h= svgSize().h;
-    //   w= svgSize().w;
-    // }); // REFACTOR_REACTIVITY: remove, unecessary thks to untrack()
-    // // REFACTOR_SEVERAL_GRAPHS: this paragraph stays here
 
     // // zoom (with initial value)
     d3selections.svg.call(d3.zoom().on("zoom",zoomed));
@@ -224,17 +154,8 @@ function MixedFactorGraph(){
       setZoomTransform(transform);
     }
     // REFACTOR_SEVERAL_GRAPHS: this paragraph stays here, mind the .gMixedFactorGraph name
-    // REFACTOR_REACTIVITY: nothing changes here
 
     
-    // be reactive on bounding box of interest changes (=> produce a new zoom transform values)
-    // (depends but not reactive to svg size)
-    // createEffect(()=>{
-    //   if (boundingBoxOfInterest().length==4){ // length is 0 initially
-    //     const xyk = bounding_box_centering_view_transform(boundingBoxOfInterest(),w,h);
-    //     setGraphZoomTransform(xyk);
-    //   }
-    // })
     const graphZoomTransform = ()=>{
       const {w, h} = untrack(svgSize);
       if (boundingBoxOfInterest().length==4){ // length is 0 initially
@@ -245,17 +166,7 @@ function MixedFactorGraph(){
       // TODO: remove that if/else: just set bbox initial value to something it has prolly no adverse consequences
       else return { x:w/2, y:h/2,k:1 };
     };
-    // REFACTOR_REACTIVITY: replace by a function that return the graphZoomTransfrom x,y,k object. return w/2,h/2,1 if length is not 4 (initial)
-    //                      use an untrack (and test it with a log) for svgSize w&h
-    //                      replace bbox of interest by call to memo data (but dont need unit_graph nor graph, only bbox)
     // REFACTOR_SEVERAL_GRAPHS: stays here (inside onMount)
-
-    // //  force initial zoom transform to be centered around zero,
-    // //  ie, since 0,0 is top-left by default, we compensate with the size
-    // // (depends but not reactive to svg size)
-    // setGraphZoomTransform({x:w/2,y:h/2,k:1});
-    // // REFACTOR_SEVERAL_GRAPHS: stays here (inside onMount)
-    // // REFACTOR_REACTIVITY: remove/comment tmp (init case dealt by )
 
     // Be reactive on zoom transform changes (=> produce d3 pan/zoom)
     // the first run is necessarly the centering around 0,0
@@ -270,28 +181,16 @@ function MixedFactorGraph(){
         .call(d3.zoom().on("zoom",zoomed).scaleTo,gzt.k);
     })
     // REFACTOR_SEVERAL_GRAPHS: this paragraph stays here
-    // REFACTOR_REACTIVITY: createEffect stays ok but replace graphZoomTransform() by const gzt = graphZoomTrasform() function call
-
-    // // create effect to forward explicitly to d3 (change in AppliedUnitGraph)
-    // createEffect(()=>{ // REFACTOR_REACTIVITY: remove/comment tmp (seems there is an ownership conflict btw 2 d3 functions)
-    //     // change for d3
-    //     d3.selectAll(".factor circle").attr("r",0.3*appliedUnitGraph());
-    //     d3.selectAll(".vertex .vertex-shape")
-    //       .attr("r",appliedUnitGraph())
-    //       .attr("d",function(){
-    //         return path_pose(d3.select(this).attr("r"))}
-    //       );
-    // })
 
     // when data is ready & massaged
     // OR when new appliedUnitGraph() value (eg declutter)
-    createEffect(()=>{  // REFACTOR_REACTIVITY: this createEffect is ok (try to remove dependents)
+    createEffect(()=>{
       // graph 
       // (d3's infamous general update pattern)
       // first the covariances
       // then the factors (therefore on top of the cov)
       // then the vertices (therefore on top of the factors)
-      console.log(`Massaged graph ready for rendering with appliedUnitGraph : ${appliedUnitGraph()}`)
+      console.log("Mounting new data/or updating data due to new applied unit for graph")
       const { graph } = processGraphData();
       console.log(graph);
       if (graph.header.exclude == null || ! graph.header.exclude.includes('covariance'))
@@ -319,14 +218,9 @@ function MixedFactorGraph(){
 
   })
 
-  // // reactive to UI: (UI options not yet imported)
-  // // d3.selectAll(circle).attr(r, HERE )
-  // createEffect(()=>{})
-
   // style="transform: matrix(1, 0, 0, -1, 0, 0);" equiv to scaleY(-1)
 
   // REFACTOR_SEVERAL_GRAPHS: solidjs control flow depending on data + calls to graph group components
-  // REFACTOR_REACTIVITY: replace appliedUnitGraph by declutterCoef*base_unit's memo
   return (
   <svg id="MixedFactorGraph">
     <TicksGrid adjustedScales={adjustedScales()} svgSize={svgSize()} invertText={true}/>
@@ -356,30 +250,3 @@ function MixedFactorGraph(){
 }
 
 export default MixedFactorGraph;
-
-
-      // // canonical base unit is also the max unit value (in the graph domain metric, ie not the viewport)
-      // // But when we zoom we want to declutter (only after pushing a button, it is too costly to do continously)
-      // // the decluttered_base_unit is set so that:
-      // //   1) close nodes are spatially distinguishable (declutter) 
-      // //      => implies the size diminishes with the ratio graphZoomTransform.k/ZoomTransform().k
-      // //   2) the unit need to be big enough so that it is readalbe 
-      // //                 (which is not the objective of the canonical_base_unit)
-      // //      E.g. we want the unit to not be smaller than x% of screen width
-      // //      => implies the size diminishing of (1) is mitigated by a lower bound of the screen/viewport
-      // //   3) but the dbu can't be greater than the canonical_base_unit. This overrule (2)
-      // //      => implies a min(canonical_base_unit, declutter_base_unit) at the end
-      // // Just doing an adjustment by zoom value isnt enough:
-      // //  declutter_base_unit = canonical_base_unit * k_graph_zoom/k_current_zoom;
-      // // Because on a large graph (eg M3500), the canonical_base_unit may be too small on the screen/viewport
-      // const compute_declutter_base_unit = function(k_current_scale, k_graph_scale , base_unit,w,h){
-      // const current_scale_adjusted_unit = baseUnitGraph()*k_graph_scale/k_current_scale;
-      // console.log(`current_scale_adjusted_unit: ${current_scale_adjusted_unit}`)
-      // const svg_span=Math.sqrt(w**2+h**2);
-      // // point (2): min_unit = 5% of svgspan/scalespan
-      // const big_enough_adjusted_unit = Math.max(current_scale_adjusted_unit, 0.05*svg_span/k_current_scale);
-      // console.log(`big_enough_adjusted_unit: ${big_enough_adjusted_unit}`)
-      // const final_declutter_unit = Math.min(base_unit, big_enough_adjusted_unit);
-      // console.log(`final_declutter_unit: ${final_declutter_unit}`)
-      // return final_declutter_unit
-      // }
