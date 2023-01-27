@@ -29,9 +29,9 @@ function SlamVizSideMenu(){
       <div class="menu" id="sidemenu">
         <div class="sidemenu-content">
           <button onClick={close} class="close-menu-button">Close &times;</button>
-          <a href="#" class="w3-bar-item w3-button">Link 1</a>
-          <a href="#" class="w3-bar-item w3-button">Link 2</a>
-          <a href="#" class="w3-bar-item w3-button">Link 3</a>
+          <a href="#" class="factor-graph-button">Factor Graph</a>
+          <a href="#" class="cluster-graph-button">Cluster Graph</a>
+          <a href="#" class="matrices-button">Matrices</a>
         </div>
       </div>
     </>
