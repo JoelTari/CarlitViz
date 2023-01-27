@@ -30,7 +30,7 @@ function SlamVizSideMenu(){
         <div class="sidemenu-content">
           <button onClick={close} class="close-menu-button">Close &times;</button>
           <a href="/factor-graph" class="factor-graph-button">Factor Graph</a>
-          <a href="/cluster-graph" class="cluster-graph-button">Cluster Graph</a>
+          <a href="/clique-tree" class="clique-tree-button">Clique Tree</a>
           <a href="/matrices" class="matrices-button">Matrices</a>
         </div>
       </div>

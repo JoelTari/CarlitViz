@@ -1,4 +1,4 @@
-svg{
+svg.mixed-factor-graph{
   --rect_stroke: black;
   --rect_fill: #eee;
   --line_stroke: #b2b3bd; 
@@ -10,46 +10,46 @@ svg{
 }
 
 
-svg{
+svg.mixed-factor-graph{
   transform: scaleY(-1);
 }
-svg text{
+svg.mixed-factor-graph text{
   transform: scaleY(-1);
 }
 
-svg vertices-group{
+svg.mixed-factor-graph vertices-group{
   cursor: pointer;
 }
 
-svg factors-group circle{
+svg.mixed-factor-graph factors-group circle{
   cursor: pointer;
 }
 
-svg .covariances-group ellipse.highlight{
+svg.mixed-factor-graph .covariances-group ellipse.highlight{
   fill: #ece281;
 }
 
-svg .factors-group .factor.link_highlight circle{
+svg.mixed-factor-graph .factors-group .factor.link_highlight circle{
   fill: #607d8b;
 }
 
-svg .factors-group .factor.link_highlight{
+svg.mixed-factor-graph .factors-group .factor.link_highlight{
   /* stroke: #d16d4b; */
   stroke: #a8c7c4;
 }
-svg .vertices-group{
+svg.mixed-factor-graph .vertices-group{
   fill: #fffaec;
 }
-svg .vertices-group .vertex.link_highlight{
+svg.mixed-factor-graph .vertices-group .vertex.link_highlight{
   /* fill: #E2C17B; */
   /* fill: #f9f5d7; */
   fill: hsl(123, 14.0%, 75.2%);
 }
-svg .vertices-group .vertex .vertex-shape:hover{
+svg.mixed-factor-graph .vertices-group .vertex .vertex-shape:hover{
   stroke: hsl(200, 18.3%, 56.1%);
 }
 
-svg .vertices-group text{
+svg.mixed-factor-graph .vertices-group text{
   /* remove some ghost hover effect when zoomed */
   pointer-events: none;
 }
@@ -57,7 +57,7 @@ svg .vertices-group text{
 /******************************************/
 /*                TOOLTIP                 */
 /******************************************/
-div.tooltip {
+div.tooltip-factor-graph {
   /* tooltip is hidden by default */
   visibility: hidden;
   opacity: 0.95;
@@ -72,19 +72,19 @@ div.tooltip {
   transform: translateX(-50%) translateY(-120%);
 }
 
-div.tooltip .tooltip-title {
+div.tooltip-factor-graph .tooltip-title {
   text-align: center;
   font-size: 0.9rem;
   background: #ddd;
   margin: auto;
 }
 
-div.tooltip .tooltip-field {
+div.tooltip-factor-graph .tooltip-field {
   text-align: left;
   font-size: 0.8rem;
 }
 
-div.tooltip .tooltip-value {
+div.tooltip-factor-graph .tooltip-value {
   text-align: right;
   font-size: 0.7rem;
   /* allows to interpret \n */

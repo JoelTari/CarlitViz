@@ -3,6 +3,7 @@ import { Router, Route, Routes } from "@solidjs/router";
 import SlamVizSideMenu from "./SlamVizSideMenu";
 
 const MixedFactorGraph = lazy(()=> import("./MixedFactorGraph"));
+const CliqueTree = lazy(()=> import("./CliqueTree"));
 import { sideMenuDisplayed , setSideMenuDisplayed } from "./stores/SideMenuDisplay";
 
 function SlamViz(){
@@ -23,6 +24,7 @@ function SlamViz(){
           <Routes>
             <Route path="/" component={MixedFactorGraph}/>
             <Route path="/factor-graph" component={MixedFactorGraph}/>
+            <Route path="/clique-tree" component={CliqueTree}/>
           </Routes>
         </Router>
         <button 

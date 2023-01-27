@@ -1,0 +1,109 @@
+svg.clique-tree-graph{
+  --rect_stroke: black;
+  --rect_fill: #eee;
+  --line_stroke: #b2b3bd; 
+  --rip_path: burlywood;
+  --clique_hover: steelblue;
+  --hover_upscale: 1.1;
+  --clique_calibrated: #d4ebc1;
+  --sep_hover: lightcoral;
+  --bg:  #fff;
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg);
+}
+
+.clique-tree-graph text{
+  font-family: Courier, monospace;
+  color: #555;
+  cursor: pointer;
+}
+
+/*------------------------------------------------------------------*/
+/*                        separator vanilla                         */
+/*------------------------------------------------------------------*/
+.clique-tree-graph .gseparator line {
+  stroke: var(--line_stroke);
+  stroke-width: 3px;
+  cursor: pointer;
+}
+
+.clique-tree-graph .gseparator text{
+  cursor: pointer;
+  text-anchor: middle;       /* horizontal */
+  dominant-baseline: Middle; /* vertical */
+}
+
+.clique-tree-graph .gseparator rect.readable_sepset{
+  fill: var(--bg);
+  fill-opacity: 50%;
+}
+
+
+/*------------------------------------------------------------------*/
+/*                          clique vanilla                          */
+/*------------------------------------------------------------------*/
+.clique-tree-graph .gclique rect{
+  fill: var(--rect_fill);
+  stroke: var(--rect_stroke);
+  cursor: pointer;
+}
+/* hover, but not necesseraly on a var_id */
+/* makes more sense once I have clique_id and factors also displayed in */
+.clique-tree-graph .gclique:has(*:hover) rect
+{
+  stroke: var(--clique_hover);
+  stroke-width: 3px;  
+  transform: scale(var(--hover_upscale));
+}
+
+.clique-tree-graph .gclique text{
+  text-anchor: middle;       /* horizontal */
+  /* dominant-baseline: Middle;  */
+}
+
+.clique-tree-graph .gclique text.id_cliquetext{
+  font-weight: bold;
+}
+
+.clique-tree-graph .gclique text.factors_cliquetext{
+  fill: grey;
+}
+
+.clique-tree-graph .gclique line.var_factor_split,
+.clique-tree-graph .gclique line.cliqueid_var_split{
+  stroke: grey;
+  stroke-width: 1px;
+}
+
+/*------------------------------------------------------------------*/
+/*                       edge hover behavior                        */
+/*------------------------------------------------------------------*/
+.clique-tree-graph .gseparator text:hover{
+  font-size: 20px;
+}
+.clique-tree-graph .gseparator:has(text:hover) line{
+  stroke-width: 5px;
+}
+
+/*------------------------------------------------------------------*/
+/*        clique's var_id hover behavior (callbacks in js to        */
+/*                     affect class .hovering)                      */
+/*------------------------------------------------------------------*/
+.clique-tree-graph .gCliqueTree tspan.hovering,
+.clique-tree-graph .gCliqueTree tspan.hovering:hover{
+  stroke: var(--rip_path);
+  fill: var(--rip_path);
+  font-size: 20px;
+}
+
+.clique-tree-graph .gseparator:has(.hovering) line{
+  stroke: var(--rip_path);
+  stroke-width: 5px;
+}
+
+.clique-tree-graph .gclique rect:has(+ * .hovering){
+  stroke: var(--rip_path);
+  stroke-width: 3px;  
+  transform: scale(1.1);
+}

@@ -120,12 +120,12 @@ function MixedFactorGraph(){
 
   onMount(() =>{
     // register d3 selections (those element contents will be under d3 jurisdiction, not solidjs)
-    d3selections.svg = d3.select("svg#MixedFactorGraph");
+    d3selections.svg = d3.select("svg.mixed-factor-graph");
     // d3selections.grid = d3.select("svg#MixedFactorGraph g.grid");
     // d3selections.axesScales = d3.select("svg#MixedFactorGraph g.axes-scales");
-    d3selections.graph= d3.select("svg#MixedFactorGraph g.gMixedFactorGraph");
+    d3selections.graph= d3.select("svg.mixed-factor-graph g.gMixedFactorGraph");
     // create a tooltip
-    d3selections.tooltip = d3.select("body").append("div").classed("tooltip", true);
+    d3selections.tooltip = d3.select("body").append("div").classed("tooltip-factor-graph", true);
     // REFACTOR_SEVERAL_GRAPHS: this paragraph stays here, except the graph
     //                          also mind the consequences on the tooltip behavior
 
@@ -222,7 +222,7 @@ function MixedFactorGraph(){
 
   // REFACTOR_SEVERAL_GRAPHS: solidjs control flow depending on data + calls to graph group components
   return (
-  <svg id="MixedFactorGraph">
+  <svg class="mixed-factor-graph">
     <TicksGrid adjustedScales={adjustedScales()} svgSize={svgSize()} invertText={true}/>
     <g class="gMixedFactorGraph">
       <g class="covariances-group"
