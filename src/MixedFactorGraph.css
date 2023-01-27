@@ -46,7 +46,7 @@ svg .vertices-group .vertex.link_highlight{
   fill: hsl(123, 14.0%, 75.2%);
 }
 svg .vertices-group .vertex .vertex-shape:hover{
-  stroke: #607d8b;
+  stroke: hsl(200, 18.3%, 56.1%);
 }
 
 svg .vertices-group text{
