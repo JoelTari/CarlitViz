@@ -142,7 +142,7 @@ const join_exit_vertex = function(exit){
 export { join_enter_vertex, join_update_vertex, path_pose }
 
 function vertex_hover(elDivTooltip){
-  const spatial_growth_value=2.4;
+  const spatial_growth_value=1.7;
   return function(vertex){
     vertex
     // on hover, the texts and circles of .vertex will grow in size by spatial_growth_value

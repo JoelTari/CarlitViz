@@ -34,10 +34,16 @@ svg .factors-group .factor.link_highlight circle{
 }
 
 svg .factors-group .factor.link_highlight{
-  stroke: #d16d4b;
+  /* stroke: #d16d4b; */
+  stroke: #a8c7c4;
+}
+svg .vertices-group{
+  fill: #fffaec;
 }
 svg .vertices-group .vertex.link_highlight{
-  fill: #cda091;
+  /* fill: #E2C17B; */
+  /* fill: #f9f5d7; */
+  fill: hsl(123, 14.0%, 75.2%);
 }
 svg .vertices-group .vertex .vertex-shape:hover{
   stroke: #607d8b;
