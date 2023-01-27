@@ -1,6 +1,8 @@
-import MixedFactorGraph from "./MixedFactorGraph";
+import { lazy } from "solid-js";
+import { Router, Route, Routes } from "@solidjs/router";
 import SlamVizSideMenu from "./SlamVizSideMenu";
 
+const MixedFactorGraph = lazy(()=> import("./MixedFactorGraph"));
 import { sideMenuDisplayed , setSideMenuDisplayed } from "./stores/SideMenuDisplay";
 
 function SlamViz(){
@@ -17,7 +19,12 @@ function SlamViz(){
         <SlamVizSideMenu/>
       </Show>
       <div class="content" style={{width:"100%",height:"100%", position:"relative"}}>
-        <MixedFactorGraph/> 
+        <Router>
+          <Routes>
+            <Route path="/" component={MixedFactorGraph}/>
+            <Route path="/factor-graph" component={MixedFactorGraph}/>
+          </Routes>
+        </Router>
         <button 
           style="position: absolute; top: 0px; left: 0px;" 
           class="open-menu-button" 
