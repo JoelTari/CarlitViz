@@ -12,34 +12,6 @@ const get_graph_bbox = function(graph){
       );
 }
 
-// const get_spatial_density_coefficient = function(graph, graph_bbox){
-//   // compute the mean distance (warning: odometry only)
-//   if (graph.factors.length > 1){
-//     let N=0;
-//     const sum_of_distances = graph.factors
-//       .filter((f)=>f.type==="odometry")// perhaps widen to every pair factor, not just odometry
-//       .map((f) => {
-//         N++;
-//         return sqDist(
-//           graph.marginals.find((v) => v.var_id === f.vars_id[0]),
-//           graph.marginals.find((v) => v.var_id === f.vars_id[1])
-//         );
-//       })
-//       .reduce((acc, v) => acc + v, 0);
-//     // console.log("sum dist")
-//     // console.log(sum_of_distances)
-//     // mean
-//     const mean_dist = sum_of_distances/N;
-//     console.log(`mean distance in this graph : ${mean_dist}`);
-//     // span
-//     const [mx,Mx,my,My] = graph_bbox;
-//     const graph_span = Math.sqrt((Mx-mx)**2+(My-my)**2);
-//     // return m/s
-//     return mean_dist/graph_span;
-//   }
-//   else return 1; // no density value is set to 1
-// }
-
 const mean_distance_neighbours= function(graph){
   // compute the mean distance (warning: odometry only)
   if (graph.factors.length > 1){
@@ -58,7 +30,7 @@ const mean_distance_neighbours= function(graph){
     // console.log(sum_of_distances)
     // mean
     const mean_dist = sum_of_distances/N;
-    console.log(`mean distance in this graph : ${mean_dist}`);
+    // console.log(`mean distance in this graph : ${mean_dist}`);
     // return m/s
     return mean_dist;
   }

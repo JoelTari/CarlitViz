@@ -22,18 +22,18 @@ setMixedFactorGraphData( window.MixedFactorGraphData == null ?
   fallback_MixedFactorGraphData : window.MixedFactorGraphData
 )
 
-setTimeout(()=>setMixedFactorGraphData(fallback1_MixedFactorGraphData),1000);
+// setTimeout(()=>setMixedFactorGraphData(fallback1_MixedFactorGraphData),1000);
 
-// setInterval(
-//   ()=>{
-//     console.log("[Interval tests] new data t1");
-//     setMixedFactorGraphData(fallback1_MixedFactorGraphData)
-//     setTimeout(()=>{
-//       console.log("[Interval tests] new data t2");
-//       setMixedFactorGraphData(fallback_MixedFactorGraphData)
-//     },2500)
-//   }
-//   ,5000
-// ) 
+setInterval(
+  ()=>{
+    console.log("[Interval tests] new data t1");
+    setMixedFactorGraphData(fallback1_MixedFactorGraphData)
+    setTimeout(()=>{
+      console.log("[Interval tests] new data t2");
+      setMixedFactorGraphData(fallback_MixedFactorGraphData)
+    },2500)
+  }
+  ,5000
+) 
 
 render(() => <SlamViz />, document.getElementById('root'));

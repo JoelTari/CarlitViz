@@ -73,17 +73,17 @@ function MixedFactorGraph(){
 
   // data massage
   const processGraphData = createMemo(()=>{
-    console.log("Processing new data:");
+    // console.log("Processing new data:");
     const graph = JSON.parse(JSON.stringify(MixedFactorGraphData()));
-    console.log(graph);
+    // console.log(graph);
     // REFACTOR_SEVERAL_GRAPHS: make it a larges objects of datas (and a Store rather than signal)
     //                          perhaps, it does not need to onMount
     //                          Then dispatch the data to group-graphs components that will render it.
 
     // get the spatial bounding box of this graph
     const [mx, Mx, my, My] = get_graph_bbox(graph);
-    console.log(`Graph Bounding box is 
-      [${mx.toFixed(2)}, ${my.toFixed(2)}, ${Mx.toFixed(2)}, ${My.toFixed(2)}]`);
+    // console.log(`Graph Bounding box is 
+    //   [${mx.toFixed(2)}, ${my.toFixed(2)}, ${Mx.toFixed(2)}, ${My.toFixed(2)}]`);
     // REFACTOR_SEVERAL_GRAPHS: move this paragraph to graph-group
     
     setBoundingBoxOfInterest([mx, Mx, my, My]); // goes to store
@@ -92,27 +92,27 @@ function MixedFactorGraph(){
     // compute the base unit given the mean euclidian distance between connected nodes in
     // the graph
     const canonical_base_unit = mean_distance_neighbours(graph)/10;
-    console.log(`base graph unit set to : ${canonical_base_unit}`);
+    // console.log(`base graph unit set to : ${canonical_base_unit}`);
     // initially the applied base unit is the canonical
     // REFACTOR_SEVERAL_GRAPHS: move this paragraph to graph-group
 
     // massage data
-    console.log("[Data Massage]: start");
+    // console.log("[Data Massage]: start");
     graph.obj_marginals = objectify_marginals(graph.marginals);
     graph.obj_factors = objectify_factors(graph.factors);
     compute_factor_set(graph);
     compute_separator_set(graph);
     estimation_data_massage(graph, canonical_base_unit);
-    console.log("[Data Massage]: done");
-    console.log(graph)
+    // console.log("[Data Massage]: done");
+    // console.log(graph)
     return {graph: graph, unit_base: canonical_base_unit}
     // REFACTOR_SEVERAL_GRAPHS: move this paragraph to graph-group
   });
 
   const appliedUnitGraph = createMemo(()=>{
     const {unit_base} = processGraphData();
-    console.log(`unit base: ${unit_base}`);
-    console.log(`declutter coefficient: ${declutterCoefficient()}`)
+    // console.log(`unit base: ${unit_base}`);
+    // console.log(`declutter coefficient: ${declutterCoefficient()}`)
     return declutterCoefficient()*unit_base;
   });
   // REFACTOR_SEVERAL_GRAPHS: this goes in graph-group but GoI might be needed (or do the GoI condition in the prop)
@@ -190,9 +190,9 @@ function MixedFactorGraph(){
       // first the covariances
       // then the factors (therefore on top of the cov)
       // then the vertices (therefore on top of the factors)
-      console.log("Mounting new data/or updating data due to new applied unit for graph")
+      // console.log("Mounting new data/or updating data due to new applied unit for graph")
       const { graph } = processGraphData();
-      console.log(graph);
+      // console.log(graph);
       if (graph.header.exclude == null || ! graph.header.exclude.includes('covariance'))
       {
         d3selections.graph
