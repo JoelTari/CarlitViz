@@ -75,7 +75,6 @@
           "f33"
         ]
       },
-      { "id": "c6", "group": 1, "content": ["x27"], "factors": ["f34"] },
       {
         "id": "c7",
         "group": 1,
@@ -116,13 +115,6 @@
         "id": "S4",
         "source": "c5",
         "target": "c4",
-        "flops2Target": 5,
-        "flopsFromSource": 5
-      },
-      {
-        "id": "S5",
-        "source": "c6",
-        "target": "c5",
         "flops2Target": 5,
         "flopsFromSource": 5
       },

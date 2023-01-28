@@ -22,6 +22,8 @@ setMixedFactorGraphData( window.MixedFactorGraphData == null ?
   fallback_MixedFactorGraphData : window.MixedFactorGraphData
 )
 
+setTimeout(()=>setMixedFactorGraphData(fallback1_MixedFactorGraphData),1000);
+
 // setInterval(
 //   ()=>{
 //     console.log("[Interval tests] new data t1");

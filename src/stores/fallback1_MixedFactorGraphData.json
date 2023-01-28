@@ -1,5 +1,140 @@
 {
   "header": { "robot_id": "A", "base_unit": 0.15, "seq": 0 },
+  "cliques": {
+    "nodes": [
+      {
+        "id": "c0",
+        "group": 1,
+        "content": ["x0", "x1"],
+        "factors": ["f0", "f1"]
+      },
+      {
+        "id": "c1",
+        "group": 1,
+        "content": ["x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8", "x9", "x10"],
+        "factors": [
+          "f2",
+          "f3",
+          "f4",
+          "f5",
+          "f6",
+          "f7",
+          "f8",
+          "f9",
+          "f10",
+          "f11",
+          "f12",
+          "f13",
+          "f14"
+        ]
+      },
+      { "id": "c2", "group": 1, "content": ["x10", "x11"], "factors": ["f15"] },
+      {
+        "id": "c3",
+        "group": 1,
+        "content": ["x11", "x12", "x13", "x14"],
+        "factors": ["f16", "f17", "f18", "f19"]
+      },
+      {
+        "id": "c4",
+        "group": 1,
+        "content": ["x11", "x15", "x16"],
+        "factors": ["f20"]
+      },
+      {
+        "id": "c5",
+        "group": 1,
+        "content": [
+          "x15",
+          "x16",
+          "x17",
+          "x18",
+          "x19",
+          "x20",
+          "x21",
+          "x22",
+          "x23",
+          "x24",
+          "x25",
+          "x26",
+          "x27"
+        ],
+        "factors": [
+          "f21",
+          "f22",
+          "f23",
+          "f24",
+          "f25",
+          "f26",
+          "f27",
+          "f28",
+          "f29",
+          "f30",
+          "f31",
+          "f32",
+          "f33"
+        ]
+      },
+      { "id": "c6", "group": 1, "content": ["x27"], "factors": ["f34"] },
+      {
+        "id": "c7",
+        "group": 1,
+        "content": ["x10", "x28"],
+        "factors": ["f35", "f36"]
+      }
+    ],
+    "links": [
+      {
+        "id": "S0",
+        "source": "c1",
+        "target": "c0",
+        "flops2Target": 5,
+        "flopsFromSource": 5
+      },
+      {
+        "id": "S1",
+        "source": "c2",
+        "target": "c1",
+        "flops2Target": 5,
+        "flopsFromSource": 5
+      },
+      {
+        "id": "S2",
+        "source": "c3",
+        "target": "c2",
+        "flops2Target": 5,
+        "flopsFromSource": 5
+      },
+      {
+        "id": "S3",
+        "source": "c4",
+        "target": "c2",
+        "flops2Target": 5,
+        "flopsFromSource": 5
+      },
+      {
+        "id": "S4",
+        "source": "c5",
+        "target": "c4",
+        "flops2Target": 5,
+        "flopsFromSource": 5
+      },
+      {
+        "id": "S5",
+        "source": "c6",
+        "target": "c5",
+        "flops2Target": 5,
+        "flopsFromSource": 5
+      },
+      {
+        "id": "S6",
+        "source": "c7",
+        "target": "c2",
+        "flops2Target": 5,
+        "flopsFromSource": 5
+      }
+    ]
+  },
   "marginals": [
     {
       "var_id": "x0",
