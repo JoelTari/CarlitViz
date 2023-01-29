@@ -31,9 +31,9 @@ setInterval(
     setTimeout(()=>{
       console.log("[Interval tests] new data t2");
       setMixedFactorGraphData(fallback0_MixedFactorGraphData)
-    },2500)
+    },5000)
   }
-  ,5000
+  ,10000
 ) 
 
 render(() => <SlamViz />, document.getElementById('root'));
