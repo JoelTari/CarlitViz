@@ -41,7 +41,7 @@ function CliqueTree(){
   //                           Reactive UI                            //
   //------------------------------------------------------------------//
   createEffect(() =>{
-    forces.charge.distanceMax(800).strength(-5000);
+    forces.charge.distanceMax(1800).strength(-8000);
     forces.links.distance(350).strength(1.5);
     forces.centrifuge.strength(1);
     console.log("Reactive CliqueTree: new UI data.")
@@ -171,7 +171,7 @@ function CliqueTree(){
       // -if the node data has already those vx,vy,x,y quadruple (cf recycle step), then it does not
       simulation.nodes(MutableSlamData.nodes);
       simulation.force("link").links(MutableSlamData.links);
-      simulation.restart();
+      simulation.alpha(0.3).restart();
 
       // forces.links = forces.links.ForceLink(links).id((d) => d.id);
         // .force("center", d3.forceCenter(width / 2, height / 2)) // strength default to 1

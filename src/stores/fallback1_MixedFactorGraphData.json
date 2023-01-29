@@ -140,6 +140,12 @@
         "group": 1,
         "content": ["x19","x26","x27"],
         "factors": ["f32","f33"]
+      },
+      {
+        "id": "c24",
+        "group": 1,
+        "content": ["x19","x2609"],
+        "factors": ["f34"]
       }
     ],
     "links": [
@@ -195,9 +201,9 @@
       { "id": "S19", "source": "c18", "target": "c19", "flops2Target": 5, "flopsFromSource": 5 },
       { "id": "S20", "source": "c19", "target": "c20", "flops2Target": 5, "flopsFromSource": 5 },
       { "id": "S21", "source": "c20", "target": "c21", "flops2Target": 5, "flopsFromSource": 5 },
-      { "id": "S22", "source": "c21", "target": "c22", "flops2Target": 5, "flopsFromSource": 5 }
+      { "id": "S22", "source": "c21", "target": "c22", "flops2Target": 5, "flopsFromSource": 5 },
+      { "id": "S23", "source": "c17", "target": "c24", "flops2Target": 5, "flopsFromSource": 5 }
     ]
-
   },
   "marginals": [
     {
@@ -478,7 +484,7 @@
       "mean": {
         "x": 7.128906801080804,
         "y": -0.0218902241811106,
-        "th": -2.5818933769379746
+        "th": -1.5818933769379746
       },
       "covariance": {
         "sigma": [0.2815177024018286, 0.1885795951844347],
@@ -499,10 +505,14 @@
     },
     {
       "var_id": "x25",
-      "mean": { "x": 5, "y": 2, "th": 0.6052725177857163 },
+      "mean": {
+        "x": 7.11384363633772,
+        "y": 1.9587573988237492,
+        "th": 1.5652725177857163
+      },
       "covariance": {
         "sigma": [0.2603132444035424, 0.14224011787192728],
-        "rot": 0.74854395241820004
+        "rot": 0.18854395241820004
       }
     },
     {
@@ -527,6 +537,18 @@
       "covariance": {
         "sigma": [0.30014782057936384, 0.09566475637424561],
         "rot": 0.5876233018403065
+      }
+    },
+    {
+      "var_id": "x2609",
+      "mean": {
+        "x": 9.127228484637786,
+        "y": 4.011788373186656,
+        "th": -3.128541482868936
+      },
+      "covariance": {
+        "sigma": [0.10925128210145556, 0.40368571284848215],
+        "rot": -2.76142867296188
       }
     }
   ],
@@ -564,6 +586,7 @@
     { "factor_id": "f30", "type": "odometry", "vars_id": ["x25", "x26"] },
     { "factor_id": "f31", "type": "odometry", "vars_id": ["x26", "x27"] },
     { "factor_id": "f32", "type": "odometry", "vars_id": ["x19", "x27"] },
+    { "factor_id": "f33", "type": "odometry", "vars_id": ["x19", "x2609"] },
     { "factor_id": "f34", "type": "prior", "vars_id": ["x0"] }
   ]
 }
