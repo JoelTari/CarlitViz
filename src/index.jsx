@@ -22,7 +22,7 @@ setMixedFactorGraphData( window.MixedFactorGraphData == null ?
   fallback_MixedFactorGraphData : window.MixedFactorGraphData
 )
 
-// setTimeout(()=>setMixedFactorGraphData(fallback1_MixedFactorGraphData),1000);
+// setTimeout(()=>setMixedFactorGraphData(fallback1_MixedFactorGraphData),2000);
 
 // setInterval(
 //   ()=>{

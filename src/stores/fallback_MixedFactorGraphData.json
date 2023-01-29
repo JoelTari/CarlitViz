@@ -11,75 +11,141 @@
       {
         "id": "c1",
         "group": 1,
-        "content": ["x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8", "x9", "x10"],
-        "factors": [
-          "f2",
-          "f3",
-          "f4",
-          "f5",
-          "f6",
-          "f7",
-          "f8",
-          "f9",
-          "f10",
-          "f11",
-          "f12",
-          "f13",
-          "f14"
-        ]
+        "content": ["x1", "x2"],
+        "factors": [ "f2"]
       },
-      { "id": "c2", "group": 1, "content": ["x10", "x11"], "factors": ["f15"] },
+      { "id": "c2", "group": 1, "content": ["x2", "x3"], "factors": ["f3"] },
       {
         "id": "c3",
         "group": 1,
-        "content": ["x11", "x12", "x13", "x14"],
-        "factors": ["f16", "f17", "f18", "f19"]
+        "content": ["x3", "x4", "x10"],
+        "factors": ["f4","f12"]
       },
       {
         "id": "c4",
         "group": 1,
-        "content": ["x11", "x15", "x16"],
-        "factors": ["f20"]
+        "content": ["x4", "x5", "x10"],
+        "factors": ["f5"]
       },
       {
         "id": "c5",
         "group": 1,
-        "content": [
-          "x15",
-          "x16",
-          "x17",
-          "x18",
-          "x19",
-          "x20",
-          "x21",
-          "x22",
-          "x23",
-          "x24",
-          "x25",
-          "x26",
-          "x27"
-        ],
-        "factors": [
-          "f21",
-          "f22",
-          "f23",
-          "f24",
-          "f25",
-          "f26",
-          "f27",
-          "f28",
-          "f29",
-          "f30",
-          "f31",
-          "f32",
-          "f33"
-        ]
+        "content": ["x5","x6","x7"],
+        "factors": [ "f6","f7"]
+      },
+      {
+        "id": "c6",
+        "group": 1,
+        "content": ["x5","x7","x8","x14"],
+        "factors": ["f8", "f17"]
       },
       {
         "id": "c7",
         "group": 1,
-        "content": ["x10", "x28"],
-        "factors": ["f35", "f36"]
+        "content": ["x5","x8","x9","x14"],
+        "factors": ["f9", "f17"]
+      },
+      {
+        "id": "c8",
+        "group": 1,
+        "content": ["x5","x9","x10","x14"],
+        "factors": ["f11","f10"]
+      },
+      {
+        "id": "c9",
+        "group": 1,
+        "content": ["x10","x11","x14"],
+        "factors": ["f13"]
+      },
+      {
+        "id": "c10",
+        "group": 1,
+        "content": ["x11","x12","x14"],
+        "factors": ["f14"]
+      },
+      {
+        "id": "c11",
+        "group": 1,
+        "content": ["x12","x13","x14"],
+        "factors": ["f15","f16"]
+      },
+      {
+        "id": "c12",
+        "group": 1,
+        "content": ["x7","x8","x14","x15"],
+        "factors": ["f18","f19"]
+      },
+      {
+        "id": "c13",
+        "group": 1,
+        "content": ["x15","x16"],
+        "factors": ["f20"]
+      },
+      {
+        "id": "c14",
+        "group": 1,
+        "content": ["x16","x17"],
+        "factors": ["f21"]
+      },
+      {
+        "id": "c15",
+        "group": 1,
+        "content": ["x17","x18"],
+        "factors": ["f22"]
+      },
+      {
+        "id": "c16",
+        "group": 1,
+        "content": ["x18","x19"],
+        "factors": ["f23"]
+      },
+      {
+        "id": "c17",
+        "group": 1,
+        "content": ["x19","x20","x26"],
+        "factors": ["f24"]
+      },
+      {
+        "id": "c18",
+        "group": 1,
+        "content": ["x20","x21","x26"],
+        "factors": ["f25"]
+      },
+      {
+        "id": "c19",
+        "group": 1,
+        "content": ["x21","x22","x26"],
+        "factors": ["f26","f31"]
+      },
+      {
+        "id": "c20",
+        "group": 1,
+        "content": ["x22","x23","x26"],
+        "factors": ["f27"]
+      },
+      {
+        "id": "c21",
+        "group": 1,
+        "content": ["x23","x24","x26"],
+        "factors": ["f28"]
+      },
+      {
+        "id": "c22",
+        "group": 1,
+        "content": ["x24","x25","x26"],
+        "factors": ["f29","f30"]
+      },
+      {
+        "id": "c23",
+        "group": 1,
+        "content": ["x19","x26","x27"],
+        "factors": ["f32","f33"]
+      },
+      {
+        "id": "c24",
+        "group": 1,
+        "content": ["x19","x2609"],
+        "factors": ["f34"]
       }
     ],
     "links": [
@@ -107,24 +173,36 @@
       {
         "id": "S3",
         "source": "c4",
-        "target": "c2",
+        "target": "c3",
         "flops2Target": 5,
         "flopsFromSource": 5
       },
       {
         "id": "S4",
-        "source": "c5",
+        "source": "c8",
         "target": "c4",
         "flops2Target": 5,
         "flopsFromSource": 5
       },
-      {
-        "id": "S6",
-        "source": "c7",
-        "target": "c2",
-        "flops2Target": 5,
-        "flopsFromSource": 5
-      }
+      { "id": "S5", "source": "c6", "target": "c8", "flops2Target": 5, "flopsFromSource": 5 },
+      { "id": "S6", "source": "c7", "target": "c8", "flops2Target": 5, "flopsFromSource": 5 },
+      { "id": "S7", "source": "c5", "target": "c6", "flops2Target": 5, "flopsFromSource": 5 },
+      { "id": "S8", "source": "c8", "target": "c9", "flops2Target": 5, "flopsFromSource": 5 },
+      { "id": "S9", "source": "c9", "target": "c10", "flops2Target": 5, "flopsFromSource": 5 },
+      { "id": "S10", "source": "c11", "target": "c10", "flops2Target": 5, "flopsFromSource": 5 },
+      { "id": "S11", "source": "c6", "target": "c12", "flops2Target": 5, "flopsFromSource": 5 },
+      { "id": "S12", "source": "c13", "target": "c12", "flops2Target": 5, "flopsFromSource": 5 },
+      { "id": "S13", "source": "c13", "target": "c14", "flops2Target": 5, "flopsFromSource": 5 },
+      { "id": "S14", "source": "c14", "target": "c15", "flops2Target": 5, "flopsFromSource": 5 },
+      { "id": "S15", "source": "c15", "target": "c16", "flops2Target": 5, "flopsFromSource": 5 },
+      { "id": "S16", "source": "c16", "target": "c17", "flops2Target": 5, "flopsFromSource": 5 },
+      { "id": "S17", "source": "c17", "target": "c23", "flops2Target": 5, "flopsFromSource": 5 },
+      { "id": "S18", "source": "c17", "target": "c18", "flops2Target": 5, "flopsFromSource": 5 },
+      { "id": "S19", "source": "c18", "target": "c19", "flops2Target": 5, "flopsFromSource": 5 },
+      { "id": "S20", "source": "c19", "target": "c20", "flops2Target": 5, "flopsFromSource": 5 },
+      { "id": "S21", "source": "c20", "target": "c21", "flops2Target": 5, "flopsFromSource": 5 },
+      { "id": "S22", "source": "c21", "target": "c22", "flops2Target": 5, "flopsFromSource": 5 },
+      { "id": "S23", "source": "c17", "target": "c24", "flops2Target": 5, "flopsFromSource": 5 }
     ]
   },
   "marginals": [
