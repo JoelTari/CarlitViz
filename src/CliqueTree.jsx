@@ -178,6 +178,7 @@ function CliqueTree(){
       const old = new Map(
         d3selections.cliques.selectAll(".gclique").data().map(d => [d.id, d])
       );
+      // TODO: make the new node (clique) spawn from its neighbour
       MutableSlamData.nodes = MutableSlamData.nodes.map(d => Object.assign(old.get(d.id) || {}, d));
       MutableSlamData.links = MutableSlamData.links.map(d => Object.assign({}, d));
 
