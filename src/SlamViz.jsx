@@ -23,6 +23,21 @@ const MixedFactorGraph = lazy(()=> import("./MixedFactorGraph"));
 const CliqueTree = lazy(()=> import("./CliqueTree"));
 import { sideMenuDisplayed , setSideMenuDisplayed } from "./stores/SideMenuDisplay";
 
+function FactorAndClique(){
+  return (
+      <div style="display: grid; grid-template-columns: 1fr 1fr;
+                    grid-template-rows: 100vh;
+                    grid-template-areas: 'fg ct';">
+        <div style="grid-area: fg; border-right: 3px solid black;">
+          <MixedFactorGraph />
+        </div>
+        <div style="grid-area: ct;border-left: 3px solid black;">
+          <CliqueTree/>
+        </div>
+      </div>
+  )
+}
+
 function SlamViz(){
 
   const open = ()=>{
@@ -42,6 +57,7 @@ function SlamViz(){
             <Route path="/" component={MixedFactorGraph}/>
             <Route path="/factor-graph" component={MixedFactorGraph}/>
             <Route path="/clique-tree" component={CliqueTree}/>
+            <Route path="/factor-and-clique" component={FactorAndClique}/>
           </Routes>
         </Router>
         <button 

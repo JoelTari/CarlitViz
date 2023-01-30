@@ -48,7 +48,7 @@ function SlamVizSideMenu(){
           <button onClick={close} class="close-menu-button">Close &times;</button>
           <a href="/factor-graph" class="factor-graph-button">Factor Graph</a>
           <a href="/clique-tree" class="clique-tree-button">Clique Tree</a>
-          <a href="/matrices" class="matrices-button">Matrices</a>
+          <a href="/factor-and-clique" class="matrices-button">Both</a>
         </div>
       </div>
     </>
