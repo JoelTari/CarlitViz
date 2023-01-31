@@ -15,7 +15,8 @@ svg.clique-tree-graph{
   --rect_stroke: black;
   --rect_fill: #eee;
   --line_stroke: #b2b3bd; 
-  --rip_path: burlywood;
+  /* --rip_path: hsl(123deg 14% 32%); */
+  --rip_path: black;
   --clique_hover: steelblue;
   --hover_upscale: 1.1;
   --clique_calibrated: #d4ebc1;
@@ -49,8 +50,13 @@ svg.clique-tree-graph{
 
 .clique-tree-graph .gseparator rect.readable_sepset{
   fill: var(--bg);
-  fill-opacity: 50%;
+  fill-opacity: 75%;
 }
+
+/* .clique-tree-graph .gseparator rect.readable_sepset{ */
+/*   fill: var(--bg); */
+/*   fill-opacity: 50%; */
+/* } */
 
 
 /*------------------------------------------------------------------*/
@@ -61,6 +67,12 @@ svg.clique-tree-graph{
   stroke: var(--rect_stroke);
   cursor: pointer;
 }
+
+/* if a clique is the root */
+.clique-tree-graph .gclique.root rect{
+  fill: darksalmon;
+}
+
 /* hover, but not necesseraly on a var_id */
 /* makes more sense once I have clique_id and factors also displayed in */
 .clique-tree-graph .gclique:has(*:hover) rect

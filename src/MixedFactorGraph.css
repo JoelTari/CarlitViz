@@ -12,7 +12,7 @@
 * See the Licence for the specific language governing permissions and limitations under the Licence.
 */
 svg.mixed-factor-graph{
-  --rect_stroke: black;
+  --fill-covariance: #ece281;
   --rect_fill: #eee;
   --line_stroke: #b2b3bd; 
   --bg:  #fff;
@@ -39,7 +39,7 @@ svg.mixed-factor-graph factors-group circle{
 }
 
 svg.mixed-factor-graph .covariances-group ellipse.highlight{
-  fill: #ece281;
+  fill: --fill-covariance;
 }
 
 svg.mixed-factor-graph .factors-group .factor.link_highlight circle{

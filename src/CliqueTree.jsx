@@ -166,11 +166,11 @@ function CliqueTree(){
     //------------------------------------------------------------------//
     createEffect(() => {
 
-      simulation.stop()
+      // simulation.stop()
       const MutableSlamData = JSON.parse(JSON.stringify(CopiedSlamData()));
 
-      console.log("Fresh SLAM data (without simulation)");
-      console.log(MutableSlamData.nodes)
+      // console.log("Fresh SLAM data (without simulation)");
+      // console.log(MutableSlamData.nodes)
 
       // source : observablehq.com/@d3/modifying-a-force-directed-graph
       // Make a shallow copy to protect against mutation, while
@@ -189,7 +189,7 @@ function CliqueTree(){
       // -if the node data has already those vx,vy,x,y quadruple (cf recycle step), then it does not
       simulation.nodes(MutableSlamData.nodes);
       simulation.force("link").links(MutableSlamData.links);
-      simulation.alpha(0.3).restart();
+      let restart_simulation = false;
 
       // forces.links = forces.links.ForceLink(links).id((d) => d.id);
         // .force("center", d3.forceCenter(width / 2, height / 2)) // strength default to 1
@@ -200,6 +200,7 @@ function CliqueTree(){
         .data(MutableSlamData.links, (d)=> `${d.source.id}\t${d.target.id}`)
         .join(
           (enter) => {
+            restart_simulation = enter.data().length > 0 ? true : false;
             return enter.append("g")
             .classed("gseparator", true)
             .attr("id", (d) => d.id)
@@ -405,12 +406,11 @@ function CliqueTree(){
         )
         .call(drag(simulation));
 
-      // console.log("slam data AFTER merge with simu");
-      // console.log(MutableSlamData.nodes[0])
+      // restart the simulation (if condition met)
+      if (restart_simulation){
+        simulation.alpha(0.8).restart();
+      }
 
-      // console.log(".")
-      // simulation.on("tick", ticked);
-      // console.log(CopiedSlamData())
     })
   })
 
