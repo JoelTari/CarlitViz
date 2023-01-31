@@ -178,7 +178,7 @@
         "flops2Target": 5,
         "flopsFromSource": 5
       },
-      { "id": "S5", "source": "c6", "target": "c8", "flops2Target": 5, "flopsFromSource": 5 },
+      { "id": "S5", "source": "c6", "target": "c7", "flops2Target": 5, "flopsFromSource": 5 },
       { "id": "S6", "source": "c7", "target": "c8", "flops2Target": 5, "flopsFromSource": 5 },
       { "id": "S7", "source": "c5", "target": "c6", "flops2Target": 5, "flopsFromSource": 5 },
       { "id": "S8", "source": "c8", "target": "c9", "flops2Target": 5, "flopsFromSource": 5 },
