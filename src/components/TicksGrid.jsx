@@ -23,7 +23,7 @@ import { createEffect, onMount } from "solid-js"
 function TicksGrid(props){
 
   onMount(()=>{
-    const elGrid = d3.select("svg#MixedFactorGraph g.TicksGrid");
+    const elGrid = d3.select(`svg.mixed-factor-graph#${props.svgId} g.TicksGrid`);
 
     createEffect(()=>{
       const sc_x = props.adjustedScales.x;
@@ -80,11 +80,11 @@ function TicksGrid(props){
   // will inherit
   return (
     <>
-    <g class="TicksGrid"
-      stroke="grey"
-      stroke-width="1px"
-      stroke-opacity="25%">
-    </g>
+      <g class="TicksGrid"
+        stroke="grey"
+        stroke-width="1px"
+        stroke-opacity={props.gridOpacity}>
+      </g>
     </>
   )
 }

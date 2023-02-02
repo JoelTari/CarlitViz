@@ -22,11 +22,13 @@ import { createEffect, onMount } from "solid-js"
 //      also UI (show or not show etc..)
 function AxesWithScales(props){
 
+
   onMount(()=>{
-    const elTop = d3.select(".Xaxis-top");
-    const elBottom = d3.select(".Xaxis-bottom");
-    const elLeft = d3.select(".Yaxis-left");
-    const elRight = d3.select(".Yaxis-right");
+    // d3 selections
+    const elTop = d3.select(`svg.mixed-factor-graph#${props.svgId} .Xaxis-top`);
+    const elBottom = d3.select(`svg.mixed-factor-graph#${props.svgId} .Xaxis-bottom`);
+    const elLeft = d3.select(`svg.mixed-factor-graph#${props.svgId} .Yaxis-left`);
+    const elRight = d3.select(`svg.mixed-factor-graph#${props.svgId} .Yaxis-right`);
 
     createEffect(()=>{
       const sc_x = props.adjustedScales.x;

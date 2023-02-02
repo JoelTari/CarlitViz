@@ -54,8 +54,8 @@ function SlamViz(){
       <div class="content" style={{width:"100%",height:"100%", position:"relative"}}>
         <Router>
           <Routes>
-            <Route path="/" component={MixedFactorGraph}/>
-            <Route path="/factor-graph" component={MixedFactorGraph}/>
+            <Route path="/" element={<MixedFactorGraph id="fg-0"/>}/>
+            <Route path="/factor-graph" element={<MixedFactorGraph id="fg-0"/>}/>
             <Route path="/clique-tree" component={CliqueTree}/>
             <Route path="/factor-and-clique" component={FactorAndClique}/>
           </Routes>

@@ -38,7 +38,7 @@ import {  objectify_marginals, objectify_factors, compute_separator_set, compute
 //------------------------------------------------------------------//
 //                            component                             //
 //------------------------------------------------------------------//
-function MixedFactorGraph(){
+function MixedFactorGraph(props){
   // define & initialize some signals
   const initSvgSize = { w: 1000, h: 1000 };
   const [ svgSize, setSvgSize ] = createSignal(initSvgSize);
@@ -209,7 +209,7 @@ function MixedFactorGraph(){
       // then the vertices (therefore on top of the factors)
       // console.log("Mounting new data/or updating data due to new applied unit for graph")
       const { graph } = processGraphData();
-      const duration_entry = 2000;
+      const duration_entry = 2000; // TODO: this is a UI option (should be untracked)
       const duration_update = 4000;
       // console.log(graph);
       if (graph.header.exclude == null || ! graph.header.exclude.includes('covariance'))
@@ -247,9 +247,16 @@ function MixedFactorGraph(){
   // style="transform: matrix(1, 0, 0, -1, 0, 0);" equiv to scaleY(-1)
 
   // REFACTOR_SEVERAL_GRAPHS: solidjs control flow depending on data + calls to graph group components
+  // FIX: add an ID to the svg, in case there are several in the UI
   return (
-  <svg class="mixed-factor-graph">
-    <TicksGrid adjustedScales={adjustedScales()} svgSize={svgSize()} invertText={true}/>
+  <svg class="mixed-factor-graph" id={props.id}>
+    <TicksGrid 
+      adjustedScales={adjustedScales()} 
+      svgId={props.id}
+      svgSize={svgSize()} 
+      invertText={true}
+      gridOpacity={"20%"}
+    />
     <g class="gMixedFactorGraph">
       <g class="covariances-group"
         style="display: inherit"
@@ -271,7 +278,10 @@ function MixedFactorGraph(){
         >
       </g>
     </g>
-    <AxesWithScales adjustedScales={adjustedScales()} svgSize={svgSize()}/>
+    <AxesWithScales 
+      svgId={props.id}
+      adjustedScales={adjustedScales()} 
+      svgSize={svgSize()}/>
   </svg>
   )
 }
