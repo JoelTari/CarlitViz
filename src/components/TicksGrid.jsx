@@ -82,7 +82,7 @@ function TicksGrid(props){
     <>
       <g class="TicksGrid"
         stroke="grey"
-        stroke-width="1px"
+        stroke-width="2px"
         stroke-opacity={props.gridOpacity}>
       </g>
     </>
