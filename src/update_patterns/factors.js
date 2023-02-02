@@ -22,7 +22,7 @@ const join_enter_factor = function(radius,elDivTooltip, time_transition_entry){
       // Imho best way to avoid to define those transitions everywhere is to
     // transform those functions in classes of which the transitions are members
     const t_factor_entry = d3.transition().duration(time_transition_entry);
-    const t_graph_motion = d3.transition().duration(1000).ease(d3.easeCubicInOut);
+    const t_graph_motion = d3.transition().duration(time_transition_entry).ease(d3.easeCubicInOut);
 
     return enter
       .append("g")
@@ -80,12 +80,12 @@ const join_enter_factor = function(radius,elDivTooltip, time_transition_entry){
   }
 }
 
-const join_update_factor = function(radius){
+const join_update_factor = function(radius,time_transition_update){
   return function(update){
     // TODO:
     // Imho best way to avoid to define those transitions everywhere is to
     // transform those functions in classes of which the transitions are members
-    const t_graph_motion = d3.transition().duration(600).ease(d3.easeCubicInOut);
+    const t_graph_motion = d3.transition().duration(time_transition_update).ease(d3.easeCubicInOut);
 
     update.each(function (d) {
       d3.select(this)
@@ -123,7 +123,7 @@ const join_update_factor = function(radius){
 
   }
 }
-const join_exit_factor = function(exit){
+const join_exit_factor = function(exit,time_transition_exit){
   return (
     exit
       .call(function (ex) {
@@ -131,7 +131,7 @@ const join_exit_factor = function(exit){
         ex.select("circle").style("fill", "brown");
       })
       .transition("exit_factor") // TODO: Define outside
-      .duration(1000)
+      .duration(time_transition_exit)
       .style("opacity", 0)
       .remove()
   );

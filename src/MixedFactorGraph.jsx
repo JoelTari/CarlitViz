@@ -209,6 +209,8 @@ function MixedFactorGraph(){
       // then the vertices (therefore on top of the factors)
       // console.log("Mounting new data/or updating data due to new applied unit for graph")
       const { graph } = processGraphData();
+      const duration_entry = 2000;
+      const duration_update = 4000;
       // console.log(graph);
       if (graph.header.exclude == null || ! graph.header.exclude.includes('covariance'))
       {
@@ -216,14 +218,14 @@ function MixedFactorGraph(){
           .select("g.covariances-group")
           .selectAll(".covariance")
           .data(graph.marginals, (d)=> d.var_id)
-          .join(join_enter_covariance, join_update_covariance); // TODO: exit covariance
+          .join(join_enter_covariance, join_update_covariance(duration_update)); // TODO: exit covariance
       }
       else{
         d3selections.graph
           .select("g.covariances-group")
           .selectAll(".covariance")
           .data([], (d)=> d.var_id)
-          .join(join_enter_covariance, join_update_covariance); // TODO: exit covariance
+          .join(join_enter_covariance, join_update_covariance(duration_update)); // TODO: exit covariance
       }
       d3selections.graph
         .select("g.factors-group")
@@ -231,12 +233,12 @@ function MixedFactorGraph(){
         .data(graph.factors, (d) => d.factor_id)
       // quirk if the appliedUnitGraph change (ie due to UI input to declutter), the proper
       // way to resize existing node is to do it through the update selection function
-        .join(join_enter_factor(0.3*appliedUnitGraph(),d3selections.tooltip,1000), join_update_factor(0.3*appliedUnitGraph()) /* join_exit_factor */);
+        .join(join_enter_factor(0.3*appliedUnitGraph(),d3selections.tooltip,duration_entry), join_update_factor(0.3*appliedUnitGraph(),duration_update) /* join_exit_factor */);
       d3selections.graph
         .select("g.vertices-group")
         .selectAll(".vertex")
         .data(graph.marginals, (d)=> d.var_id)
-        .join(join_enter_vertex(appliedUnitGraph(),d3selections.tooltip,1000),join_update_vertex(appliedUnitGraph()));
+        .join(join_enter_vertex(appliedUnitGraph(),d3selections.tooltip,duration_entry),join_update_vertex(appliedUnitGraph(),duration_update));
       // REFACTOR_SEVERAL_GRAPHS: move this paragraph to graph-group
     });
 

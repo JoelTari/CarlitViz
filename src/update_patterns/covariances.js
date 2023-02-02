@@ -35,18 +35,20 @@ function join_enter_covariance(enter) {
       .attr("ry", (d) => d.covariance.sigma[1] * Math.sqrt(9.21))
 }
 
-function join_update_covariance(update) {
-  const t_graph_motion = d3.transition().duration(600).ease(d3.easeCubicInOut);
-  update
-    .transition(t_graph_motion)
-    .attr(
-      "transform",
-      (d) =>
-        `translate(${d.mean.x},${d.mean.y}) rotate(${
-          (d.covariance.rot * 180) / Math.PI
-        })`
-    )
-    .attr("rx", (d) => d.covariance.sigma[0] * Math.sqrt(9.21))
-    .attr("ry", (d) => d.covariance.sigma[1] * Math.sqrt(9.21));
+const join_update_covariance = function(duration_transition_update){
+  return function(update) {
+    const t_graph_motion = d3.transition().duration(duration_transition_update).ease(d3.easeCubicInOut);
+    update
+      .transition(t_graph_motion)
+      .attr(
+        "transform",
+        (d) =>
+          `translate(${d.mean.x},${d.mean.y}) rotate(${
+            (d.covariance.rot * 180) / Math.PI
+          })`
+      )
+      .attr("rx", (d) => d.covariance.sigma[0] * Math.sqrt(9.21))
+      .attr("ry", (d) => d.covariance.sigma[1] * Math.sqrt(9.21));
+  }
 }
 
