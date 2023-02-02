@@ -96,7 +96,7 @@ const join_enter_vertex = function(radius,elDivTooltip,time_transition_entry){
 
 const join_update_vertex = function(radius,time_transition_update){
   return function(update){
-    const t_graph_motion = d3.transition().duration(time_transition_update).ease(d3.easeCubicInOut);
+    const t_graph_motion = d3.transition().duration(time_transition_update);
     update
       .each(function(dd,i,n){
         // get current transform, 

@@ -12,6 +12,7 @@
 * See the Licence for the specific language governing permissions and limitations under the Licence.
 */
 svg.mixed-factor-graph{
+  /* TODO: fix variable definitions */
   --fill-covariance: #ece281;
   --rect_fill: #eee;
   --line_stroke: #b2b3bd; 
@@ -21,7 +22,6 @@ svg.mixed-factor-graph{
   height: 100%;
   background-color: var(--bg);
 }
-
 
 svg.mixed-factor-graph{
   transform: scaleY(-1);
@@ -39,7 +39,7 @@ svg.mixed-factor-graph factors-group circle{
 }
 
 svg.mixed-factor-graph .covariances-group ellipse.highlight{
-  fill: --fill-covariance;
+  fill: #f3d189;
 }
 
 svg.mixed-factor-graph .factors-group .factor.link_highlight circle{

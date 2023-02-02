@@ -1,5 +1,5 @@
 {
-  "header": { "robot_id": "A", "seq": 0, "exclude": ["covariance"] },
+  "header": { "robot_id": "A", "seq": 0},
   "cliques": {
     "nodes": [
       {

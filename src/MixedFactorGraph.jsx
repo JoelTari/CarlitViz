@@ -220,13 +220,13 @@ function MixedFactorGraph(props){
           .data(graph.marginals, (d)=> d.var_id)
           .join(join_enter_covariance, join_update_covariance(duration_update)); // TODO: exit covariance
       }
-      else{
-        d3selections.graph
-          .select("g.covariances-group")
-          .selectAll(".covariance")
-          .data([], (d)=> d.var_id)
-          .join(join_enter_covariance, join_update_covariance(duration_update)); // TODO: exit covariance
-      }
+      // else{
+      //   d3selections.graph
+      //     .select("g.covariances-group")
+      //     .selectAll(".covariance")
+      //     .data([], (d)=> d.var_id)
+      //     .join(join_enter_covariance, join_update_covariance(duration_update)); // TODO: exit covariance
+      // }
       d3selections.graph
         .select("g.factors-group")
         .selectAll(".factor")
