@@ -209,9 +209,11 @@ function MixedFactorGraph(props){
       // then the vertices (therefore on top of the factors)
       // console.log("Mounting new data/or updating data due to new applied unit for graph")
       const { graph } = processGraphData();
-      const duration_entry = 2000; // TODO: this is a UI option (should be untracked)
+      const duration_entry = 2000;  // TODO: this is a UI option (should be untracked
+                                    // so as to not trigger reactivity)
       const duration_update = 4000;
-      // console.log(graph);
+      // TODO: replace this covariance condition by UI option (untracked as well)
+      //       going forward, the data header will no longer have an 'exclude' field
       if (graph.header.exclude == null || ! graph.header.exclude.includes('covariance'))
       {
         d3selections.graph
@@ -220,13 +222,6 @@ function MixedFactorGraph(props){
           .data(graph.marginals, (d)=> d.var_id)
           .join(join_enter_covariance, join_update_covariance(duration_update)); // TODO: exit covariance
       }
-      // else{
-      //   d3selections.graph
-      //     .select("g.covariances-group")
-      //     .selectAll(".covariance")
-      //     .data([], (d)=> d.var_id)
-      //     .join(join_enter_covariance, join_update_covariance(duration_update)); // TODO: exit covariance
-      // }
       d3selections.graph
         .select("g.factors-group")
         .selectAll(".factor")
@@ -255,7 +250,7 @@ function MixedFactorGraph(props){
       svgId={props.id}
       svgSize={svgSize()} 
       invertText={true}
-      gridOpacity={"20%"}
+      gridOpacity={"50%"}
     />
     <g class="gMixedFactorGraph">
       <g class="covariances-group"
