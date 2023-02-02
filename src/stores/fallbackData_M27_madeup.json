@@ -37,7 +37,7 @@
         "id": "c6",
         "group": 1,
         "content": ["x5","x7","x8","x14"],
-        "factors": ["f8", "f17"]
+        "factors": ["f8"]
       },
       {
         "id": "c7",
