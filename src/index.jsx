@@ -28,34 +28,39 @@ import './style.css'
 import { setMixedFactorGraphData } from './stores/MixedFactorGraphData'
 // import the component
 import SlamViz from './SlamViz';
-// import fallback data
-import * as fallback0_unsolved_MixedFactorGraphData from "./stores/factor-graph_cutx27M3500_initial_guess.json"
-import * as fallback0_MixedFactorGraphData from "./stores/fallback0_MixedFactorGraphData.json"
-import * as fallback1_MixedFactorGraphData from "./stores/fallback1_MixedFactorGraphData.json"
-import * as fallback2_MixedFactorGraphData from "./stores/fallback2_M3500_solved_MixedFactorGraphData.json"
+// import fallback data: M27 is the dataset of the first 27 steps of M3500
+import * as fallbackData_M27_unsolved from "./stores/fallbackData_M27_unsolved.json"
+import * as fallbackData_M27_solved from "./stores/fallbackData_M27_solved.json"
+import * as fallbackData_M27_madeup from "./stores/fallbackData_M27_madeup.json"
+import * as fallbackData_M3500_unsolved from "./stores/fallbackData_M3500_unsolved.json"
+import * as fallbackData_M3500_solved from "./stores/fallbackData_M3500_solved.json"
 
 
 // set store: if no data, use fallback data
 setMixedFactorGraphData( window.MixedFactorGraphData == null ?
-  fallback0_unsolved_MixedFactorGraphData : window.MixedFactorGraphData
+  fallbackData_M27_unsolved : window.MixedFactorGraphData
 )
 
-// setTimeout(()=>setMixedFactorGraphData(fallback0_MixedFactorGraphData),3000);
+setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_unsolved),3000);
+setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_solved),8000);
+setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_unsolved),13000);
+setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_solved),18000);
+setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_madeup),23000);
 
-setInterval(
-  ()=>{
-    console.log("[Interval tests] new data t1");
-    setMixedFactorGraphData(fallback0_unsolved_MixedFactorGraphData)
-    setTimeout(()=>{
-      console.log("[Interval tests] new data t2");
-      setMixedFactorGraphData(fallback0_MixedFactorGraphData)
-    },5000)
-    // setTimeout(()=>{
-    //   console.log("[Interval tests] new data t3");
-    //   setMixedFactorGraphData(fallback1_MixedFactorGraphData)
-    // },5000)
-  }
-  ,7500
-) 
+// setInterval(
+//   ()=>{
+//     console.log("[Interval tests] new data : M27 unsolved");
+//     setMixedFactorGraphData(fallbackData_M27_unsolved)
+//     setTimeout(()=>{
+//       console.log("[Interval tests] new data : M27 solved");
+//       setMixedFactorGraphData(fallbackData_M27_solved)
+//     },3500)
+//     // setTimeout(()=>{
+//     //   console.log("[Interval tests] new data t3");
+//     //   setMixedFactorGraphData(fallback1_MixedFactorGraphData)
+//     // },5000)
+//   }
+//   ,7000
+// ) 
 
 render(() => <SlamViz />, document.getElementById('root'));
