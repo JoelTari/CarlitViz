@@ -39,12 +39,6 @@ const join_enter_factor = function(radius,elDivTooltip, time_transition_entry){
               d.vars.forEach((v) =>
                 g
                   .append("line")
-                  // .attr("x1", d.dot_factor_position.x)
-                  // .attr("y1", d.dot_factor_position.y)
-                  // .attr("x2", 0.2 * v.mean.x + 0.8 * d.dot_factor_position.x)
-                  // .attr("y2", 0.2 * v.mean.y + 0.8 * d.dot_factor_position.y)
-                  // .classed(v.var_id, true)
-                  // .transition(t_graph_motion)
                   .attr("x1", d.dot_factor_position.x)
                   .attr("y1", d.dot_factor_position.y)
                   .attr("x2", v.mean.x)
@@ -109,10 +103,10 @@ const join_update_factor = function(radius,time_transition_update){
               .attr("y2", d.dot_factor_position.y);
           }
         });
-     // update radius factor dot
-     d3.select(this)
-      .select("circle")
-      .attr("r",radius);
+      // update radius factor dot
+      d3.select(this)
+       .select("circle")
+       .attr("r",radius);
     });
     // the little factor circle (to visually differentiate from with MRF)
     update

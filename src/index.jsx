@@ -38,14 +38,17 @@ import * as fallbackData_M3500_solved from "./stores/fallbackData_M3500_solved.j
 
 // set store: if no data, use fallback data
 setMixedFactorGraphData( window.MixedFactorGraphData == null ?
-  fallbackData_M27_unsolved : window.MixedFactorGraphData
+  // fallbackData_M27_unsolved : window.MixedFactorGraphData
+  fallbackData_M3500_unsolved : window.MixedFactorGraphData
 )
 
-setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_unsolved),3000);
-setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_solved),8000);
-setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_unsolved),13000);
-setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_solved),18000);
-setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_madeup),23000);
+setTimeout(()=>setMixedFactorGraphData(fallbackData_M3500_solved),5000);
+
+// setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_unsolved),3000);
+// setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_solved),8000);
+// setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_unsolved),13000);
+// setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_solved),18000);
+// setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_madeup),23000);
 
 // setInterval(
 //   ()=>{

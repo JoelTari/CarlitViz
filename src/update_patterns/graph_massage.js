@@ -107,7 +107,7 @@ const compute_separator_set = function({marginals, obj_marginals, obj_factors}){
 // In-place method
 // The graph json is supposed to have been augmented by obj_marginals, obj_factors & factor_set.
 // This method comes up with spatial position for the factors, which is easy for a factor connecting
-// 2 or more keys, but less trivial for a unifactor
+// 2 or more keys (just take the barycenter), but less trivial for a unifactor
 // Perf: costly
 const estimation_data_massage = function({factors: d_factors, marginals: d_marginals, obj_factors: d_obj_factors, obj_marginals: d_obj_marginals}, base_unit){
   // Data massage before integration: some data on the vertices array are needed
