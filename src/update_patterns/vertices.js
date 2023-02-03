@@ -17,13 +17,29 @@
 
 import * as d3 from "d3"
 
-const path_pose = function(radius){
+const path_pose_old = function(radius){
   const basis=1.1; //.96
   const triangleLen = 1.9;
   // Viz X=horizontal and Y=vertical
   // triangle is dominant in x-axis
   // Path goes from top to point to bot
   return `M ${-radius},${basis*radius} L ${triangleLen*radius} 0 L ${-radius},${-basis*radius} Z`;
+}
+
+const path_pose = function(radius){
+  const basis=3; // if radius is one, base of triangle is 3 (or 1.5*diameter)
+  const tLen = 3.8;
+  // Viz X=horizontal and Y=vertical
+  // triangle is dominant in x-axis
+  // Path goes from hyphen-mark to front of the robot (in its orientation)
+  // then robot left side, then right side
+  // and finally loop back in front of the robot
+  return `M ${(tLen-2)*radius},0
+          L ${(tLen-1)*radius},0
+          L ${-radius},${basis/2*radius} 
+          L ${-radius},${-basis/2*radius} 
+          L ${(tLen-1)*radius},0
+          Z`;
 }
 
 const join_enter_vertex = function(radius,elDivTooltip,time_transition_entry){
@@ -44,7 +60,7 @@ const join_enter_vertex = function(radius,elDivTooltip,time_transition_entry){
           "translate(" + d.mean.x + "," + d.mean.y + ")")
           .call(vertex_hover(elDivTooltip));
         // circle or pose ? if it has an orientation -> pose
-        if (d.mean.th!=null){
+        if (d.mean.th!=null){ // -> triangle (svg path)
           d3.select(this)
             .append("path")
             .classed("vertex-shape",true)
