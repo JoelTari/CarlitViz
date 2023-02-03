@@ -209,6 +209,7 @@ function MixedFactorGraph(props){
       // then the vertices (therefore on top of the factors)
       // console.log("Mounting new data/or updating data due to new applied unit for graph")
       const { graph } = processGraphData();
+      console.log(graph)
       const duration_entry = 2000;  // TODO: this is a UI option (should be untracked
                                     // so as to not trigger reactivity)
       const duration_update = 4000;
@@ -228,7 +229,7 @@ function MixedFactorGraph(props){
         .data(graph.factors, (d) => d.factor_id)
       // quirk if the appliedUnitGraph change (ie due to UI input to declutter), the proper
       // way to resize existing node is to do it through the update selection function
-        .join(join_enter_factor(0.3*appliedUnitGraph(),d3selections.tooltip,duration_entry), join_update_factor(0.3*appliedUnitGraph(),duration_update) /* join_exit_factor */);
+        .join(join_enter_factor(0.6*appliedUnitGraph(),d3selections.tooltip,duration_entry), join_update_factor(0.6*appliedUnitGraph(),duration_update) /* join_exit_factor */);
       d3selections.graph
         .select("g.vertices-group")
         .selectAll(".vertex")
@@ -261,7 +262,7 @@ function MixedFactorGraph(props){
       </g>
       <g class="factors-group"
         stroke="grey"
-        stroke-width={0.3*appliedUnitGraph()}
+        stroke-width={0.5*appliedUnitGraph()}
         fill="#333">
       </g>
       <g class="vertices-group"
