@@ -26,8 +26,8 @@ const bounding_box_centering_view_transform= function(bounding_box, w_svg, h_svg
   const xc = (Mx+mx)/2;
   const yc = (My+my)/2;
   // margins
-  const xmargin = (Mx-mx)*.2; // 20% margin on top & bot (both)
-  const ymargin = (My-my)*.2; // 20% margin on L&R (both)
+  const xmargin = (Mx-mx)*.05; // 5% margin on top & bot (both)
+  const ymargin = (My-my)*.05; // 5% margin on L&R (both)
   const [x,X,y,Y] = [mx-xmargin,Mx+xmargin,my-ymargin,My+ymargin];
   // scale
   const ratio_svg = w_svg/h_svg;
