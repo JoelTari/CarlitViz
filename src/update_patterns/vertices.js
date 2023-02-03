@@ -32,6 +32,7 @@ const join_enter_vertex = function(radius,elDivTooltip,time_transition_entry){
     // Imho best way to avoid to define those transitions everywhere is to
     // transform those functions in classes of which the transitions are members
     const t_vertex_entry = d3.transition().duration(time_transition_entry);
+    console.log(radius)
 
     return enter
       .append("g")
@@ -51,8 +52,8 @@ const join_enter_vertex = function(radius,elDivTooltip,time_transition_entry){
             .style("opacity", "40%")
             .style("stroke-width", 0.12*radius*2)
             .style("fill","green")
-            .attr("r",10*radius)
-            .attr("d",path_pose(6*radius))
+            .attr("r",2*radius)
+            .attr("d",path_pose(2*radius))
             .transition(t_vertex_entry)
             .attr("d",path_pose(radius))
             .attr("r",radius)
@@ -64,7 +65,7 @@ const join_enter_vertex = function(radius,elDivTooltip,time_transition_entry){
           d3.select(this)
             .append("circle")
             .classed("vertex-shape",true)
-            .attr("r",6 * radius) 
+            .attr("r",2 * radius) 
             .style("opacity", 0)
             .style("fill","green")
             .transition(t_vertex_entry)
@@ -79,7 +80,7 @@ const join_enter_vertex = function(radius,elDivTooltip,time_transition_entry){
           .attr("stroke","none")
           .attr("fill","black")
           .text((d) => d.var_id)
-          .style("opacity", "40%")
+          .style("opacity", "70%")
           // .style("font-size",radius*0.75*6)
           .transition(t_vertex_entry)
           // .style("font-size",null)
