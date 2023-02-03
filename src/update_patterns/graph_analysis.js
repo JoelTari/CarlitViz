@@ -34,7 +34,7 @@ const mean_distance_neighbours= function(graph){
   if (graph.factors.length > 1){
     let N=0;
     const sum_of_distances = graph.factors
-      .filter((f)=>f.type==="odometry")// perhaps widen to every pair factor, not just odometry
+      .filter((f)=>f.type==="odometry"||f.type==="EDGE_SE2")// perhaps widen to every pair factor, not just odometry
       .map((f) => {
         N++;
         return sqDist(
