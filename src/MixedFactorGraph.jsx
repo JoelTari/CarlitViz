@@ -108,7 +108,7 @@ function MixedFactorGraph(props){
 
     // compute the base unit given the mean euclidian distance between connected nodes in
     // the graph
-    const canonical_base_unit = mean_distance_neighbours(graph)/10;
+    const canonical_base_unit = mean_distance_neighbours(graph)/20;
     // console.log(`base graph unit set to : ${canonical_base_unit}`);
     // initially the applied base unit is the canonical
     // REFACTOR_SEVERAL_GRAPHS: move this paragraph to graph-group
@@ -190,7 +190,8 @@ function MixedFactorGraph(props){
     // Note the reactive causal path: 
     //      bbox_oI -> zoomTransform -> d3 zoom effect
     createEffect(()=>{
-      const gzt = graphZoomTransform();
+      // const gzt = graphZoomTransform();
+      const gzt = untrack(graphZoomTransform); // only on init
       d3selections.svg
         .transition("b").duration(200)
         .call(d3.zoom().on("zoom",zoomed).translateTo,gzt.x,gzt.y)
