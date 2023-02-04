@@ -29,7 +29,7 @@ const join_enter_factor = function(radius,elDivTooltip, time_transition_entry){
       .attr("class",(d)=> `factor ${d.factor_id}`)
       .each(function (d) {
         d3.select(this)
-          .style("opacity", 0)
+          .style("opacity", "40%")
           .transition(t_factor_entry) // ugly (im interest in the child opacity not this node) but necessary to run concurrent transitions on the line (which doesnt work if I place it below)
           .style("opacity", null)
           .selection()
@@ -47,11 +47,6 @@ const join_enter_factor = function(radius,elDivTooltip, time_transition_entry){
             } else {
               // unifactor
               g.append("line")
-                .attr("x1", d.dot_factor_position.x)
-                .attr("y1", d.dot_factor_position.y)
-                .attr("x2", d.dot_factor_position.x)
-                .attr("y2", d.dot_factor_position.y)
-                .transition(t_graph_motion)
                 .attr("x1", d.vars[0].mean.x)
                 .attr("y1", d.vars[0].mean.y)
                 .attr("x2", d.dot_factor_position.x)
@@ -65,9 +60,9 @@ const join_enter_factor = function(radius,elDivTooltip, time_transition_entry){
               // on hover, dot-circle of factor grows and tooltip displays
               // define remotely for clarity
               .call(factor_hover(elDivTooltip))
-              .attr( "r", 2 * radius) // *2 is transitory
-              .transition("fc")
-              .duration(time_transition_entry)
+              // .attr( "r", 2 * radius) // *2 is transitory
+              // .transition("fc")
+              // .duration(time_transition_entry)
               .attr("r",radius);
           });
       });

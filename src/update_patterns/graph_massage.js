@@ -116,11 +116,9 @@ const estimation_data_massage = function({factors: d_factors, marginals: d_margi
   //     in order to draw the factor/edge at the right position (a line between fact-vertex)
   //     and the position of the full 'dot' representing the factor.
   d_factors.forEach((f) => {
-    f.vars = d_marginals.filter((marginal) => // construct d_factors[..].vars : a subset of the marginals
-        f.vars_id.includes(marginal.var_id)
-      );
-    // // the node set of this factor
-    // const node_set= 
+    // put marginals data in the factors
+    f.vars = f.vars_id.map((marginal_id)=> d_obj_marginals[marginal_id]);
+
     // automagically compute the factor position
     // For a factor involving several variables, the dot is positioned at the
     // barycenter of the variables mean position
@@ -140,9 +138,10 @@ const estimation_data_massage = function({factors: d_factors, marginals: d_margi
           // f.vars.length,
       };
     } else {
+      // place in 5 xaxis units near the var_id (ie 5 units right of var_id in normal screen)
       f.dot_factor_position = {
-        x: d_obj_marginals[f.vars_id[0]].mean.y,
-        y: d_obj_marginals[f.vars_id[0]].mean.x + 5 * base_unit,
+        x: f.vars[0].mean.y,
+        y: f.vars[0].mean.x + 5 * base_unit,
       };
     }
     // also add it in d_obj_factors

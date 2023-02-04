@@ -65,28 +65,28 @@ const join_enter_vertex = function(radius,elDivTooltip,time_transition_entry){
             .append("path")
             .classed("vertex-shape",true)
             .attr("transform",`rotate(${d.mean.th*180/Math.PI})`)
-            .style("opacity", "40%")
-            .style("stroke-width", 0.12*radius*2)
-            .style("fill","green")
-            .attr("r",2*radius)
-            .attr("d",path_pose(2*radius))
-            .transition(t_vertex_entry)
             .attr("d",path_pose(radius))
             .attr("r",radius)
-            .style("stroke-width", null)
-            .style("fill",null)
+            .style("opacity", "40%")
+            // .style("stroke-width", 0.12*radius*2)
+            // .style("fill","green")
+            // .attr("r",2*radius)
+            // .attr("d",path_pose(2*radius))
+            .transition(t_vertex_entry)
+            // .style("stroke-width", null)
+            // .style("fill",null)
             .style("opacity", null);
         }else
         {
           d3.select(this)
             .append("circle")
             .classed("vertex-shape",true)
-            .attr("r",2 * radius) 
-            .style("opacity", 0)
-            .style("fill","green")
-            .transition(t_vertex_entry)
             .attr( "r", radius)
-            .style("fill",null)
+            // .attr("r",2 * radius) 
+            .style("opacity", "40%")
+            // .style("fill","green")
+            .transition(t_vertex_entry)
+            // .style("fill",null)
             .style("opacity", null);
         }
 
@@ -176,7 +176,7 @@ const join_exit_vertex = function(exit){
 export { join_enter_vertex, join_update_vertex, path_pose }
 
 function vertex_hover(elDivTooltip){
-  const spatial_growth_value=1.7;
+  const spatial_growth_value=1.2;
   return function(vertex){
     vertex
     // on hover, the texts and circles of .vertex will grow in size by spatial_growth_value

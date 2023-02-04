@@ -108,7 +108,7 @@ function MixedFactorGraph(props){
 
     // compute the base unit given the mean euclidian distance between connected nodes in
     // the graph
-    const canonical_base_unit = mean_distance_neighbours(graph)/20;
+    const canonical_base_unit = mean_distance_neighbours(graph)/10;
     // console.log(`base graph unit set to : ${canonical_base_unit}`);
     // initially the applied base unit is the canonical
     // REFACTOR_SEVERAL_GRAPHS: move this paragraph to graph-group
@@ -158,17 +158,20 @@ function MixedFactorGraph(props){
     // // zoom (with initial value)
     d3selections.svg.call(d3.zoom().on("zoom",zoomed));
     // zoom callback
-    function zoomed({transform, hasTransition}){
+    function zoomed(e){
+      // console.log("zoomed event")
+      // console.log(e)
       // console.log(transform);
       // the zoom transform is applied to factor graph group (not the whole svg)
-      if (hasTransition){
-        d3.select('g.gMixedFactorGraph')
-          .transition().duration(1500)
-          .attr("transform",transform);
-      }
-      else d3.select('g.gMixedFactorGraph').attr("transform",transform);
+      // if (hasTransition){
+      //   d3.select('g.gMixedFactorGraph')
+      //     .transition().duration(1500)
+      //     .attr("transform",transform);
+      // }
+      // else 
+      d3.select('g.gMixedFactorGraph').attr("transform",e.transform);
       // record current transform for scales/axes/grid reactivity
-      setZoomTransform(transform);
+      setZoomTransform(e.transform);
     }
     // REFACTOR_SEVERAL_GRAPHS: this paragraph stays here, mind the .gMixedFactorGraph name
 
@@ -189,14 +192,23 @@ function MixedFactorGraph(props){
     // the first run is necessarly the centering around 0,0
     // Note the reactive causal path: 
     //      bbox_oI -> zoomTransform -> d3 zoom effect
+    let firstMountTime = true;
     createEffect(()=>{
-      // const gzt = graphZoomTransform();
-      const gzt = untrack(graphZoomTransform); // only on init
+      const gzt = graphZoomTransform();
+      // const gzt = untrack(graphZoomTransform); // only on init
+        // .call(d3.zoom().on("zoom",zoomed).transform,d3.zoomIdentity.scale(gzt.k).translate(-gzt.x,-gzt.y))
+      // zoom only the firstTime
+      if (firstMountTime){
+        d3selections.svg
+          .call(d3.zoom().on("zoom",zoomed).translateTo,gzt.x,gzt.y)
+          .call(d3.zoom().on("zoom",zoomed).scaleTo,gzt.k);
+        firstMountTime=false;
+      }
       d3selections.svg
-        .transition("b").duration(200)
-        .call(d3.zoom().on("zoom",zoomed).translateTo,gzt.x,gzt.y)
-        .transition("a").duration(700)
-        .call(d3.zoom().on("zoom",zoomed).scaleTo,gzt.k);
+        // .transition("zt").duration(500).ease(d3.easeLinear)
+        // .call(d3.zoom().on("zoom",zoomed).scaleTo,gzt.k)
+        .transition("zt").duration(3500).ease(d3.easeLinear)
+        .call(d3.zoom().on("zoom",zoomed).translateTo,gzt.x,gzt.y);
     })
     // REFACTOR_SEVERAL_GRAPHS: this paragraph stays here
 
@@ -211,11 +223,12 @@ function MixedFactorGraph(props){
       // console.log("Mounting new data/or updating data due to new applied unit for graph")
       const { graph } = processGraphData();
       console.log(graph)
-      const duration_entry = 2000;  // TODO: this is a UI option (should be untracked
+      const duration_entry = 500;  // TODO: this is a UI option (should be untracked
                                     // so as to not trigger reactivity)
       const duration_update = 4000;
       // TODO: replace this covariance condition by UI option (untracked as well)
       //       going forward, the data header will no longer have an 'exclude' field
+      // if (false)
       if (graph.header.exclude == null || ! graph.header.exclude.includes('covariance'))
       {
         d3selections.graph
@@ -247,6 +260,7 @@ function MixedFactorGraph(props){
   // FIX: add an ID to the svg, in case there are several in the UI
   return (
   <svg class="mixed-factor-graph" id={props.id}>
+    <Show when={true}>
     <TicksGrid 
       adjustedScales={adjustedScales()} 
       svgId={props.id}
@@ -254,6 +268,7 @@ function MixedFactorGraph(props){
       invertText={true}
       gridOpacity={"50%"}
     />
+    </Show>
     <g class="gMixedFactorGraph">
       <g class="covariances-group"
         style="display: inherit"
@@ -269,16 +284,17 @@ function MixedFactorGraph(props){
       <g class="vertices-group"
         font-size={0.75*appliedUnitGraph()} 
         stroke-width={0.12*appliedUnitGraph()} 
-        stroke="#aaa" 
-        style="text-anchor: middle;font-family: monospace;dominant-baseline: middle; cursor: pointer;"
-        fill="#fafbf2"
+        stroke="#212F3C" 
+        style="text-anchor: middle;font-family: monospace;dominant-baseline: middle; cursor: pointer;fill: #d1d1d1"
         >
       </g>
     </g>
+    <Show when={true}>
     <AxesWithScales 
       svgId={props.id}
       adjustedScales={adjustedScales()} 
       svgSize={svgSize()}/>
+    </Show>
   </svg>
   )
 }

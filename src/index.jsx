@@ -42,7 +42,7 @@ setMixedFactorGraphData( window.MixedFactorGraphData == null ?
   fallbackData_M3500_unsolved : window.MixedFactorGraphData
 )
 
-setTimeout(()=>setMixedFactorGraphData(fallbackData_M3500_solved),5000);
+setTimeout(()=>setMixedFactorGraphData(fallbackData_M3500_solved),4000);
 
 // setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_unsolved),3000);
 // setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_solved),8000);
