@@ -10,4 +10,16 @@ const fs = require('fs')
 filename = process.argv[2]
 
 const data = fs.readFileSync(filename);  // readFileSync is blocking
-console.log(JSON.parse(data))
+
+const graph = JSON.parse(data);
+
+// graph.factors.forEach(f=>{
+//   console.log(f.factor_id)
+// })
+
+// remove factors of type 'loop-closure'
+graph.factors = graph.factors.filter(f=>{ 
+  return f.type!="loop-closure";
+});
+
+console.log(JSON.stringify(graph))
