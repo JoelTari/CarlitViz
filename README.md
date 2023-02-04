@@ -64,3 +64,10 @@ A visualization system of graphical models for back-end SLAM applications.
 - katex
 
 - drag and drop data
+
+- loading scenario for timecut
+
+## Known bugs
+
+- if data missing in `cliques`, can't open the menu to leave the `/cliquetree` url
+- fix interrupted transitions (when time between new data is smaller than d3 transitions)
