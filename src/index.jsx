@@ -44,11 +44,10 @@ setMixedFactorGraphData( window.MixedFactorGraphData == null ?
 
 setTimeout(()=>setMixedFactorGraphData(fallbackData_M3500_solved),4000);
 
-// setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_unsolved),3000);
-// setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_solved),8000);
-// setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_unsolved),13000);
-// setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_solved),18000);
-// setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_madeup),23000);
+// setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_solved),3000);
+// setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_unsolved),8000);
+// setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_solved),13000);
+// setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_madeup),18000);
 
 // setInterval(
 //   ()=>{

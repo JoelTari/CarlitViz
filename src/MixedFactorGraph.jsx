@@ -196,19 +196,21 @@ function MixedFactorGraph(props){
     createEffect(()=>{
       const gzt = graphZoomTransform();
       // const gzt = untrack(graphZoomTransform); // only on init
-        // .call(d3.zoom().on("zoom",zoomed).transform,d3.zoomIdentity.scale(gzt.k).translate(-gzt.x,-gzt.y))
-      // zoom only the firstTime
-      if (firstMountTime){
-        d3selections.svg
-          .call(d3.zoom().on("zoom",zoomed).translateTo,gzt.x,gzt.y)
-          .call(d3.zoom().on("zoom",zoomed).scaleTo,gzt.k);
-        firstMountTime=false;
-      }
+
+      const {w, h} = untrack(svgSize);;
+      const [mx, Mx, my, My] = untrack(boundingBoxOfInterest);
+
       d3selections.svg
-        // .transition("zt").duration(500).ease(d3.easeLinear)
-        // .call(d3.zoom().on("zoom",zoomed).scaleTo,gzt.k)
-        .transition("zt").duration(3500).ease(d3.easeLinear)
-        .call(d3.zoom().on("zoom",zoomed).translateTo,gzt.x,gzt.y);
+        .transition("zt").duration(firstMountTime? 0:3500).ease(d3.easeLinear)
+        .call(
+          d3.zoom().on("zoom",zoomed).transform,
+          d3.zoomIdentity
+          .translate(w/ 2, h/ 2)
+          .scale( 0.9 / Math.max((Mx - mx) / w, (My - my) / h))
+          .translate(-(mx + Mx) / 2, -(my + My) / 2)
+        );
+      firstMountTime = false;
+
     })
     // REFACTOR_SEVERAL_GRAPHS: this paragraph stays here
 
