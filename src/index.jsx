@@ -35,21 +35,28 @@ import * as fallbackData_M27_madeup from "./stores/fallbackData_M27_madeup.json"
 import * as fallbackData_M3500_odom_only_unsolved from "./stores/fallbackData_M3500_odom_only_unsolved.json"
 import * as fallbackData_M3500_unsolved from "./stores/fallbackData_M3500_unsolved.json"
 import * as fallbackData_M3500_solved from "./stores/fallbackData_M3500_solved.json"
+import { window } from 'd3';
 
 
-// set store: if no data, use fallback data
-setMixedFactorGraphData( window.MixedFactorGraphData == null ?
-  // fallbackData_M27_unsolved : window.MixedFactorGraphData
-  fallbackData_M3500_odom_only_unsolved : window.MixedFactorGraphData
-)
+const fallback_dataset = "M28";
 
-setTimeout(()=>setMixedFactorGraphData(fallbackData_M3500_unsolved),4000);
-setTimeout(()=>setMixedFactorGraphData(fallbackData_M3500_solved),8000);
+if (!window.MixedFactorGraphData == null){  // given dataset
+  setMixedFactorGraphData( window.MixedFactorGraphData )
+}
+else{
+  if (fallback_dataset == "M27"){ // M27
+    setMixedFactorGraphData(fallbackData_M27_unsolved);
+    setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_solved),3000);
+    setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_unsolved),8000);
+    setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_solved),13000);
+    setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_madeup),18000);
+  }else{ // M3500
+    setMixedFactorGraphData(fallbackData_M3500_odom_only_unsolved);
+    setTimeout(()=>setMixedFactorGraphData(fallbackData_M3500_unsolved),6000);
+    setTimeout(()=>setMixedFactorGraphData(fallbackData_M3500_solved),13000);
+  }
+}
 
-// setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_solved),3000);
-// setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_unsolved),8000);
-// setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_solved),13000);
-// setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_madeup),18000);
 
 // setInterval(
 //   ()=>{

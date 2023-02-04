@@ -201,7 +201,7 @@ function MixedFactorGraph(props){
       const [mx, Mx, my, My] = untrack(boundingBoxOfInterest);
 
       d3selections.svg
-        .transition("zt").duration(firstMountTime? 0:3500).ease(d3.easeLinear)
+        .transition("zt").duration(firstMountTime? 0:9500).ease(d3.easeLinear)
         .call(
           d3.zoom().on("zoom",zoomed).transform,
           d3.zoomIdentity
@@ -225,13 +225,13 @@ function MixedFactorGraph(props){
       // console.log("Mounting new data/or updating data due to new applied unit for graph")
       const { graph } = processGraphData();
       console.log(graph)
-      const duration_entry = 500;  // TODO: this is a UI option (should be untracked
+      const duration_entry = 2500;  // TODO: this is a UI option (should be untracked
                                     // so as to not trigger reactivity)
-      const duration_update = 4000;
+      const duration_update = 10000;
       // TODO: replace this covariance condition by UI option (untracked as well)
       //       going forward, the data header will no longer have an 'exclude' field
-      // if (false)
-      if (graph.header.exclude == null || ! graph.header.exclude.includes('covariance'))
+      if (false)
+      // if (graph.header.exclude == null || ! graph.header.exclude.includes('covariance'))
       {
         d3selections.graph
           .select("g.covariances-group")
@@ -260,9 +260,10 @@ function MixedFactorGraph(props){
 
   // REFACTOR_SEVERAL_GRAPHS: solidjs control flow depending on data + calls to graph group components
   // FIX: add an ID to the svg, in case there are several in the UI
+  const displayGrids = false;
   return (
   <svg class="mixed-factor-graph" id={props.id}>
-    <Show when={true}>
+    <Show when={displayGrids}>
     <TicksGrid 
       adjustedScales={adjustedScales()} 
       svgId={props.id}
@@ -291,7 +292,7 @@ function MixedFactorGraph(props){
         >
       </g>
     </g>
-    <Show when={true}>
+    <Show when={displayGrids}>
     <AxesWithScales 
       svgId={props.id}
       adjustedScales={adjustedScales()} 

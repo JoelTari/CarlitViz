@@ -30,8 +30,12 @@ const join_enter_factor = function(radius,elDivTooltip, time_transition_entry){
       .each(function (d) {
         d3.select(this)
           .style("opacity", "40%")
+          .style("fill","green")
+          .style("stroke","green")
           .transition(t_factor_entry) // ugly (im interest in the child opacity not this node) but necessary to run concurrent transitions on the line (which doesnt work if I place it below)
           .style("opacity", null)
+          .style("fill",null)
+          .style("stroke",null)
           .selection()
           .call(function (g) {
             if (d.vars.length > 1) {
