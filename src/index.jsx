@@ -32,6 +32,7 @@ import SlamViz from './SlamViz';
 import * as fallbackData_M27_unsolved from "./stores/fallbackData_M27_unsolved.json"
 import * as fallbackData_M27_solved from "./stores/fallbackData_M27_solved.json"
 import * as fallbackData_M27_madeup from "./stores/fallbackData_M27_madeup.json"
+import * as fallbackData_M3500_odom_only_unsolved from "./stores/fallbackData_M3500_odom_only_unsolved.json"
 import * as fallbackData_M3500_unsolved from "./stores/fallbackData_M3500_unsolved.json"
 import * as fallbackData_M3500_solved from "./stores/fallbackData_M3500_solved.json"
 
@@ -39,10 +40,11 @@ import * as fallbackData_M3500_solved from "./stores/fallbackData_M3500_solved.j
 // set store: if no data, use fallback data
 setMixedFactorGraphData( window.MixedFactorGraphData == null ?
   // fallbackData_M27_unsolved : window.MixedFactorGraphData
-  fallbackData_M3500_unsolved : window.MixedFactorGraphData
+  fallbackData_M3500_odom_only_unsolved : window.MixedFactorGraphData
 )
 
-setTimeout(()=>setMixedFactorGraphData(fallbackData_M3500_solved),4000);
+setTimeout(()=>setMixedFactorGraphData(fallbackData_M3500_unsolved),4000);
+setTimeout(()=>setMixedFactorGraphData(fallbackData_M3500_solved),8000);
 
 // setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_solved),3000);
 // setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_unsolved),8000);
