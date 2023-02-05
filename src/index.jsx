@@ -35,10 +35,8 @@ import * as fallbackData_M27_madeup from "./stores/fallbackData_M27_madeup.json"
 import * as fallbackData_M3500_odom_only_unsolved from "./stores/fallbackData_M3500_odom_only_unsolved.json"
 import * as fallbackData_M3500_unsolved from "./stores/fallbackData_M3500_unsolved.json"
 import * as fallbackData_M3500_solved from "./stores/fallbackData_M3500_solved.json"
-import { window } from 'd3';
 
-
-const fallback_dataset = "M28";
+const fallback_dataset = "M27";
 
 if (!window.MixedFactorGraphData == null){  // given dataset
   setMixedFactorGraphData( window.MixedFactorGraphData )

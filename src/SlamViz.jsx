@@ -22,6 +22,7 @@ import SlamVizSideMenu from "./SlamVizSideMenu";
 const MixedFactorGraph = lazy(()=> import("./MixedFactorGraph"));
 const CliqueTree = lazy(()=> import("./CliqueTree"));
 import { sideMenuDisplayed , setSideMenuDisplayed } from "./stores/SideMenuDisplay";
+import { Toaster } from "solid-toast";
 
 function FactorAndClique(){
   return (
@@ -67,6 +68,7 @@ function SlamViz(){
           ☰
         </button>
       </div>
+      <Toaster/>
     </>
   )
 }

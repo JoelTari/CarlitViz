@@ -34,6 +34,7 @@ import { join_enter_vertex, join_update_vertex, path_pose } from "./update_patte
 import { join_enter_factor, join_update_factor, join_exit_factor } from "./update_patterns/factors"
 import {  objectify_marginals, objectify_factors, compute_separator_set, compute_factor_set,  estimation_data_massage } from "./update_patterns/graph_massage"
 // REFACTOR_SEVERAL_GRAPHS: these import goes in graph-group
+import toast from 'solid-toast';
 
 //------------------------------------------------------------------//
 //                            component                             //
@@ -90,6 +91,9 @@ function MixedFactorGraph(props){
 
   // data massage
   const processGraphData = createMemo(()=>{
+
+    // toast("Processing New Graph Data");
+
     // console.log("Processing new data:");
     const graph = JSON.parse(JSON.stringify(MixedFactorGraphData()));
     // console.log(graph);
@@ -122,6 +126,9 @@ function MixedFactorGraph(props){
     estimation_data_massage(graph, canonical_base_unit);
     // console.log("[Data Massage]: done");
     // console.log(graph)
+
+    // toast.success("New Data Processed !");
+
     return {graph: graph, unit_base: canonical_base_unit}
     // REFACTOR_SEVERAL_GRAPHS: move this paragraph to graph-group
   });
@@ -230,8 +237,8 @@ function MixedFactorGraph(props){
       const duration_update = 10000;
       // TODO: replace this covariance condition by UI option (untracked as well)
       //       going forward, the data header will no longer have an 'exclude' field
-      if (false)
-      // if (graph.header.exclude == null || ! graph.header.exclude.includes('covariance'))
+      // if (false)
+      if (graph.header.exclude == null || ! graph.header.exclude.includes('covariance'))
       {
         d3selections.graph
           .select("g.covariances-group")
