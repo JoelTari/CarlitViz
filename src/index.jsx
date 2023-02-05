@@ -53,7 +53,7 @@ else{
   }else{ // M3500
     setMixedFactorGraphData(fallbackData_M3500_odom_only_unsolved);
     setTimeout(()=>setMixedFactorGraphData(fallbackData_M3500_unsolved),6000);
-    setTimeout(()=>setMixedFactorGraphData(fallbackData_M3500_solved),13000);
+    setTimeout(()=>setMixedFactorGraphData(fallbackData_M3500_solved),12000);
   }
 }
 
