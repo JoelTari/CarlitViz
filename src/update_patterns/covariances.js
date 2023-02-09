@@ -20,37 +20,40 @@ import * as d3 from "d3"
 export {join_enter_covariance, join_update_covariance}
 
 
-function join_enter_covariance(enter) {
-  return enter
-    .append("ellipse")
-    .attr("class", (d) =>`covariance ${d.var_id}`)
-    .style("display",(d) => {
-      if ( d.covariance == undefined ){
-        return "none";
-      } else{
-        return "inherit";
-      }
-    })
-    .each(function(dd){
-      if (dd.covariance== undefined){
-        d3.select(this)
-        .attr(
-          "transform",
-            `translate(${dd.mean.x},${dd.mean.y}) rotate(0)`
-        )
-        .attr("rx", 0)
-        .attr("ry", 0)
-      } else{
-        d3.select(this)
-        .attr(
-          "transform",
-            `translate(${dd.mean.x},${dd.mean.y}) rotate(${
-              (dd.covariance.rot * 180) / Math.PI})`
-        )
-        .attr("rx", dd.covariance.sigma[0] * Math.sqrt(9.21))
-        .attr("ry", dd.covariance.sigma[1] * Math.sqrt(9.21))
-      }
-    })
+function join_enter_covariance(duration_entry) {
+  const t_entry = d3.transition().duration(duration_entry);
+  return function(enter){
+    return enter
+      .append("ellipse")
+      .attr("class", (d) =>`covariance ${d.var_id}`)
+      .style("display",(d) => {
+        if ( d.covariance == undefined ){
+          return "none";
+        } else{
+          return "inherit";
+        }
+      })
+      .each(function(dd){
+        if (dd.covariance== undefined){
+          d3.select(this)
+          .attr(
+            "transform",
+              `translate(${dd.mean.x},${dd.mean.y}) rotate(0)`
+          )
+          .attr("rx", 0)
+          .attr("ry", 0)
+        } else{
+          d3.select(this)
+          .attr(
+            "transform",
+              `translate(${dd.mean.x},${dd.mean.y}) rotate(${
+                (dd.covariance.rot * 180) / Math.PI})`
+          )
+          .attr("rx", dd.covariance.sigma[0] * Math.sqrt(9.21))
+          .attr("ry", dd.covariance.sigma[1] * Math.sqrt(9.21))
+        }
+      })
+  }
 }
 
 const join_update_covariance = function(duration_transition_update){

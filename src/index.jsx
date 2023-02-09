@@ -35,8 +35,9 @@ import * as fallbackData_M27_madeup from "./stores/fallbackData_M27_madeup.json"
 import * as fallbackData_M3500_odom_only_unsolved from "./stores/fallbackData_M3500_odom_only_unsolved.json"
 import * as fallbackData_M3500_unsolved from "./stores/fallbackData_M3500_unsolved.json"
 import * as fallbackData_M3500_solved from "./stores/fallbackData_M3500_solved.json"
+import * as fallbackData_M30_solved from "./stores/fallbackData_M30_solved.json"
 
-const fallback_dataset = "M27";
+const fallback_dataset = "M30";
 
 if (!window.MixedFactorGraphData == null){  // given dataset
   setMixedFactorGraphData( window.MixedFactorGraphData )
@@ -48,7 +49,11 @@ else{
     setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_unsolved),8000);
     setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_solved),13000);
     setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_madeup),18000);
-  }else{ // M3500
+  }
+  else if (fallback_dataset == "M30") {
+    setMixedFactorGraphData(fallbackData_M30_solved);
+  }
+  else{ // M3500
     setMixedFactorGraphData(fallbackData_M3500_odom_only_unsolved);
     setTimeout(()=>setMixedFactorGraphData(fallbackData_M3500_unsolved),6000);
     setTimeout(()=>setMixedFactorGraphData(fallbackData_M3500_solved),12000);

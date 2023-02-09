@@ -67,7 +67,8 @@ const join_enter_vertex = function(radius,elDivTooltip,time_transition_entry){
             .attr("transform",`rotate(${d.mean.th*180/Math.PI})`)
             .attr("d",path_pose(radius))
             .attr("r",radius)
-            .style("opacity", "40%")
+            .style("stroke-opacity", "40%")
+            .style("stroke","green")
             // .style("stroke-width", 0.12*radius*2)
             // .style("fill","green")
             // .attr("r",2*radius)
@@ -75,7 +76,8 @@ const join_enter_vertex = function(radius,elDivTooltip,time_transition_entry){
             .transition(t_vertex_entry)
             // .style("stroke-width", null)
             // .style("fill",null)
-            .style("opacity", null);
+            .style("stroke",null)
+            .style("stroke-opacity", null);
         }else
         {
           d3.select(this)
@@ -83,11 +85,12 @@ const join_enter_vertex = function(radius,elDivTooltip,time_transition_entry){
             .classed("vertex-shape",true)
             .attr( "r", radius)
             // .attr("r",2 * radius) 
-            .style("opacity", "40%")
-            // .style("fill","green")
+            .style("stroke-opacity", "40%")
+            .style("stroke","green")
             .transition(t_vertex_entry)
             // .style("fill",null)
-            .style("opacity", null);
+            .style("stroke",null)
+            .style("stroke-opacity", null);
         }
 
         // text: variable name inside the circle

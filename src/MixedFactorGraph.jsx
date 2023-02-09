@@ -112,7 +112,7 @@ function MixedFactorGraph(props){
 
     // compute the base unit given the mean euclidian distance between connected nodes in
     // the graph
-    const canonical_base_unit = mean_distance_neighbours(graph)/10;
+    const canonical_base_unit = mean_distance_neighbours(graph)/10; // TODO: replace by median
     // console.log(`base graph unit set to : ${canonical_base_unit}`);
     // initially the applied base unit is the canonical
     // REFACTOR_SEVERAL_GRAPHS: move this paragraph to graph-group
@@ -244,7 +244,7 @@ function MixedFactorGraph(props){
           .select("g.covariances-group")
           .selectAll(".covariance")
           .data(graph.marginals, (d)=> d.var_id)
-          .join(join_enter_covariance, join_update_covariance(duration_update)); // TODO: exit covariance
+          .join(join_enter_covariance(duration_entry), join_update_covariance(duration_update)); // TODO: exit covariance
       }
       d3selections.graph
         .select("g.factors-group")
@@ -266,18 +266,17 @@ function MixedFactorGraph(props){
   // style="transform: matrix(1, 0, 0, -1, 0, 0);" equiv to scaleY(-1)
 
   // REFACTOR_SEVERAL_GRAPHS: solidjs control flow depending on data + calls to graph group components
-  // FIX: add an ID to the svg, in case there are several in the UI
-  const displayGrids = false;
+  const displayGrids = true;
   return (
   <svg class="mixed-factor-graph" id={props.id}>
     <Show when={displayGrids}>
-    <TicksGrid 
-      adjustedScales={adjustedScales()} 
-      svgId={props.id}
-      svgSize={svgSize()} 
-      invertText={true}
-      gridOpacity={"50%"}
-    />
+      <TicksGrid 
+        adjustedScales={adjustedScales()} 
+        svgId={props.id}
+        svgSize={svgSize()} 
+        invertText={true}
+        gridOpacity={"50%"}
+      />
     </Show>
     <g class="gMixedFactorGraph">
       <g class="covariances-group"
@@ -295,15 +294,15 @@ function MixedFactorGraph(props){
         font-size={0.75*appliedUnitGraph()} 
         stroke-width={0.12*appliedUnitGraph()} 
         stroke="#212F3C" 
-        style="text-anchor: middle;font-family: monospace;dominant-baseline: middle; cursor: pointer;fill: #d1d1d1"
+        style="text-anchor: middle;font-family: monospace;dominant-baseline: middle; cursor: pointer;fill: #fff"
         >
       </g>
     </g>
     <Show when={displayGrids}>
-    <AxesWithScales 
-      svgId={props.id}
-      adjustedScales={adjustedScales()} 
-      svgSize={svgSize()}/>
+      <AxesWithScales 
+        svgId={props.id}
+        adjustedScales={adjustedScales()} 
+        svgSize={svgSize()}/>
     </Show>
   </svg>
   )
