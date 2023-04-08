@@ -11,7 +11,7 @@
 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 * See the Licence for the specific language governing permissions and limitations under the Licence.
 */
-svg.mixed-factor-graph{
+svg.causal-graph{
   /* TODO: fix variable definitions */
   --fill-covariance: #ece281;
   --rect_fill: #eee;
@@ -23,46 +23,46 @@ svg.mixed-factor-graph{
   background-color: var(--bg);
 }
 
-svg.mixed-factor-graph{
+svg.causal-graph{
   transform: scaleY(-1);
 }
-svg.mixed-factor-graph text{
+svg.causal-graph text{
   transform: scaleY(-1);
 }
 
-svg.mixed-factor-graph vertices-group{
+svg.causal-graph vertices-group{
   cursor: pointer;
 }
 
-svg.mixed-factor-graph factors-group circle{
+svg.causal-graph directed-edges-group circle{
   cursor: pointer;
 }
 
-svg.mixed-factor-graph .covariances-group ellipse.highlight{
+svg.causal-graph .covariances-group ellipse.highlight{
   fill: #f3d189;
 }
 
-svg.mixed-factor-graph .factors-group .factor.link_highlight circle{
+svg.causal-graph .directed-edges-group .factor.link_highlight circle{
   fill: #607d8b;
 }
 
-svg.mixed-factor-graph .factors-group .factor.link_highlight{
+svg.causal-graph .directed-edges-group .factor.link_highlight{
   /* stroke: #d16d4b; */
   stroke: #a8c7c4;
 }
-svg.mixed-factor-graph .vertices-group{
+svg.causal-graph .vertices-group{
   fill: #fffaec;
 }
-svg.mixed-factor-graph .vertices-group .vertex.link_highlight{
+svg.causal-graph .vertices-group .vertex.link_highlight{
   /* fill: #E2C17B; */
   /* fill: #f9f5d7; */
   fill: hsl(123, 14.0%, 75.2%);
 }
-svg.mixed-factor-graph .vertices-group .vertex .vertex-shape:hover{
+svg.causal-graph .vertices-group .vertex .vertex-shape:hover{
   stroke: hsl(200, 18.3%, 56.1%);
 }
 
-svg.mixed-factor-graph .vertices-group text{
+svg.causal-graph .vertices-group text{
   /* remove some ghost hover effect when zoomed */
   pointer-events: none;
 }

@@ -25,10 +25,10 @@ function AxesWithScales(props){
 
   onMount(()=>{
     // d3 selections
-    const elTop = d3.select(`svg.mixed-factor-graph#${props.svgId} .Xaxis-top`);
-    const elBottom = d3.select(`svg.mixed-factor-graph#${props.svgId} .Xaxis-bottom`);
-    const elLeft = d3.select(`svg.mixed-factor-graph#${props.svgId} .Yaxis-left`);
-    const elRight = d3.select(`svg.mixed-factor-graph#${props.svgId} .Yaxis-right`);
+    const elTop = d3.select(`svg.${props.svgClass}#${props.svgId} .Xaxis-top`);
+    const elBottom = d3.select(`svg.${props.svgClass}#${props.svgId} .Xaxis-bottom`);
+    const elLeft = d3.select(`svg.${props.svgClass}#${props.svgId} .Yaxis-left`);
+    const elRight = d3.select(`svg.${props.svgClass}#${props.svgId} .Yaxis-right`);
 
     createEffect(()=>{
       const sc_x = props.adjustedScales.x;

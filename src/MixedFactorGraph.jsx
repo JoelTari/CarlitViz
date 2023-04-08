@@ -30,7 +30,7 @@ import { SlamVizUI_opts, setSlamVizUI_opts } from "./stores/SlamVizUI"
 // import { DummyTurnkeyVertices, DummyTurnkeyFactors, DummyTurnkeyCovariances } from "./stores/dummy_turnkey_graph"
 import { join_enter_covariance, join_update_covariance } from "./update_patterns/covariances"
 import { get_graph_bbox, mean_distance_neighbours} from "./update_patterns/graph_analysis"
-import { join_enter_vertex, join_update_vertex, path_pose } from "./update_patterns/vertices"
+import { join_enter_vertex, join_update_vertex, path_pose } from "./update_patterns/fg-vertices"
 import { join_enter_factor, join_update_factor, join_exit_factor } from "./update_patterns/factors"
 import {  objectify_marginals, objectify_factors, compute_separator_set, compute_factor_set,  estimation_data_massage } from "./update_patterns/graph_massage"
 // REFACTOR_SEVERAL_GRAPHS: these import goes in graph-group
@@ -271,6 +271,7 @@ function MixedFactorGraph(props){
   <svg class="mixed-factor-graph" id={props.id}>
     <Show when={displayGrids}>
       <TicksGrid 
+        svgClass={"mixed-factor-graph"}
         adjustedScales={adjustedScales()} 
         svgId={props.id}
         svgSize={svgSize()} 
@@ -300,6 +301,7 @@ function MixedFactorGraph(props){
     </g>
     <Show when={displayGrids}>
       <AxesWithScales 
+        svgClass={"mixed-factor-graph"}
         svgId={props.id}
         adjustedScales={adjustedScales()} 
         svgSize={svgSize()}/>

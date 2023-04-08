@@ -31,7 +31,7 @@ import { CarlitVizUI_opts, setCarlitVizUI_opts } from "./stores/CarlitVizUI"
 import { join_enter_covariance, join_update_covariance } from "./update_patterns/covariances"
 import { get_graph_bbox, mean_distance_neighbours} from "./update_patterns/graph_analysis"
 import { join_enter_vertex, join_update_vertex, path_pose } from "./update_patterns/vertices"
-import { join_enter_factor, join_update_factor, join_exit_factor } from "./update_patterns/factors"
+import { join_enter_factor as join_enter_arrow, join_update_factor as join_update_arrow, join_exit_factor as join_exit_arrow } from "./update_patterns/arrows"
 import {  objectify_marginals, objectify_factors, compute_separator_set, compute_factor_set,  estimation_data_massage } from "./update_patterns/graph_massage"
 // REFACTOR_SEVERAL_GRAPHS: these import goes in graph-group
 import toast from 'solid-toast';
@@ -144,10 +144,10 @@ function CausalGraph(props){
 
   onMount(() =>{
     // register d3 selections (those element contents will be under d3 jurisdiction, not solidjs)
-    d3selections.svg = d3.select("svg.mixed-factor-graph");
+    d3selections.svg = d3.select("svg.causal-graph");
     // d3selections.grid = d3.select("svg#CausalGraph g.grid");
     // d3selections.axesScales = d3.select("svg#CausalGraph g.axes-scales");
-    d3selections.graph= d3.select("svg.mixed-factor-graph g.gCausalGraph");
+    d3selections.graph= d3.select("svg.causal-graph g.gCausalGraph");
     // create a tooltip
     d3selections.tooltip = d3.select("body").append("div").classed("tooltip-factor-graph", true);
     // REFACTOR_SEVERAL_GRAPHS: this paragraph stays here, except the graph
@@ -208,7 +208,7 @@ function CausalGraph(props){
       const [mx, Mx, my, My] = untrack(boundingBoxOfInterest);
 
       d3selections.svg
-        .transition("zt").duration(firstMountTime? 0:9500).ease(d3.easeLinear)
+        .transition("zt").duration(firstMountTime? 0:props.dt).ease(d3.easeLinear)
         .call(
           d3.zoom().on("zoom",zoomed).transform,
           d3.zoomIdentity
@@ -232,9 +232,11 @@ function CausalGraph(props){
       // console.log("Mounting new data/or updating data due to new applied unit for graph")
       const { graph } = processGraphData();
       console.log(graph)
-      const duration_entry = 2500;  // TODO: this is a UI option (should be untracked
+      const duration_entry = props.dt/3;  // TODO: this is a UI option (should be untracked
                                     // so as to not trigger reactivity)
-      const duration_update = 10000;
+      const duration_update = props.dt*2/3;
+      console.log("props.dt")
+      console.log(props.dt)
       // TODO: replace this covariance condition by UI option (untracked as well)
       //       going forward, the data header will no longer have an 'exclude' field
       // if (false)
@@ -247,12 +249,12 @@ function CausalGraph(props){
           .join(join_enter_covariance(duration_entry), join_update_covariance(duration_update)); // TODO: exit covariance
       }
       d3selections.graph
-        .select("g.factors-group")
+        .select("g.directed-edges-group")
         .selectAll(".factor")
         .data(graph.factors, (d) => d.factor_id)
       // quirk if the appliedUnitGraph change (ie due to UI input to declutter), the proper
       // way to resize existing node is to do it through the update selection function
-        .join(join_enter_factor(0.6*appliedUnitGraph(),d3selections.tooltip,duration_entry), join_update_factor(0.6*appliedUnitGraph(),duration_update) /* join_exit_factor */);
+        .join(join_enter_arrow(0.6*appliedUnitGraph(),d3selections.tooltip,duration_entry), join_update_arrow(0.6*appliedUnitGraph(),duration_update) /* join_exit_factor */);
       d3selections.graph
         .select("g.vertices-group")
         .selectAll(".vertex")
@@ -268,9 +270,10 @@ function CausalGraph(props){
   // REFACTOR_SEVERAL_GRAPHS: solidjs control flow depending on data + calls to graph group components
   const displayGrids = true;
   return (
-  <svg class="mixed-factor-graph" id={props.id}>
+  <svg class="causal-graph" id={props.id}>
     <Show when={displayGrids}>
       <TicksGrid 
+        svgClass={"causal-graph"}
         adjustedScales={adjustedScales()} 
         svgId={props.id}
         svgSize={svgSize()} 
@@ -285,7 +288,7 @@ function CausalGraph(props){
         stroke="#aaa"
         fill="none">
       </g>
-      <g class="factors-group"
+      <g class="directed-edges-group"
         stroke="grey"
         stroke-width={0.5*appliedUnitGraph()}
         fill="#333">
@@ -300,6 +303,7 @@ function CausalGraph(props){
     </g>
     <Show when={displayGrids}>
       <AxesWithScales 
+        svgClass={"causal-graph"}
         svgId={props.id}
         adjustedScales={adjustedScales()} 
         svgSize={svgSize()}/>

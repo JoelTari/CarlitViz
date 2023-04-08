@@ -124,63 +124,37 @@ const join_update_vertex = function(radius,time_transition_update){
         const this_vertex = d3.select(this);
         const prev_xy = {x: n[i].transform.baseVal.getItem(0).matrix.e,
                           y: n[i].transform.baseVal.getItem(0).matrix.f};
-        const euclidian_move = Math.sqrt((prev_xy.x-dd.mean.x)**2+(prev_xy.y-dd.mean.y)**2);
-
-        // if the vertex shape is a pose (svg path)
-        // if (dd.mean.th!=null){ // FIX: conditionned  on the current shape 
-          // (because we can choose to represent circle even
-          // if its a pose that has a mean.th field)
-        if (false){
-          const prev_angle = d3.select(n[i])
-                                .select("path.vertex-shape")
-                                .node()
-                                .transform.baseVal
-                                .getItem(0)
-                                .angle;
-          // console.log(prev_angle);
-          if (
-            // euclidian distance move condition
-            //    TODO: threshold should depend on base_unit
-            euclidian_move > 0.1 
-            ||
-            // OR rotation move condition (1deg)
-            Math.abs(prev_angle-dd.mean.th*180/Math.PI) > 1.
-          ){
-            this_vertex
-              .style("fill","steelblue")
-              .transition(t_graph_motion)
-              .attr("transform", (d) => `translate(${d.mean.x}, ${d.mean.y})`)
-              .style("fill",null);
-            this_vertex.select("path.vertex-shape")
-                       .transition(t_graph_motion)
-                       .attr("transform", (d)=> `rotate(${d.mean.th*180/Math.PI})`);
-          }
-          // else, (move not significant, dont bother with transition) 
-          else{
-            this_vertex
-              .attr("transform", (d) => `translate(${d.mean.x}, ${d.mean.y})`)
-              .select("path.vertex-shape")
-              .attr("transform", (d)=> `rotate(${d.mean.th*180/Math.PI})`);
-          }
+        const euclidian_move = ((prev_xy.x-dd.mean.x)**2+(prev_xy.y-dd.mean.y)**2);
+        const prev_angle = d3.select(n[i])
+                              .select("path.vertex-shape")
+                              .node()
+                              .transform.baseVal
+                              .getItem(0)
+                              .angle;
+        // console.log(prev_angle);
+        if (
+          // euclidian distance move condition
+          //    TODO: threshold should depend on base_unit
+          euclidian_move > 0.1 
+          ||
+          // OR rotation move condition (1deg)
+          Math.abs(prev_angle-dd.mean.th*180/Math.PI) > 1.
+        ){
+          this_vertex
+            .style("fill","steelblue")
+            .transition(t_graph_motion)
+            .attr("transform", (d) => `translate(${d.mean.x}, ${d.mean.y})`)
+            .style("fill",null);
+          this_vertex.select("path.vertex-shape")
+                     .transition(t_graph_motion)
+                     .attr("transform", (d)=> `rotate(${d.mean.th*180/Math.PI})`);
         }
-        // else, the vertex shape is a circle (svg circle)
+        // else, (move not significant, dont bother with transition) 
         else{
-          if (
-            // euclidian distance move condition
-            //    TODO: threshold should depend on base_unit
-            euclidian_move > 0.01 
-          ){
-            this_vertex
-              .style("fill","steelblue")
-              .transition(t_graph_motion)
-              .attr("transform", (d) => `translate(${d.mean.x}, ${d.mean.y})`)
-              .style("fill",null);
-          }
-          // else, (move not significant, dont bother with transition) 
-          else{
-            this_vertex
-              .attr("transform", (d) => `translate(${d.mean.x}, ${d.mean.y})`)
-          }
+          this_vertex
+            .attr("transform", (d) => `translate(${d.mean.x}, ${d.mean.y})`)
+            .select("path.vertex-shape")
+            .attr("transform", (d)=> `rotate(${d.mean.th*180/Math.PI})`);
         }
 
         // now update the shape's radius (might have changed)

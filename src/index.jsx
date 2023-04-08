@@ -37,6 +37,10 @@ import * as fallbackData_M3500_unsolved from "./stores/fallbackData_M3500_unsolv
 import * as fallbackData_M3500_solved from "./stores/fallbackData_M3500_solved.json"
 import * as fallbackData_M30_solved from "./stores/fallbackData_M30_solved.json"
 
+
+// update time (temporary, will be deprecated)
+const dt = 3000;
+
 const fallback_dataset = "M27";
 
 if (!window.CausalGraphData == null){  // given dataset
@@ -45,18 +49,18 @@ if (!window.CausalGraphData == null){  // given dataset
 else{
   if (fallback_dataset == "M27"){ // M27
     setCausalGraphData(fallbackData_M27_unsolved);
-    setTimeout(()=>setCausalGraphData(fallbackData_M27_solved),3000);
-    setTimeout(()=>setCausalGraphData(fallbackData_M27_unsolved),8000);
-    setTimeout(()=>setCausalGraphData(fallbackData_M27_solved),13000);
-    setTimeout(()=>setCausalGraphData(fallbackData_M27_madeup),18000);
+    setTimeout(()=>setCausalGraphData(fallbackData_M27_solved),dt);
+    setTimeout(()=>setCausalGraphData(fallbackData_M27_unsolved),2*dt);
+    setTimeout(()=>setCausalGraphData(fallbackData_M27_solved),3*dt);
+    setTimeout(()=>setCausalGraphData(fallbackData_M27_madeup),4*dt);
   }
   else if (fallback_dataset == "M30") {
     setCausalGraphData(fallbackData_M30_solved);
   }
   else{ // M3500
     setCausalGraphData(fallbackData_M3500_odom_only_unsolved);
-    setTimeout(()=>setCausalGraphData(fallbackData_M3500_unsolved),6000);
-    setTimeout(()=>setCausalGraphData(fallbackData_M3500_solved),12000);
+    setTimeout(()=>setCausalGraphData(fallbackData_M3500_unsolved),2*dt);
+    setTimeout(()=>setCausalGraphData(fallbackData_M3500_solved),4*dt);
   }
 }
 
@@ -77,4 +81,4 @@ else{
 //   ,7000
 // ) 
 
-render(() => <CarlitViz />, document.getElementById('root'));
+render(() => <CarlitViz dt={dt}/>, document.getElementById('root'));

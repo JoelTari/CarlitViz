@@ -39,7 +39,7 @@ function FactorAndClique(){
   )
 }
 
-function CarlitViz(){
+function CarlitViz(props){
 
   const open = ()=>{
     // document.getElementById("sidemenu").style.display = "block";
@@ -55,8 +55,8 @@ function CarlitViz(){
       <div class="content" style={{width:"100%",height:"100%", position:"relative"}}>
         <Router>
           <Routes>
-            <Route path="/" element={<CausalGraph id="fg-0"/>}/>
-            <Route path="/causal-graph" element={<CausalGraph id="fg-0"/>}/>
+            <Route path="/" element={<CausalGraph dt={props.dt} id="fg-0"/>}/>
+            <Route path="/causal-graph" element={<CausalGraph dt={props.dt} id="fg-0"/>}/>
             <Route path="/clique-tree" component={CliqueTree}/>
             <Route path="/factor-and-clique" component={FactorAndClique}/>
           </Routes>
