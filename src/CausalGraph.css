@@ -1,0 +1,107 @@
+/*
+* Copyright 2023 AKKA Technologies (joel.tari@akka.eu)
+*
+* Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
+* You may not use this work except in compliance with the Licence.
+* You may obtain a copy of the Licence at:
+*
+* https://joinup.ec.europa.eu/software/page/eupl
+*
+* Unless required by applicable law or agreed to in writing, software distributed under the Licence is distributed on an "AS IS" basis,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the Licence for the specific language governing permissions and limitations under the Licence.
+*/
+svg.mixed-factor-graph{
+  /* TODO: fix variable definitions */
+  --fill-covariance: #ece281;
+  --rect_fill: #eee;
+  --line_stroke: #b2b3bd; 
+  --bg:  #fff;
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg);
+}
+
+svg.mixed-factor-graph{
+  transform: scaleY(-1);
+}
+svg.mixed-factor-graph text{
+  transform: scaleY(-1);
+}
+
+svg.mixed-factor-graph vertices-group{
+  cursor: pointer;
+}
+
+svg.mixed-factor-graph factors-group circle{
+  cursor: pointer;
+}
+
+svg.mixed-factor-graph .covariances-group ellipse.highlight{
+  fill: #f3d189;
+}
+
+svg.mixed-factor-graph .factors-group .factor.link_highlight circle{
+  fill: #607d8b;
+}
+
+svg.mixed-factor-graph .factors-group .factor.link_highlight{
+  /* stroke: #d16d4b; */
+  stroke: #a8c7c4;
+}
+svg.mixed-factor-graph .vertices-group{
+  fill: #fffaec;
+}
+svg.mixed-factor-graph .vertices-group .vertex.link_highlight{
+  /* fill: #E2C17B; */
+  /* fill: #f9f5d7; */
+  fill: hsl(123, 14.0%, 75.2%);
+}
+svg.mixed-factor-graph .vertices-group .vertex .vertex-shape:hover{
+  stroke: hsl(200, 18.3%, 56.1%);
+}
+
+svg.mixed-factor-graph .vertices-group text{
+  /* remove some ghost hover effect when zoomed */
+  pointer-events: none;
+}
+
+/******************************************/
+/*                TOOLTIP                 */
+/******************************************/
+div.tooltip-factor-graph {
+  /* tooltip is hidden by default */
+  visibility: hidden;
+  opacity: 0.95;
+  position: absolute;
+  /* width: 60px; */
+  /* height: 28px; */
+  font-family: Monospace;
+  padding: 0.3rem 0.5rem;
+  background: #ccc;
+  border: 2px solid #444;
+  border-radius: 5%;
+  transform: translateX(-50%) translateY(-120%);
+}
+
+div.tooltip-factor-graph .tooltip-title {
+  text-align: center;
+  font-size: 0.9rem;
+  background: #ddd;
+  margin: auto;
+}
+
+div.tooltip-factor-graph .tooltip-field {
+  text-align: left;
+  font-size: 0.8rem;
+}
+
+div.tooltip-factor-graph .tooltip-value {
+  text-align: right;
+  font-size: 0.7rem;
+  /* allows to interpret \n */
+  white-space: pre-line;
+}
+
+

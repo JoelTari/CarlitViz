@@ -25,9 +25,9 @@ import { render } from 'solid-js/web';
 import './style.css'
 
 // import the store
-import { setMixedFactorGraphData } from './stores/MixedFactorGraphData'
+import { setCausalGraphData } from './stores/CausalGraphData'
 // import the component
-import SlamViz from './SlamViz';
+import CarlitViz from './CarlitViz';
 // import fallback data: M27 is the dataset of the first 27 steps of M3500
 import * as fallbackData_M27_unsolved from "./stores/fallbackData_M27_unsolved.json"
 import * as fallbackData_M27_solved from "./stores/fallbackData_M27_solved.json"
@@ -37,26 +37,26 @@ import * as fallbackData_M3500_unsolved from "./stores/fallbackData_M3500_unsolv
 import * as fallbackData_M3500_solved from "./stores/fallbackData_M3500_solved.json"
 import * as fallbackData_M30_solved from "./stores/fallbackData_M30_solved.json"
 
-const fallback_dataset = "M30";
+const fallback_dataset = "M27";
 
-if (!window.MixedFactorGraphData == null){  // given dataset
-  setMixedFactorGraphData( window.MixedFactorGraphData )
+if (!window.CausalGraphData == null){  // given dataset
+  setCausalGraphData( window.CausalGraphData )
 }
 else{
   if (fallback_dataset == "M27"){ // M27
-    setMixedFactorGraphData(fallbackData_M27_unsolved);
-    setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_solved),3000);
-    setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_unsolved),8000);
-    setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_solved),13000);
-    setTimeout(()=>setMixedFactorGraphData(fallbackData_M27_madeup),18000);
+    setCausalGraphData(fallbackData_M27_unsolved);
+    setTimeout(()=>setCausalGraphData(fallbackData_M27_solved),3000);
+    setTimeout(()=>setCausalGraphData(fallbackData_M27_unsolved),8000);
+    setTimeout(()=>setCausalGraphData(fallbackData_M27_solved),13000);
+    setTimeout(()=>setCausalGraphData(fallbackData_M27_madeup),18000);
   }
   else if (fallback_dataset == "M30") {
-    setMixedFactorGraphData(fallbackData_M30_solved);
+    setCausalGraphData(fallbackData_M30_solved);
   }
   else{ // M3500
-    setMixedFactorGraphData(fallbackData_M3500_odom_only_unsolved);
-    setTimeout(()=>setMixedFactorGraphData(fallbackData_M3500_unsolved),6000);
-    setTimeout(()=>setMixedFactorGraphData(fallbackData_M3500_solved),12000);
+    setCausalGraphData(fallbackData_M3500_odom_only_unsolved);
+    setTimeout(()=>setCausalGraphData(fallbackData_M3500_unsolved),6000);
+    setTimeout(()=>setCausalGraphData(fallbackData_M3500_solved),12000);
   }
 }
 
@@ -64,17 +64,17 @@ else{
 // setInterval(
 //   ()=>{
 //     console.log("[Interval tests] new data : M27 unsolved");
-//     setMixedFactorGraphData(fallbackData_M27_unsolved)
+//     setCausalGraphData(fallbackData_M27_unsolved)
 //     setTimeout(()=>{
 //       console.log("[Interval tests] new data : M27 solved");
-//       setMixedFactorGraphData(fallbackData_M27_solved)
+//       setCausalGraphData(fallbackData_M27_solved)
 //     },3500)
 //     // setTimeout(()=>{
 //     //   console.log("[Interval tests] new data t3");
-//     //   setMixedFactorGraphData(fallback1_MixedFactorGraphData)
+//     //   setCausalGraphData(fallback1_CausalGraphData)
 //     // },5000)
 //   }
 //   ,7000
 // ) 
 
-render(() => <SlamViz />, document.getElementById('root'));
+render(() => <CarlitViz />, document.getElementById('root'));
