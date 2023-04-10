@@ -16,8 +16,53 @@
  */
 
 import * as d3 from "d3"
+import { descending } from "d3";
 
-const join_enter_factor = function(radius,elDivTooltip, time_transition_entry){
+const phi = 1.618; // golden ratio (close enough)
+
+// internal method: return the coordinate of the directed edge (an svg line)
+//    given that: - space should be left for the arrow marker
+//                - maybe there is not enough space between the pair of node
+//                  so the line should be made thiner
+const design_line_with_arrow = function(x1,y1,x2,y2,extendedVertexRadius, defaultEdgeWidth){
+  const L = Math.sqrt((x1-x2)**2+(y1-y2)**2);
+  let  x1f = x1;
+  let  x2f = x2;
+  let  y1f = y1;
+  let  y2f = y2;
+  const mW = 3*phi*defaultEdgeWidth;
+  let edgeWidth=defaultEdgeWidth;
+  // branch cases
+  let drawMarker = true;
+  // console.log(`L = ${L}; R = ${extendedVertexRadius}`)
+  if (L > 2*extendedVertexRadius + 2*mW){ // there is ample room
+    // length of the line: L minus the room taken by the arrow + the ext rad in the arrival
+    const l = L - mW - extendedVertexRadius;
+    const a = Math.atan2(y2-y1, x2-x1);
+    x2f = x1f + l*Math.cos(a);
+    y2f = y1f + l*Math.sin(a);
+    drawMarker = true;
+  } else if (L < 2*extendedVertexRadius){ // the 2 nodes overlap
+    // dont draw the marker
+    drawMarker = false;
+    // the line goes from node to node 
+    // (the line and the absence of arrows are not noticed because the nodes are 'on top')
+  } 
+  else{ // there is space between the nodes, but the line/arrow should be smaller
+    // compute new edge width
+    edgeWidth=(L-2*extendedVertexRadius)/(6*phi)
+    // compute given that we impose l:=2R
+    const l = (L-2*extendedVertexRadius)/2+extendedVertexRadius;
+    const a = Math.atan2(y2-y1, x2-x1);
+    x2f = x1f + l*Math.cos(a);
+    y2f = y1f + l*Math.sin(a);
+    drawMarker = true;
+    // console.log("in between")
+  }
+  return [x1f,y1f,x2f,y2f,drawMarker,edgeWidth]; 
+}
+
+const join_enter_factor = function(extended_vertex_radius, edge_default_stroke_width ,elDivTooltip, time_transition_entry){
   return function(enter){
       // Imho best way to avoid to define those transitions everywhere is to
     // transform those functions in classes of which the transitions are members
@@ -38,42 +83,28 @@ const join_enter_factor = function(radius,elDivTooltip, time_transition_entry){
           .style("stroke",null)
           .selection()
           .call(function (g) {
-            if (d.vars.length > 1) {
-              // bi-factor, tri-factor etc...
-              d.vars.forEach((v) =>
-                g
-                  .append("line")
-                  .attr("x1", d.dot_factor_position.x)
-                  .attr("y1", d.dot_factor_position.y)
-                  .attr("x2", v.mean.x)
-                  .attr("y2", v.mean.y)
-              );
-            } else {
-              // unifactor
-              g.append("line")
-                .attr("x1", d.vars[0].mean.x)
-                .attr("y1", d.vars[0].mean.y)
-                .attr("x2", d.dot_factor_position.x)
-                .attr("y2", d.dot_factor_position.y);
-            }
-
-            g.append("circle")
-              .attr( "cx", (d) => d.dot_factor_position.x)
-              .attr( "cy", (d) => d.dot_factor_position.y)
-              .attr("stroke","none")
-              // on hover, dot-circle of factor grows and tooltip displays
-              // define remotely for clarity
-              .call(factor_hover(elDivTooltip))
-              // .attr( "r", 2 * radius) // *2 is transitory
-              // .transition("fc")
-              // .duration(time_transition_entry)
-              .attr("r",radius);
+            // design the length of the line
+            const x1=d.vars[0].mean.x
+            const y1=d.vars[0].mean.y
+            const x2=d.vars[1].mean.x
+            const y2=d.vars[1].mean.y
+            const [x1f,y1f,x2f,y2f,drawMarker,edgeWidth] 
+              = design_line_with_arrow(x1,y1,x2,y2,extended_vertex_radius,edge_default_stroke_width);
+            // console.log(d)
+            g.append("line")
+              // .attr("marker-end","url(#vee)")
+              .attr("marker-end", drawMarker? "url(#arrowVee)":null)
+              .attr("stroke-width",edgeWidth)
+              .attr("x1", x1f)
+              .attr("y1", y1f)
+              .attr("x2", x2f)
+              .attr("y2", y2f);
           });
       });
   }
 }
 
-const join_update_factor = function(radius,time_transition_update){
+const join_update_factor = function(extended_vertex_radius, edge_default_stroke_width, time_transition_update){
   return function(update){
     // TODO:
     // Imho best way to avoid to define those transitions everywhere is to
@@ -84,36 +115,24 @@ const join_update_factor = function(radius,time_transition_update){
       d3.select(this)
         .selectAll("line")
         .each(function (_, i, n) {
-          if (d.vars.length > 1) {
+            // line
+            const x1=d.vars[0].mean.x
+            const y1=d.vars[0].mean.y
+            const x2=d.vars[1].mean.x
+            const y2=d.vars[1].mean.y
+            const [x1f,y1f,x2f,y2f,drawMarker,edgeWidth] 
+              = design_line_with_arrow(x1,y1,x2,y2,extended_vertex_radius,edge_default_stroke_width);
             // line
             d3.select(n[i])
               .transition(t_graph_motion)
-              .attr("x1", d.dot_factor_position.x)
-              .attr("y1", d.dot_factor_position.y)
-              .attr("x2", d.vars[i].mean.x)
-              .attr("y2", d.vars[i].mean.y);
-          } else {
-            // update unary factor
-            d3.select(n[i])
-              .transition(t_graph_motion)
-              .attr("x1", d.vars[0].mean.x)
-              .attr("y1", d.vars[0].mean.y)
-              .attr("x2", d.dot_factor_position.x)
-              .attr("y2", d.dot_factor_position.y);
-          }
+              .attr("marker-end", drawMarker? "url(#arrowVee)":null)
+              .attr("stroke-width",edgeWidth)
+              .attr("x1", x1f)
+              .attr("y1", y1f)
+              .attr("x2", x2f)
+              .attr("y2", y2f);
         });
-      // update radius factor dot
-      d3.select(this)
-       .select("circle")
-       .attr("r",radius);
     });
-    // the little factor circle (to visually differentiate from with MRF)
-    update
-      .select("circle")
-      .transition(t_graph_motion)
-      .attr("cx", (d) => d.dot_factor_position.x)
-      .attr("cy", (d) => d.dot_factor_position.y);
-
   }
 }
 const join_exit_factor = function(exit,time_transition_exit){
@@ -121,7 +140,6 @@ const join_exit_factor = function(exit,time_transition_exit){
     exit
       .call(function (ex) {
         ex.selectAll("line").style("stroke", "brown");
-        ex.select("circle").style("fill", "brown");
       })
       .transition("exit_factor") // TODO: Define outside
       .duration(time_transition_exit)

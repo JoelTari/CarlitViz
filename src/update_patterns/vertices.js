@@ -48,7 +48,7 @@ const join_enter_vertex = function(radius,elDivTooltip,time_transition_entry){
     // Imho best way to avoid to define those transitions everywhere is to
     // transform those functions in classes of which the transitions are members
     const t_vertex_entry = d3.transition().duration(time_transition_entry);
-    console.log(radius)
+    // console.log(radius)
 
     return enter
       .append("g")
@@ -130,7 +130,7 @@ const join_update_vertex = function(radius,time_transition_update){
         // if (dd.mean.th!=null){ // FIX: conditionned  on the current shape 
           // (because we can choose to represent circle even
           // if its a pose that has a mean.th field)
-        if (false){
+        if (0){
           const prev_angle = d3.select(n[i])
                                 .select("path.vertex-shape")
                                 .node()
@@ -162,6 +162,10 @@ const join_update_vertex = function(radius,time_transition_update){
               .select("path.vertex-shape")
               .attr("transform", (d)=> `rotate(${d.mean.th*180/Math.PI})`);
           }
+          // now update the shape's radius (might have changed)
+          this_vertex.select("path.vertex-shape")
+            .attr("d",path_pose(radius))
+            .attr("r",radius);
         }
         // else, the vertex shape is a circle (svg circle)
         else{
@@ -181,16 +185,8 @@ const join_update_vertex = function(radius,time_transition_update){
             this_vertex
               .attr("transform", (d) => `translate(${d.mean.x}, ${d.mean.y})`)
           }
-        }
-
-        // now update the shape's radius (might have changed)
-        if (dd.mean.th!=null ){ // triangle shape (pose)
-          this_vertex.select("path.vertex-shape")
-            .attr("d",path_pose(radius))
-            .attr("r",radius);
-        }
-        else{ // circle shape (2d position)
-          this_vertex.select("path.vertex-shape")
+          // update the shape's radius
+          this_vertex.select(".vertex-shape")
             .attr("r",radius);
         }
       });

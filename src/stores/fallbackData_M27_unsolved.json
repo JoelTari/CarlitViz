@@ -200,7 +200,7 @@
 
   },
   "marginals": [
-    { "var_id": "x0", "mean": { "x": 0.0, "y": 0.0, "th": 0.0 } },
+    { "var_id": "x0", "mean": { "x": 0.0, "y": 0.0, "th": 0.0 }, "type": "intervention" },
     { "var_id": "x1", "mean": { "x": 1.03039, "y": 0.01135, "th": -0.012958 } },
     {
       "var_id": "x2",
@@ -302,7 +302,6 @@
     { "var_id": "x27", "mean": { "x": 7.223238, "y": 4.26889, "th": 1.611072 } }
   ],
   "factors": [
-    { "factor_id": "f0", "type": "prior", "vars_id": ["x0"] },
     { "factor_id": "f1", "type": "odometry", "vars_id": ["x0", "x1"] },
     { "factor_id": "f2", "type": "odometry", "vars_id": ["x1", "x2"] },
     { "factor_id": "f3", "type": "odometry", "vars_id": ["x2", "x3"] },

@@ -142,6 +142,17 @@ function CausalGraph(props){
   // REFACTOR_SEVERAL_GRAPHS: this goes in graph-group but GoI might be needed (or do the GoI condition in the prop)
   //                          i.e. we just want to declutter the GoI graph not the others
 
+  // stroke
+  const vertexStrokeWidth = () => appliedUnitGraph()*0.12; // TODO: memo
+  const vertexFontSize = () => appliedUnitGraph()*0.75;
+  // edge
+  const edgeWidth = ()=> appliedUnitGraph()*0.3; // TODO: worth it to make it a memo ?
+  // covariance
+  const covarianceStrokeWidth = () => appliedUnitGraph()*0.04;
+  // extended vertex radius
+  const extendedVertexRadius = () => vertexStrokeWidth()/2+appliedUnitGraph();
+
+
   onMount(() =>{
     // register d3 selections (those element contents will be under d3 jurisdiction, not solidjs)
     d3selections.svg = d3.select("svg.causal-graph");
@@ -235,26 +246,25 @@ function CausalGraph(props){
       const duration_entry = props.dt/3;  // TODO: this is a UI option (should be untracked
                                     // so as to not trigger reactivity)
       const duration_update = props.dt*2/3;
-      console.log("props.dt")
-      console.log(props.dt)
-      // TODO: replace this covariance condition by UI option (untracked as well)
-      //       going forward, the data header will no longer have an 'exclude' field
-      // if (false)
-      if (graph.header.exclude == null || ! graph.header.exclude.includes('covariance'))
-      {
-        d3selections.graph
-          .select("g.covariances-group")
-          .selectAll(".covariance")
-          .data(graph.marginals, (d)=> d.var_id)
-          .join(join_enter_covariance(duration_entry), join_update_covariance(duration_update)); // TODO: exit covariance
-      }
+      // // TODO: replace this covariance condition by UI option (untracked as well)
+      // //       going forward, the data header will no longer have an 'exclude' field
+      // // if (false)
+      // if (graph.header.exclude == null || ! graph.header.exclude.includes('covariance'))
+      // {
+      //   d3selections.graph
+      //     .select("g.covariances-group")
+      //     .selectAll(".covariance")
+      //     .data(graph.marginals, (d)=> d.var_id)
+      //     .join(join_enter_covariance(duration_entry), join_update_covariance(duration_update)); // TODO: exit covariance
+      // }
+
       d3selections.graph
         .select("g.directed-edges-group")
         .selectAll(".factor")
         .data(graph.factors, (d) => d.factor_id)
       // quirk if the appliedUnitGraph change (ie due to UI input to declutter), the proper
       // way to resize existing node is to do it through the update selection function
-        .join(join_enter_arrow(0.6*appliedUnitGraph(),d3selections.tooltip,duration_entry), join_update_arrow(0.6*appliedUnitGraph(),duration_update) /* join_exit_factor */);
+        .join(join_enter_arrow(extendedVertexRadius(),edgeWidth(),d3selections.tooltip,duration_entry), join_update_arrow(extendedVertexRadius(),edgeWidth(),duration_update) /* join_exit_factor */);
       d3selections.graph
         .select("g.vertices-group")
         .selectAll(".vertex")
@@ -266,11 +276,46 @@ function CausalGraph(props){
   })
 
   // style="transform: matrix(1, 0, 0, -1, 0, 0);" equiv to scaleY(-1)
+  // console.log(`appliedUnitGraph:  ${appliedUnitGraph()}`)
+
+
+
+  // markers
+  const markerHeight =()=> edgeWidth()*3;           // (same as width perpendicular to the 'line' direction)
+  const markerWidth =()=> 6*markerHeight()*(1+Math.sqrt(5))/2; // golden ratio
+  const markerRefX =()=> appliedUnitGraph() + markerWidth() + 0.06*appliedUnitGraph();// vertexStrokeWidth()/2);
+  const markerRefY =()=> markerHeight()/2;
 
   // REFACTOR_SEVERAL_GRAPHS: solidjs control flow depending on data + calls to graph group components
   const displayGrids = true;
   return (
   <svg class="causal-graph" id={props.id}>
+    <defs>
+      <marker id="arrowVee" 
+        markerUnits="strokeWidth"
+        markerWidth={3*1.618}  
+        markerHeight="3" 
+        refX="0" 
+        refY="1.5" 
+        orient="auto" 
+        fill="#212F3C">
+          <polygon
+            points={`0 0, ${3*1.618} 1.5, 0 3`} 
+          />
+      </marker>
+      <marker id="arrowmark" 
+        markerUnits="userSpaceOnUse"
+        markerWidth={markerWidth()} 
+        markerHeight={markerHeight()}
+        // refX={markerRefX()}
+        refX="0" 
+        refY={markerRefY()} 
+        orient="auto" >
+          <polygon
+            points={`0 0, ${markerWidth()} ${markerHeight()/2}, 0 ${markerHeight()}`} 
+          />
+      </marker>
+    </defs>
     <Show when={displayGrids}>
       <TicksGrid 
         svgClass={"causal-graph"}
@@ -284,18 +329,18 @@ function CausalGraph(props){
     <g class="gCausalGraph">
       <g class="covariances-group"
         style="display: inherit"
-        stroke-width={0.04*appliedUnitGraph()}
+        stroke-width={covarianceStrokeWidth()}
         stroke="#aaa"
         fill="none">
       </g>
       <g class="directed-edges-group"
         stroke="grey"
-        stroke-width={0.5*appliedUnitGraph()}
-        fill="#333">
+        stroke-width={edgeWidth()}
+        fill="grey">
       </g>
       <g class="vertices-group"
-        font-size={0.75*appliedUnitGraph()} 
-        stroke-width={0.12*appliedUnitGraph()} 
+        font-size={vertexFontSize()} 
+        stroke-width={vertexStrokeWidth()} 
         stroke="#212F3C" 
         style="text-anchor: middle;font-family: monospace;dominant-baseline: middle; cursor: pointer;fill: #fff"
         >

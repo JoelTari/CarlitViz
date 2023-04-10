@@ -213,7 +213,7 @@
         "y": 1.0468537462173571e-20,
         "th": 9.776618297253755e-20
       },
-      "covariance": { "sigma": [1e-8, 1e-8], "rot": 0.7853981633974483 }
+      "type": "intervention"
     },
     {
       "var_id": "x1",
@@ -549,7 +549,6 @@
     }
   ],
   "factors": [
-    { "factor_id": "f0", "type": "prior", "vars_id": ["x0"] },
     { "factor_id": "f1", "type": "odometry", "vars_id": ["x0", "x1"] },
     { "factor_id": "f2", "type": "odometry", "vars_id": ["x1", "x2"] },
     { "factor_id": "f3", "type": "odometry", "vars_id": ["x2", "x3"] },
