@@ -282,7 +282,7 @@ function CausalGraph(props){
 
   // markers
   const markerHeight =()=> edgeWidth()*3;           // (same as width perpendicular to the 'line' direction)
-  const markerWidth =()=> 6*markerHeight()*(1+Math.sqrt(5))/2; // golden ratio
+  const markerWidth =()=> markerHeight()*(1+Math.sqrt(5))/2; // golden ratio
   const markerRefX =()=> appliedUnitGraph() + markerWidth() + 0.06*appliedUnitGraph();// vertexStrokeWidth()/2);
   const markerRefY =()=> markerHeight()/2;
 

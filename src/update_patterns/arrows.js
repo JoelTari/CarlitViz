@@ -98,7 +98,8 @@ const join_enter_factor = function(extended_vertex_radius, edge_default_stroke_w
               .attr("x1", x1f)
               .attr("y1", y1f)
               .attr("x2", x2f)
-              .attr("y2", y2f);
+              .attr("y2", y2f)
+              .call(factor_hover(elDivTooltip));
           });
       });
   }
@@ -158,15 +159,12 @@ function factor_hover(elDivTooltip){
   return function(factor_dot){
     factor_dot
       .on("mouseover", (e, d) => {
-        //circle first
+        // enlarge the stroke width
         factor_dot
-          .attr("r", function(d,i,n){
-            return d3.select(this).attr("r")*1.4
-          })
           .attr(
             "stroke-width",
             function(d,i,n){
-              return d3.select(this.parentNode).attr("stroke-width")*1.4
+              return d3.select(n[i]).attr("stroke-width")*1.4
             }
           );
         // highlight this factor group
@@ -199,15 +197,12 @@ function factor_hover(elDivTooltip){
       )
       // on hover out, rebase to default
       .on("mouseout", (e, d) => {
-        // retract the radius of the factor dot
+        // retract the stroke-width of the factor dot
         factor_dot
-          .attr("r", function(d,i,n){
-            return d3.select(this).attr("r")/1.4
-          })
           .attr(
             "stroke-width",
             function(d,i,n){
-              return d3.select(this.parentNode).attr("stroke-width")/1.4
+              return d3.select(n[i]).attr("stroke-width")/1.4
             }
           );
         // remove the highlight the factor & on the connected vertices
