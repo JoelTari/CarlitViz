@@ -1,7 +1,7 @@
 {
   "header": { "robot_id": "A", "seq": 0 },
   "marginals": [
-    { "var_id": "x0", "mean": { "x": 0.0, "y": 0.0, "th": 0.0 } },
+    { "var_id": "x0", "mean": { "x": 0.0, "y": 0.0, "th": 0.0 }, "type": "intervention" },
     { "var_id": "x1", "mean": { "x": 1.03039, "y": 0.01135, "th": -0.012958 } },
     {
       "var_id": "x2",
