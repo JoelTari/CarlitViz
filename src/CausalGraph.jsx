@@ -29,7 +29,7 @@ import { CarlitVizUI_opts, setCarlitVizUI_opts } from "./stores/CarlitVizUI"
 
 // import { DummyTurnkeyVertices, DummyTurnkeyFactors, DummyTurnkeyCovariances } from "./stores/dummy_turnkey_graph"
 import { join_enter_covariance, join_update_covariance } from "./update_patterns/covariances"
-import { get_graph_bbox, mean_distance_neighbours} from "./update_patterns/graph_analysis"
+import { get_graph_bbox, mean_distance_neighbours, median_distance_neighbours} from "./update_patterns/graph_analysis"
 import { join_enter_vertex, join_update_vertex, path_pose } from "./update_patterns/vertices"
 import { join_enter_factor as join_enter_arrow, join_update_factor as join_update_arrow, join_exit_factor as join_exit_arrow } from "./update_patterns/arrows"
 import {  objectify_marginals, objectify_factors, compute_separator_set, compute_factor_set,  estimation_data_massage } from "./update_patterns/graph_massage"
@@ -112,7 +112,8 @@ function CausalGraph(props){
 
     // compute the base unit given the mean euclidian distance between connected nodes in
     // the graph
-    const canonical_base_unit = mean_distance_neighbours(graph)/10; // TODO: replace by median
+    // const canonical_base_unit = mean_distance_neighbours(graph)/10; // TODO: replace by median
+    const canonical_base_unit = median_distance_neighbours(graph)/10; // TODO: replace by median
     // console.log(`base graph unit set to : ${canonical_base_unit}`);
     // initially the applied base unit is the canonical
     // REFACTOR_SEVERAL_GRAPHS: move this paragraph to graph-group
