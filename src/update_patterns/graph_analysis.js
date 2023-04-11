@@ -54,6 +54,21 @@ const mean_distance_neighbours= function(graph){
   else return 1; // no neighbour: value is set to 1
 }
 
+const median_distance_neighbours=function(graph){
+  if(graph.factors.length > 1){
+    const distances = graph.factors.map(f=>{
+      return sqDist(
+          graph.marginals.find((v) => v.var_id === f.vars_id[0]),
+          graph.marginals.find((v) => v.var_id === f.vars_id[1])
+      )
+    });
+    // console.log(distances)
+    const median_dist = distances.sort()[Math.floor(distances.length/2)];
+    return median_dist;
+  }
+  else return 1;
+}
+
 // internal
 function sqDist(v1, v2) {
   return (
@@ -61,4 +76,4 @@ function sqDist(v1, v2) {
   );
 }
 
-export { get_graph_bbox, mean_distance_neighbours }
+export { get_graph_bbox, mean_distance_neighbours, median_distance_neighbours}

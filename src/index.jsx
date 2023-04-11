@@ -35,13 +35,19 @@ import * as fallbackData_M27_madeup from "./stores/fallbackData_M27_madeup.json"
 import * as fallbackData_M3500_odom_only_unsolved from "./stores/fallbackData_M3500_odom_only_unsolved.json"
 import * as fallbackData_M3500_unsolved from "./stores/fallbackData_M3500_unsolved.json"
 import * as fallbackData_M3500_solved from "./stores/fallbackData_M3500_solved.json"
+import * as fallbackData_M3500_solved_left from "./stores/fallbackData_M3500_solved_left.json"
+import * as fallbackData_M3500_solved_right from "./stores/fallbackData_M3500_solved_right.json"
+import * as fallbackData_M3500_unsolved_left from "./stores/fallbackData_M3500_unsolved_left.json"
+import * as fallbackData_M3500_unsolved_right from "./stores/fallbackData_M3500_unsolved_right.json"
+import * as fallbackData_M3500_odom_only_unsolved_left from "./stores/fallbackData_M3500_odom_only_unsolved_left.json"
+import * as fallbackData_M3500_odom_only_unsolved_right from "./stores/fallbackData_M3500_odom_only_unsolved_right.json"
 import * as fallbackData_M30_solved from "./stores/fallbackData_M30_solved.json"
 
 
 // update time (temporary, will be deprecated)
-const dt = 3000;
+const dt = 5000;
 
-const fallback_dataset = "M27";
+const fallback_dataset = "M3500_left";
 
 if (!window.CausalGraphData == null){  // given dataset
   setCausalGraphData( window.CausalGraphData )
@@ -57,6 +63,16 @@ else{
   else if (fallback_dataset == "M30") {
     setCausalGraphData(fallbackData_M30_solved);
   }
+  else if (fallback_dataset == "M3500_left"){
+    setCausalGraphData(fallbackData_M3500_odom_only_unsolved_left);
+    setTimeout(()=>setCausalGraphData(fallbackData_M3500_unsolved_left), dt/2);
+    setTimeout(()=>setCausalGraphData(fallbackData_M3500_solved_left), 3/2*dt);
+  } 
+  else if (fallback_dataset == "M3500_right"){
+    setCausalGraphData(fallbackData_M3500_odom_only_unsolved_right);
+    setTimeout(()=>setCausalGraphData(fallbackData_M3500_unsolved_right), dt/2);
+    setTimeout(()=>setCausalGraphData(fallbackData_M3500_solved_right), 3/2*dt);
+  } 
   else{ // M3500
     setCausalGraphData(fallbackData_M3500_odom_only_unsolved);
     setTimeout(()=>setCausalGraphData(fallbackData_M3500_unsolved),2*dt);
