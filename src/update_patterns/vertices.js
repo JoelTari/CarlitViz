@@ -42,7 +42,7 @@ const path_pose = function(radius){
           Z`;
 }
 
-const join_enter_vertex = function(radius,elDivTooltip,time_transition_entry){
+const join_enter_vertex = function(radius, vertexStrokeWidth,elDivTooltip,time_transition_entry){
   return function(enter){
     // TODO:
     // Imho best way to avoid to define those transitions everywhere is to
@@ -84,13 +84,22 @@ const join_enter_vertex = function(radius,elDivTooltip,time_transition_entry){
             .append("circle")
             .classed("vertex-shape",true)
             .attr( "r", radius)
-            // .attr("r",2 * radius) 
+            .attr("fill",d.type == "intervention"?"#ccc":null)
             .style("stroke-opacity", "40%")
             .style("stroke","green")
             .transition(t_vertex_entry)
             // .style("fill",null)
             .style("stroke",null)
             .style("stroke-opacity", null);
+          // intervention double-circle effect
+          if (d.type == "intervention"){
+            d3.select(this)
+              .append("circle")
+              .classed("intervention-circle",true)
+              .attr("r", ()=>radius-1.7*vertexStrokeWidth)
+              .attr("fill", "none")
+              .attr("stroke-width",vertexStrokeWidth/1.8)
+          }
         }
 
         // text: variable name inside the circle
@@ -114,7 +123,7 @@ const join_enter_vertex = function(radius,elDivTooltip,time_transition_entry){
   }
 }
 
-const join_update_vertex = function(radius,time_transition_update){
+const join_update_vertex = function(radius,vertexStrokeWidth,time_transition_update){
   return function(update){
     const t_graph_motion = d3.transition().duration(time_transition_update);
     update
@@ -188,6 +197,9 @@ const join_update_vertex = function(radius,time_transition_update){
           // update the shape's radius
           this_vertex.select(".vertex-shape")
             .attr("r",radius);
+          this_vertex.select(".intervention-circle")
+            .attr("r", ()=>radius-1.7*vertexStrokeWidth)
+            .attr("stroke-width",vertexStrokeWidth/1.8);
         }
       });
   }
@@ -208,15 +220,15 @@ function vertex_hover(elDivTooltip){
     .on("mouseover", (e, d) => {
       // grow the vertex shape, raise the element
       vertex
-        .select(".vertex-shape")  // if its a circle
+        .selectAll("circle")
         .attr("r",
           function(d,i,n){
             return d3.select(this).attr("r")*spatial_growth_value
           }
         )
-        .attr("d",function(){
-          return path_pose(d3.select(this).attr("r"))}
-        );
+        // .attr("d",function(){
+        //   return path_pose(d3.select(this).attr("r"))}
+        // );
       
       // stroke-width & text should grow as well
       // since they are defined at the vertices-group  level (aka parent node of vertex)
@@ -279,15 +291,16 @@ function vertex_hover(elDivTooltip){
     // on hover out, rebase to default
     .on("mouseout", (e, d) => {
       vertex
-        .select(".vertex-shape")
+        .selectAll("circle")
         .attr("r",
           function(d,i,n){
             return d3.select(this).attr("r")/spatial_growth_value
           }
         )
-        .attr("d",function(){
-          return path_pose(d3.select(this).attr("r"))}
-        );
+        // .attr("d",function(){
+        //   return path_pose(d3.select(this).attr("r"))}
+        // );
+
       // stroke-width & font-size defaults value
       // are defined at vertices-group level, remove those attributes for this
       // vertex so that we inherit the defaults again

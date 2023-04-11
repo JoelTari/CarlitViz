@@ -269,7 +269,7 @@ function CausalGraph(props){
         .select("g.vertices-group")
         .selectAll(".vertex")
         .data(graph.marginals, (d)=> d.var_id)
-        .join(join_enter_vertex(appliedUnitGraph(),d3selections.tooltip,duration_entry),join_update_vertex(appliedUnitGraph(),duration_update));
+        .join(join_enter_vertex(appliedUnitGraph(),vertexStrokeWidth(),d3selections.tooltip,duration_entry),join_update_vertex(appliedUnitGraph(),vertexStrokeWidth(),duration_update));
       // REFACTOR_SEVERAL_GRAPHS: move this paragraph to graph-group
     });
 

@@ -186,8 +186,10 @@ function factor_hover(elDivTooltip){
                          <span class="tooltip-field"><strong>Type</strong></span>: 
                          <span class="tooltip-value">${d.type}</span>
                          <br>
-                         <span class="tooltip-field"><strong>Vars</strong></span>: 
-                         <span class="tooltip-value">${d.vars_id}</span>
+                         <span class="tooltip-field"><strong>From</strong></span>: 
+                         <span class="tooltip-value">${d.vars_id[0]}</span>
+                         <span class="tooltip-field"><strong>To</strong></span>: 
+                         <span class="tooltip-value">${d.vars_id[1]}</span>
                          `);
         // cursor pointer
         d3.select(e.currentTarget).style("cursor", "pointer");
