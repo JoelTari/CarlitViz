@@ -48,7 +48,7 @@ import * as clique_output from "./stores/clique_output.json"
 // update time (temporary, will be deprecated)
 const dt = 5000;
 
-const fallback_dataset = "M3500_left";
+const fallback_dataset = "M3500_right";
 
 if (!window.CausalGraphData == null){  // given dataset
   setCausalGraphData( window.CausalGraphData )
