@@ -42,12 +42,13 @@ import * as fallbackData_M3500_unsolved_right from "./stores/fallbackData_M3500_
 import * as fallbackData_M3500_odom_only_unsolved_left from "./stores/fallbackData_M3500_odom_only_unsolved_left.json"
 import * as fallbackData_M3500_odom_only_unsolved_right from "./stores/fallbackData_M3500_odom_only_unsolved_right.json"
 import * as fallbackData_M30_solved from "./stores/fallbackData_M30_solved.json"
+import * as clique_output from "./stores/clique_output.json"
 
 
 // update time (temporary, will be deprecated)
 const dt = 5000;
 
-const fallback_dataset = "M3500_left";
+const fallback_dataset = "clique_output";
 
 if (!window.CausalGraphData == null){  // given dataset
   setCausalGraphData( window.CausalGraphData )
@@ -73,6 +74,9 @@ else{
     setTimeout(()=>setCausalGraphData(fallbackData_M3500_unsolved_right), dt/2);
     setTimeout(()=>setCausalGraphData(fallbackData_M3500_solved_right), 3/2*dt);
   } 
+  else if (fallback_dataset == "clique_output"){
+    setCausalGraphData(clique_output);
+  }
   else{ // M3500
     setCausalGraphData(fallbackData_M3500_odom_only_unsolved);
     setTimeout(()=>setCausalGraphData(fallbackData_M3500_unsolved),2*dt);

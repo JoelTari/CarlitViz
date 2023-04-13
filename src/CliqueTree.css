@@ -38,7 +38,7 @@ svg.clique-tree-graph{
 /*------------------------------------------------------------------*/
 .clique-tree-graph .gseparator line {
   stroke: var(--line_stroke);
-  stroke-width: 3px;
+  stroke-width: 10%;
   cursor: pointer;
 }
 
@@ -65,6 +65,7 @@ svg.clique-tree-graph{
 .clique-tree-graph .gclique rect{
   fill: var(--rect_fill);
   stroke: var(--rect_stroke);
+  stroke-width: 10%;
   cursor: pointer;
 }
 
@@ -108,7 +109,7 @@ svg.clique-tree-graph{
   font-size: 20px;
 }
 .clique-tree-graph .gseparator:has(text:hover) line{
-  stroke-width: 5px;
+  /* stroke-width: 5px; */
 }
 
 /*------------------------------------------------------------------*/
@@ -124,11 +125,11 @@ svg.clique-tree-graph{
 
 .clique-tree-graph .gseparator:has(.hovering) line{
   stroke: var(--rip_path);
-  stroke-width: 5px;
+  /* stroke-width: 5px; */
 }
 
 .clique-tree-graph .gclique rect:has(+ * .hovering){
   stroke: var(--rip_path);
-  stroke-width: 3px;  
+  /* stroke-width: 3px;   */
   transform: scale(1.1);
 }

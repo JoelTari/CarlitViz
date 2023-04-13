@@ -18,7 +18,7 @@
 import * as d3 from "d3"
 import { createMemo, createEffect, onCleanup, onMount } from 'solid-js'
 // import { SlamData } from "./stores/SlamDataStore"
-import { MixedFactorGraphData } from "./stores/MixedFactorGraphData"
+import { CausalGraphData } from "./stores/CausalGraphData"
 import './CliqueTree.css'   
 
 function CliqueTree(){
@@ -48,7 +48,7 @@ function CliqueTree(){
   const CopiedSlamData = createMemo( () => {
     // adds the 'sepset' field in each link (element of 'links')
     console.log("massaging data (get the store and make a deep copy)")
-    return JSON.parse(JSON.stringify(MixedFactorGraphData().cliques))
+    return JSON.parse(JSON.stringify(CausalGraphData().cliques))
     // return MassageLinks(
     //   DeepCopiedSlamData
     // )
@@ -58,7 +58,7 @@ function CliqueTree(){
   //                           Reactive UI                            //
   //------------------------------------------------------------------//
   createEffect(() =>{
-    forces.charge.distanceMax(1800).strength(-8000);
+    forces.charge.distanceMax(900800).strength(-20000);
     forces.links.distance(350).strength(1.5);
     forces.centrifuge.strength(1);
     console.log("Reactive CliqueTree: new UI data.")
@@ -68,7 +68,7 @@ function CliqueTree(){
   // define a drag behavior
   const drag = (a_simulation) => {
     function dragstarted(event) {
-      if (!event.active) a_simulation.alphaTarget(0.3).restart();
+      if (!event.active) a_simulation.alphaTarget(0.7).restart();
       event.subject.fx = event.subject.x;
       event.subject.fy = event.subject.y;
     }
@@ -408,7 +408,7 @@ function CliqueTree(){
 
       // restart the simulation (if condition met)
       if (restart_simulation){
-        simulation.alpha(0.8).restart();
+        simulation.alpha(0.9).restart();
       }
 
     })
