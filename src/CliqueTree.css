@@ -38,7 +38,7 @@ svg.clique-tree-graph{
 /*------------------------------------------------------------------*/
 .clique-tree-graph .gseparator line {
   stroke: var(--line_stroke);
-  stroke-width: 10%;
+  stroke-width: 10px;
   cursor: pointer;
 }
 
@@ -65,7 +65,7 @@ svg.clique-tree-graph{
 .clique-tree-graph .gclique rect{
   fill: var(--rect_fill);
   stroke: var(--rect_stroke);
-  stroke-width: 10%;
+  /* stroke-width: 10%; */
   cursor: pointer;
 }
 
