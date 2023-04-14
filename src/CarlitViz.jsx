@@ -16,7 +16,7 @@
  */
 
 import { lazy } from "solid-js";
-import { Router, Route, Routes } from "@solidjs/router";
+import { Router, Route, Routes, hashIntegration } from "@solidjs/router";
 import CarlitVizSideMenu from "./CarlitVizSideMenu";
 
 const CausalGraph = lazy(()=> import("./CausalGraph"));
@@ -53,12 +53,12 @@ function CarlitViz(props){
         <CarlitVizSideMenu/>
       </Show>
       <div class="content" style={{width:"100%",height:"100%", position:"relative"}}>
-        <Router>
+        <Router source={hashIntegration()}>
           <Routes>
             <Route path="/" element={<CausalGraph dt={props.dt} id="fg-0"/>}/>
-            <Route path="/causal-graph" element={<CausalGraph dt={props.dt} id="fg-0"/>}/>
-            <Route path="/clique-tree" component={CliqueTree}/>
-            <Route path="/causal-graph-and-clique" element={<CausalGraphAndClique dt={props.dt}/>}/>
+            <Route path="causal-graph" element={<CausalGraph dt={props.dt} id="fg-0"/>}/>
+            <Route path="clique-tree" component={CliqueTree}/>
+            <Route path="causal-graph-and-clique" element={<CausalGraphAndClique dt={props.dt}/>}/>
           </Routes>
         </Router>
         <button 
