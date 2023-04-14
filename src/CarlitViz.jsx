@@ -24,13 +24,13 @@ const CliqueTree = lazy(()=> import("./CliqueTree"));
 import { sideMenuDisplayed , setSideMenuDisplayed } from "./stores/SideMenuDisplay";
 import { Toaster } from "solid-toast";
 
-function FactorAndClique(){
+function CausalGraphAndClique(props){
   return (
       <div style="display: grid; grid-template-columns: 1fr 1fr;
                     grid-template-rows: 100vh;
                     grid-template-areas: 'fg ct';">
         <div style="grid-area: fg; border-right: 3px solid black;">
-          <CausalGraph />
+          <CausalGraph dt={props.dt} id="causal-graph-right-panel"/>
         </div>
         <div style="grid-area: ct;border-left: 3px solid black;">
           <CliqueTree/>
@@ -58,7 +58,7 @@ function CarlitViz(props){
             <Route path="/" element={<CausalGraph dt={props.dt} id="fg-0"/>}/>
             <Route path="/causal-graph" element={<CausalGraph dt={props.dt} id="fg-0"/>}/>
             <Route path="/clique-tree" component={CliqueTree}/>
-            <Route path="/factor-and-clique" component={FactorAndClique}/>
+            <Route path="/causal-graph-and-clique" element={<CausalGraphAndClique dt={props.dt}/>}/>
           </Routes>
         </Router>
         <button 

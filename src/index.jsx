@@ -45,9 +45,9 @@ import * as fallbackData_M30_solved from "./stores/fallbackData_M30_solved.json"
 
 
 // update time (temporary, will be deprecated)
-const dt = 5000;
+const dt = 4000;
 
-const fallback_dataset = "M3500_left";
+const fallback_dataset = "M27";
 
 if (!window.CausalGraphData == null){  // given dataset
   setCausalGraphData( window.CausalGraphData )
@@ -56,9 +56,9 @@ else{
   if (fallback_dataset == "M27"){ // M27
     setCausalGraphData(fallbackData_M27_unsolved);
     setTimeout(()=>setCausalGraphData(fallbackData_M27_solved),dt);
-    setTimeout(()=>setCausalGraphData(fallbackData_M27_unsolved),2*dt);
-    setTimeout(()=>setCausalGraphData(fallbackData_M27_solved),3*dt);
-    setTimeout(()=>setCausalGraphData(fallbackData_M27_madeup),4*dt);
+    // setTimeout(()=>setCausalGraphData(fallbackData_M27_unsolved),2*dt);
+    // setTimeout(()=>setCausalGraphData(fallbackData_M27_solved),3*dt);
+    // setTimeout(()=>setCausalGraphData(fallbackData_M27_madeup),4*dt);
   }
   else if (fallback_dataset == "M30") {
     setCausalGraphData(fallbackData_M30_solved);

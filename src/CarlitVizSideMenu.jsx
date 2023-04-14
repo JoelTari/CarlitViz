@@ -48,7 +48,7 @@ function CarlitVizSideMenu(){
           <button onClick={close} class="close-menu-button">Close &times;</button>
           <a href="/causal-graph" class="causal-graph-button">Causal Graph</a>
           <a href="/clique-tree" class="clique-tree-button">Clique Tree</a>
-          <a href="/factor-and-clique" class="matrices-button">Both</a>
+          <a href="/causal-graph-and-clique" class="matrices-button">Both</a>
         </div>
       </div>
     </>

@@ -18,7 +18,7 @@
 import * as d3 from "d3"
 import { createMemo, createEffect, onCleanup, onMount } from 'solid-js'
 // import { SlamData } from "./stores/SlamDataStore"
-import { MixedFactorGraphData } from "./stores/MixedFactorGraphData"
+import { CausalGraphData } from "./stores/CausalGraphData"
 import './CliqueTree.css'   
 
 function CliqueTree(){
@@ -48,7 +48,7 @@ function CliqueTree(){
   const CopiedSlamData = createMemo( () => {
     // adds the 'sepset' field in each link (element of 'links')
     console.log("massaging data (get the store and make a deep copy)")
-    return JSON.parse(JSON.stringify(MixedFactorGraphData().cliques))
+    return JSON.parse(JSON.stringify(CausalGraphData().cliques))
     // return MassageLinks(
     //   DeepCopiedSlamData
     // )
@@ -193,11 +193,13 @@ function CliqueTree(){
 
       // forces.links = forces.links.ForceLink(links).id((d) => d.id);
         // .force("center", d3.forceCenter(width / 2, height / 2)) // strength default to 1
+      // console.log(MutableSlamData.links)
 
       // enter-update pattern on links (separators)
       d3selections.separators
         .selectAll(".gseparator")
-        .data(MutableSlamData.links, (d)=> `${d.source.id}\t${d.target.id}`)
+        // .data(MutableSlamData.links, (d)=> `${d.source.id}\t${d.target.id}`)
+        .data(MutableSlamData.links, (d)=> d.id)
         .join(
           (enter) => {
             restart_simulation = enter.data().length > 0 ? true : false;
@@ -215,8 +217,9 @@ function CliqueTree(){
 
               const septext = d3.select(this)
                 .append("text")
-                .text(_ => `${d.id}: `)
-                .attr("id", _ => d.id)
+                .attr("id", _ => d.id);
+
+              septext.text(_ => `${d.id}: `)
                 // .attr("x", (d) => .5*(d.source.x+d.target.x))
                 // .attr("y", (d) => .5*(d.source.y+d.target.y))
                 .call(function(d3t){
@@ -257,7 +260,7 @@ function CliqueTree(){
                   d3t.append("tspan").text("}")
                 })
               // rect support for sepset text (readability)
-              const bbox_septext = septext.node().getBBox();
+              const bbox_septext = septext.node().getBBox(); // TODO: account for rect stroke-width
               d3.select(this)
                 .append("rect")
                 .classed("readable_sepset", true)
@@ -279,6 +282,71 @@ function CliqueTree(){
             //   //                 .distance(forces.links.distance())
             //   //                 .strength(forces.links.strength())
             // });
+          },
+          update => {
+            restart_simulation = true;
+            return update
+              .each( function(d){
+                // remove old text
+                d3.select(this)
+                  .select(`text#${d.id}`)
+                  .remove();
+
+                const septext = d3.select(this)
+                  .append("text")
+                  .attr("id", _ => d.id);
+
+                septext.text(_ => `${d.id}: `)
+                  // .attr("x", (d) => .5*(d.source.x+d.target.x))
+                  // .attr("y", (d) => .5*(d.source.y+d.target.y))
+                  .call(function(d3t){
+                    // opening bracket
+                    d3t.append("tspan").text("{")
+
+                    // TODO: put that in update, not enter
+                    // compute the sepset, we use the insightful fact that 
+                    // the target and source fields have been replaced by d3
+                    // at this stage (under the hood) by the reference node objects
+                    // (was originally the string of the node id)
+                    // sauce : https://github.com/d3/d3-force#link_links
+                    d.sepset = d.target.content.filter(x_var => d.source.content.includes(x_var));
+                    // TODO: keep the above in update
+
+                    // const source_clique = MutableSlamData.nodes.filter(node => node.id == d.source)[0];
+                    // const target_clique = MutableSlamData.nodes.filter(node => node.id == d.target)[0];
+                    // d.sepset = target_clique.content.filter(x_var => source_clique.content.includes(x_var));
+
+                    // console.log(`[${d.id}]: source is ${source_clique}, target is ${target_clique} `)
+                    d.sepset.forEach( function(sep_var_id,i,dsepset) // (element, idx, array)
+                      {
+                      d3t.append("tspan")
+                        .attr("id",sep_var_id)
+                        .text(`${sep_var_id}${i===dsepset.length-1? "":","}`)
+                        .on("mouseover", (_) => {
+                          d3.selectAll(`tspan#${sep_var_id}`)
+                            .classed("hovering",true)
+                        })
+                        .on("mouseout", 
+                          ()=>{
+                          d3.selectAll(`tspan#${sep_var_id}`)
+                            .classed("hovering",false)
+                          }
+                        )
+                    })
+                    // closing bracket
+                    d3t.append("tspan").text("}")
+                  });
+                // rect support for sepset text (readability)
+                const bbox_septext = septext.node().getBBox(); // TODO: account for rect stroke-width
+                d3.select(this)
+                  .select("rect.readable_sepset")
+                  .attr("x",bbox_septext.x-bbox_septext.width/2)
+                  .attr("y",bbox_septext.y-bbox_septext.height/2)
+                  .attr("height",bbox_septext.height)
+                  .attr("width",bbox_septext.width)
+                // raise text (the rect is supposed to be 'under' the text)
+                septext.raise()
+              });
           }
         );
 
@@ -293,7 +361,7 @@ function CliqueTree(){
             .attr("id", (d) => d.id)
             // .style("transform", (d) => `translate(${d.x}px,${d.y}px)`)
             .each(function (d) {
-              // 0. compute text layout (cols)
+               // 0. compute text layout (cols)
               const totalFields = d.content.length + d.factors.length;
               // const cols = Math.max(1,Math.floor(Math.sqrt(totalFields)))
               const cols = 6
@@ -396,12 +464,109 @@ function CliqueTree(){
               // otherwise rectangle conceals the text,
               // and rectangle needed text bbox
 
-            })
+             });
           },
           (update) => { 
-            return update;
+            return update
+            .each(function (d) {
+              // 0. compute text layout (cols)
+              const totalFields = d.content.length + d.factors.length;
+              // const cols = Math.max(1,Math.floor(Math.sqrt(totalFields)))
+              const cols = 6
+
+              let d3textgroup = d3.select(this).select("g.cliquetext");
+              // pre-update: remove text of vars and factors
+              d3textgroup.select("text.vars_cliquetext").remove();
+              d3textgroup.select("text.factors_cliquetext").remove();
+
+              // 1. add text variables id
+              let d3text_vars = d3textgroup
+                .append("text")
+                .classed("vars_cliquetext",true)
+                .attr("y", 16)
+                .call(function(d3t) {
+                  // const cols = Math.ceil(Math.sqrt(d.content.length))
+                  // console.log(`${d.content.length} -> ${cols}`)
+                  for (let i=0;i<d.content.length; i++){
+                    d3t.append("tspan")
+                    .attr("id",`${d.content[i]}`)
+                    .attr("dy", _ => i%cols==0? 16:0)
+                    .attr("x",_ => i%cols==0? 0:null)
+                    .attr("dx",0)
+                    .text(`${d.content[i]}${i==d.content.length-1?"":","}`)
+                    .on("mouseover", (_) => {
+                      d3.selectAll(`tspan#${d.content[i]}`)
+                        .classed("hovering",true)
+                      // console.log(d.content[i])
+                    })
+                    .on("mouseout", 
+                      ()=>{
+                      d3.selectAll(`tspan#${d.content[i]}`)
+                        .classed("hovering",false)
+                      }
+                    )
+                  }
+                })
+              // 2. add text factors id
+              let d3text_factors = d3textgroup
+                .append("text")
+                .classed("factors_cliquetext",true)
+                .attr("y", 16*2 + d.content.length/cols*16)
+                .call(function(d3t){
+                  for (let i=0;i<d.factors.length; i++){
+                    d3t.append("tspan")
+                    .attr("id",`${d.factors[i]}`)
+                    .attr("dy", _ => i%cols==0? 16:0)
+                    .attr("x",_ => i%cols==0? 0:null)
+                    .attr("dx",0)
+                    .text(`${d.factors[i]}${i==d.factors.length-1?"":","}`)
+                  }
+                })
+
+              const bboxtext =  d3textgroup.node().getBBox()
+              // console.log(`${d.id} :  
+              //   ${bboxtext.width}, ${bboxtext.height}`)
+
+              // 3. resize the line that split variables & factors id
+              const pad_addon=20;
+              d3textgroup.select("line.cliqueid_var_split")
+                .attr("y1", 16)
+                .attr("y2", 16)
+                .attr("x1", -bboxtext.width/2-pad_addon/2)
+                .attr("x2", bboxtext.width/2+pad_addon/2);
+              d3textgroup.select("line.var_factor_split")
+                .attr("y1", 16*2 + d.content.length/cols*16)
+                .attr("y2", 16*2 + d.content.length/cols*16)
+                .attr("x1", -bboxtext.width/2-pad_addon/2)
+                .attr("x2", bboxtext.width/2+pad_addon/2);
+                
+            
+              // let d3text_factors = d3.select(this)
+              // .append("text")
+              // .text(d=> JSON.stringify(d.factors) )
+
+
+              // apply transform on text
+              d3textgroup
+                .attr("transform",
+                  `translate(0,${-bboxtext.height/2.5})`) // TODO: solve 2.5
+
+              // 3. resize the rectangle outlines the clique  
+              const rectw=bboxtext.width+pad_addon;
+              const recth=bboxtext.height+pad_addon;
+              d3.select(this).select("rect")
+              .attr("width", rectw)
+              .attr("height",recth)
+              .attr("x", `${-rectw/2}`)
+              .attr("y", `${-recth/2}`)
+              .attr("rx", `${pad_addon}`)
+              .attr("ry", `${pad_addon}`)
+              .lower(); // become the first child of its parent
+              // otherwise rectangle conceals the text,
+              // and rectangle needed text bbox
+
+            });
           }
-          // TODO: update
           // TODO: remove
         )
         .call(drag(simulation));
