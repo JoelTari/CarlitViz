@@ -45,7 +45,7 @@ import * as fallbackData_M30_solved from "./stores/fallbackData_M30_solved.json"
 
 
 // update time (temporary, will be deprecated)
-const dt = 4000;
+const dt = 2667;
 
 const fallback_dataset = "M27";
 
@@ -75,8 +75,8 @@ else{
   } 
   else{ // M3500
     setCausalGraphData(fallbackData_M3500_odom_only_unsolved);
-    setTimeout(()=>setCausalGraphData(fallbackData_M3500_unsolved),2*dt);
-    setTimeout(()=>setCausalGraphData(fallbackData_M3500_solved),4*dt);
+    setTimeout(()=>setCausalGraphData(fallbackData_M3500_unsolved),dt/2);
+    setTimeout(()=>setCausalGraphData(fallbackData_M3500_solved),3/2*dt);
   }
 }
 

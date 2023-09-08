@@ -138,7 +138,7 @@ function CausalGraph(props){
     const {unit_base} = processGraphData();
     // console.log(`unit base: ${unit_base}`);
     // console.log(`declutter coefficient: ${declutterCoefficient()}`)
-    return declutterCoefficient()*unit_base;
+    return declutterCoefficient()*unit_base*2.4;
   });
   // REFACTOR_SEVERAL_GRAPHS: this goes in graph-group but GoI might be needed (or do the GoI condition in the prop)
   //                          i.e. we just want to declutter the GoI graph not the others
@@ -147,7 +147,7 @@ function CausalGraph(props){
   const vertexStrokeWidth = () => appliedUnitGraph()*0.12; // TODO: memo
   const vertexFontSize = () => appliedUnitGraph()*0.75;
   // edge
-  const edgeWidth = ()=> appliedUnitGraph()*0.3; // TODO: worth it to make it a memo ?
+  const edgeWidth = ()=> appliedUnitGraph()*0.4; // TODO: worth it to make it a memo ?
   // covariance
   const covarianceStrokeWidth = () => appliedUnitGraph()*0.04;
   // extended vertex radius
@@ -156,10 +156,10 @@ function CausalGraph(props){
 
   onMount(() =>{
     // register d3 selections (those element contents will be under d3 jurisdiction, not solidjs)
-    d3selections.svg = d3.select("svg.causal-graph");
+    d3selections.svg = d3.select("svg.trajectory-graph");
     // d3selections.grid = d3.select("svg#CausalGraph g.grid");
     // d3selections.axesScales = d3.select("svg#CausalGraph g.axes-scales");
-    d3selections.graph= d3.select("svg.causal-graph g.gCausalGraph");
+    d3selections.graph= d3.select("svg.trajectory-graph g.gCausalGraph");
     // create a tooltip
     d3selections.tooltip = d3.select("body").append("div").classed("tooltip-factor-graph", true);
     // REFACTOR_SEVERAL_GRAPHS: this paragraph stays here, except the graph
@@ -288,9 +288,9 @@ function CausalGraph(props){
   const markerRefY =()=> markerHeight()/2;
 
   // REFACTOR_SEVERAL_GRAPHS: solidjs control flow depending on data + calls to graph group components
-  const displayGrids = true;
+  const displayGrids = false;
   return (
-  <svg class="causal-graph" id={props.id}>
+  <svg class="trajectory-graph" id={props.id}>
     <defs>
       <marker id="arrowVee" 
         markerUnits="strokeWidth"
@@ -319,7 +319,7 @@ function CausalGraph(props){
     </defs>
     <Show when={displayGrids}>
       <TicksGrid 
-        svgClass={"causal-graph"}
+        svgClass={"trajectory-graph"}
         adjustedScales={adjustedScales()} 
         svgId={props.id}
         svgSize={svgSize()} 
@@ -335,7 +335,7 @@ function CausalGraph(props){
         fill="none">
       </g>
       <g class="directed-edges-group"
-        stroke="grey"
+        stroke="black"
         stroke-width={edgeWidth()}
         fill="grey">
       </g>
@@ -349,7 +349,7 @@ function CausalGraph(props){
     </g>
     <Show when={displayGrids}>
       <AxesWithScales 
-        svgClass={"causal-graph"}
+        svgClass={"trajectory-graph"}
         svgId={props.id}
         adjustedScales={adjustedScales()} 
         svgSize={svgSize()}/>

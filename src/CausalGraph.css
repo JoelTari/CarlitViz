@@ -11,7 +11,7 @@
 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 * See the Licence for the specific language governing permissions and limitations under the Licence.
 */
-svg.causal-graph{
+svg.trajectory-graph{
   /* TODO: fix variable definitions */
   --fill-covariance: #ece281;
   --rect_fill: #eee;
@@ -23,46 +23,46 @@ svg.causal-graph{
   background-color: var(--bg);
 }
 
-svg.causal-graph{
+svg.trajectory-graph{
   transform: scaleY(-1);
 }
-svg.causal-graph text{
+svg.trajectory-graph text{
   transform: scaleY(-1);
 }
 
-svg.causal-graph vertices-group{
+svg.trajectory-graph vertices-group{
   cursor: pointer;
 }
 
-svg.causal-graph directed-edges-group circle{
+svg.trajectory-graph directed-edges-group circle{
   cursor: pointer;
 }
 
-svg.causal-graph .covariances-group ellipse.highlight{
+svg.trajectory-graph .covariances-group ellipse.highlight{
   fill: #f3d189;
 }
 
-svg.causal-graph .directed-edges-group .factor.link_highlight circle{
+svg.trajectory-graph .directed-edges-group .factor.link_highlight circle{
   fill: #607d8b;
 }
 
-svg.causal-graph .directed-edges-group .factor.link_highlight{
+svg.trajectory-graph .directed-edges-group .factor.link_highlight{
   /* stroke: #d16d4b; */
   stroke: #a8c7c4;
 }
-svg.causal-graph .vertices-group{
+svg.trajectory-graph .vertices-group{
   fill: #fffaec;
 }
-svg.causal-graph .vertices-group .vertex.link_highlight{
+svg.trajectory-graph .vertices-group .vertex.link_highlight{
   /* fill: #E2C17B; */
   /* fill: #f9f5d7; */
   fill: hsl(123, 14.0%, 75.2%);
 }
-svg.causal-graph .vertices-group .vertex .vertex-shape:hover{
+svg.trajectory-graph .vertices-group .vertex .vertex-shape:hover{
   stroke: hsl(200, 18.3%, 56.1%);
 }
 
-svg.causal-graph .vertices-group text{
+svg.trajectory-graph .vertices-group text{
   /* remove some ghost hover effect when zoomed */
   pointer-events: none;
 }
