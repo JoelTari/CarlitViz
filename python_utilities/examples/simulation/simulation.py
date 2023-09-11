@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-# Copyright 2021 AKKA Technologies (joel.tari-summerfield@akka.eu)
+# Copyright 2021 AKKA Technologies and LAAS-CNRS (joel.tari-summerfield@akka.eu)
 
 # Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 # the European Commission - subsequent versions of the EUPL (the "Licence");
