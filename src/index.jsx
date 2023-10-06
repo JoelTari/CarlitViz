@@ -47,7 +47,7 @@ import * as fallbackData_M30_solved from "./stores/fallbackData_M30_solved.json"
 // update time (temporary, will be deprecated)
 const dt = 2667;
 
-const fallback_dataset = "M27";
+const fallback_dataset = "M3500_left";
 
 if (!window.CausalGraphData == null){  // given dataset
   setCausalGraphData( window.CausalGraphData )

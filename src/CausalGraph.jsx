@@ -288,7 +288,7 @@ function CausalGraph(props){
   const markerRefY =()=> markerHeight()/2;
 
   // REFACTOR_SEVERAL_GRAPHS: solidjs control flow depending on data + calls to graph group components
-  const displayGrids = false;
+  const displayGrids = true;
   return (
   <svg class="trajectory-graph" id={props.id}>
     <defs>
