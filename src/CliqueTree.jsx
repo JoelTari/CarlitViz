@@ -166,7 +166,7 @@ function CliqueTree(){
     //------------------------------------------------------------------//
     createEffect(() => {
 
-      // simulation.stop()
+      simulation.stop()
       const MutableSlamData = JSON.parse(JSON.stringify(CopiedSlamData()));
 
       // console.log("Fresh SLAM data (without simulation)");
@@ -190,6 +190,7 @@ function CliqueTree(){
       simulation.nodes(MutableSlamData.nodes);
       simulation.force("link").links(MutableSlamData.links);
       let restart_simulation = false;
+      let run_manual_ticks_simulation = false; // flag in case of too much elements
 
       // forces.links = forces.links.ForceLink(links).id((d) => d.id);
         // .force("center", d3.forceCenter(width / 2, height / 2)) // strength default to 1
@@ -203,6 +204,8 @@ function CliqueTree(){
         .join(
           (enter) => {
             restart_simulation = enter.data().length > 0 ? true : false;
+            console.log(`nb of new clique elements: ${enter.data().length}`)
+            run_manual_ticks_simulation = enter.data().length > 450 ? true : false;
             return enter.append("g")
             .classed("gseparator", true)
             .attr("id", (d) => d.id)
@@ -571,9 +574,39 @@ function CliqueTree(){
         )
         .call(drag(simulation));
 
-      // restart the simulation (if condition met)
+      // decide if/how to restart the simulation (if condition met)
       if (restart_simulation){
-        simulation.alpha(0.8).restart();
+        if (run_manual_ticks_simulation){
+          simulation.alphaDecay(0.003448); // 6000 iterations, default is 0.0228 which is equal to 1- 0.001^(1/300) for 300 iterations
+                                          // where 0.001 is alphaMin (default).
+          simulation.velocityDecay(0.02); // default is 0.2
+          // only triggers if there are a lot of new elements
+
+          // anticipate the number of ticks necessary (no need to compute more, since the forces won't apply
+          // after decay run its course)
+          const nticks=Math.ceil(Math.log(simulation.alphaMin()) / Math.log(1 - simulation.alphaDecay()))
+
+
+          // set a strong negative charge (the goal is to prevent spaghetti)
+          simulation.force("charge" , d3.forceManyBody().distanceMax(18000).strength(-80000)) // TODO: make it forces.charge*10 (ie, relative to the current charge)
+          // const centrifuge_tmp = d3.forceCenter(svg_w/2,svg_h/2).strength(0.5) 
+          // simulation.force("center" , centrifuge_tmp)
+          console.log(`Simulation: running non-interactive ticks  (${nticks} of those)`)
+          // FIX: can be very high cost, use a web worker: https://observablehq.com/@d3/force-directed-web-worker
+          simulation.tick(nticks);
+          console.log(`Simulation: done running non-interactive ticks`)
+          // act on DOM (since tick doesnot trigger events, it is the same function)
+          ticked();
+          simulation.stop();
+          // TODO: bounding box the zoom
+        }else{
+          simulation.alpha(0.6).restart();
+        }
+        // put back default/pre manual ticks values
+        simulation.force("charge" , forces.charge)
+        simulation.force("center" , forces.centrifuge)
+        simulation.alphaDecay(0.0228);
+        simulation.velocityDecay(0.4);
       }
 
     })
