@@ -18,7 +18,7 @@
 import * as d3 from "d3"
 import { createMemo, createEffect, onCleanup, onMount } from 'solid-js'
 // import { SlamData } from "./stores/SlamDataStore"
-import { CausalGraphData } from "./stores/CausalGraphData"
+import { GraphData } from "./stores/GraphData"
 import './CliqueTree.css'   
 
 function CliqueTree(){
@@ -48,7 +48,7 @@ function CliqueTree(){
   const CopiedSlamData = createMemo( () => {
     // adds the 'sepset' field in each link (element of 'links')
     console.log("massaging data (get the store and make a deep copy)")
-    return JSON.parse(JSON.stringify(CausalGraphData().cliques))
+    return JSON.parse(JSON.stringify(GraphData().cliques))
     // return MassageLinks(
     //   DeepCopiedSlamData
     // )

@@ -25,7 +25,7 @@ import { render } from 'solid-js/web';
 import './style.css'
 
 // import the store
-import { setCausalGraphData } from './stores/CausalGraphData'
+import { setGraphData } from './stores/GraphData'
 // import the component
 import CarlitViz from './CarlitViz';
 // import fallback data: M27 is the dataset of the first 27 steps of M3500
@@ -49,34 +49,34 @@ const dt = 2667;
 
 const fallback_dataset = "M3500_left";
 
-if (!window.CausalGraphData == null){  // given dataset
-  setCausalGraphData( window.CausalGraphData )
+if (!window.GraphData == null){  // given dataset
+  setGraphData( window.GraphData )
 }
 else{
   if (fallback_dataset == "M27"){ // M27
-    setCausalGraphData(fallbackData_M27_unsolved);
-    setTimeout(()=>setCausalGraphData(fallbackData_M27_solved),dt);
-    // setTimeout(()=>setCausalGraphData(fallbackData_M27_unsolved),2*dt);
-    // setTimeout(()=>setCausalGraphData(fallbackData_M27_solved),3*dt);
-    // setTimeout(()=>setCausalGraphData(fallbackData_M27_madeup),4*dt);
+    setGraphData(fallbackData_M27_unsolved);
+    setTimeout(()=>setGraphData(fallbackData_M27_solved),dt);
+    // setTimeout(()=>setGraphData(fallbackData_M27_unsolved),2*dt);
+    // setTimeout(()=>setGraphData(fallbackData_M27_solved),3*dt);
+    // setTimeout(()=>setGraphData(fallbackData_M27_madeup),4*dt);
   }
   else if (fallback_dataset == "M30") {
-    setCausalGraphData(fallbackData_M30_solved);
+    setGraphData(fallbackData_M30_solved);
   }
   else if (fallback_dataset == "M3500_left"){
-    setCausalGraphData(fallbackData_M3500_odom_only_unsolved_left);
-    setTimeout(()=>setCausalGraphData(fallbackData_M3500_unsolved_left), dt/2);
-    setTimeout(()=>setCausalGraphData(fallbackData_M3500_solved_left), 3/2*dt);
+    setGraphData(fallbackData_M3500_odom_only_unsolved_left);
+    setTimeout(()=>setGraphData(fallbackData_M3500_unsolved_left), dt/2);
+    setTimeout(()=>setGraphData(fallbackData_M3500_solved_left), 3/2*dt);
   } 
   else if (fallback_dataset == "M3500_right"){
-    setCausalGraphData(fallbackData_M3500_odom_only_unsolved_right);
-    setTimeout(()=>setCausalGraphData(fallbackData_M3500_unsolved_right), dt/2);
-    setTimeout(()=>setCausalGraphData(fallbackData_M3500_solved_right), 3/2*dt);
+    setGraphData(fallbackData_M3500_odom_only_unsolved_right);
+    setTimeout(()=>setGraphData(fallbackData_M3500_unsolved_right), dt/2);
+    setTimeout(()=>setGraphData(fallbackData_M3500_solved_right), 3/2*dt);
   } 
   else{ // M3500
-    setCausalGraphData(fallbackData_M3500_odom_only_unsolved);
-    setTimeout(()=>setCausalGraphData(fallbackData_M3500_unsolved),dt/2);
-    setTimeout(()=>setCausalGraphData(fallbackData_M3500_solved),3/2*dt);
+    setGraphData(fallbackData_M3500_odom_only_unsolved);
+    setTimeout(()=>setGraphData(fallbackData_M3500_unsolved),dt/2);
+    setTimeout(()=>setGraphData(fallbackData_M3500_solved),3/2*dt);
   }
 }
 
@@ -84,14 +84,14 @@ else{
 // setInterval(
 //   ()=>{
 //     console.log("[Interval tests] new data : M27 unsolved");
-//     setCausalGraphData(fallbackData_M27_unsolved)
+//     setGraphData(fallbackData_M27_unsolved)
 //     setTimeout(()=>{
 //       console.log("[Interval tests] new data : M27 solved");
-//       setCausalGraphData(fallbackData_M27_solved)
+//       setGraphData(fallbackData_M27_solved)
 //     },3500)
 //     // setTimeout(()=>{
 //     //   console.log("[Interval tests] new data t3");
-//     //   setCausalGraphData(fallback1_CausalGraphData)
+//     //   setGraphData(fallback1_GraphData)
 //     // },5000)
 //   }
 //   ,7000

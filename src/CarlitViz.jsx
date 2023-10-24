@@ -19,18 +19,18 @@ import { lazy } from "solid-js";
 import { Router, Route, Routes, hashIntegration } from "@solidjs/router";
 import CarlitVizSideMenu from "./CarlitVizSideMenu";
 
-const CausalGraph = lazy(()=> import("./CausalGraph"));
+const TrajectoryGraph = lazy(()=> import("./TrajectoryGraph"));
 const CliqueTree = lazy(()=> import("./CliqueTree"));
 import { sideMenuDisplayed , setSideMenuDisplayed } from "./stores/SideMenuDisplay";
 import { Toaster } from "solid-toast";
 
-function CausalGraphAndClique(props){
+function TrajectoryGraphAndClique(props){
   return (
       <div style="display: grid; grid-template-columns: 1fr 1fr;
                     grid-template-rows: 100vh;
                     grid-template-areas: 'fg ct';">
         <div style="grid-area: fg; border-right: 3px solid black;">
-          <CausalGraph dt={props.dt} id="trajectory-graph-right-panel"/>
+          <TrajectoryGraph dt={props.dt} id="trajectory-graph-right-panel"/>
         </div>
         <div style="grid-area: ct;border-left: 3px solid black;">
           <CliqueTree/>
@@ -55,10 +55,10 @@ function CarlitViz(props){
       <div class="content" style={{width:"100%",height:"100%", position:"relative"}}>
         <Router source={hashIntegration()}>
           <Routes>
-            <Route path="/" element={<CausalGraph dt={props.dt} id="fg-0"/>}/>
-            <Route path="trajectory-graph" element={<CausalGraph dt={props.dt} id="fg-0"/>}/>
+            <Route path="/" element={<TrajectoryGraph dt={props.dt} id="fg-0"/>}/>
+            <Route path="trajectory-graph" element={<TrajectoryGraph dt={props.dt} id="fg-0"/>}/>
             <Route path="clique-tree" component={CliqueTree}/>
-            <Route path="trajectory-graph-and-clique" element={<CausalGraphAndClique dt={props.dt}/>}/>
+            <Route path="trajectory-graph-and-clique" element={<TrajectoryGraphAndClique dt={props.dt}/>}/>
           </Routes>
         </Router>
         <button 

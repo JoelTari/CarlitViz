@@ -17,9 +17,9 @@
 
 import { createSignal } from "solid-js"
 
-const [CausalGraphData, setCausalGraphData] = createSignal({})
+const [GraphData, setGraphData] = createSignal({})
 
 export {
-  CausalGraphData,
-  setCausalGraphData
+  GraphData,
+  setGraphData
 }

@@ -16,11 +16,11 @@
  */
 
 import * as d3 from "d3"
-import './CausalGraph.css'
+import './TrajectoryGraph.css'
 import { createMemo, createEffect, onMount, createSignal, untrack } from "solid-js"
 // REFACTOR_SEVERAL_GRAPHS: these imports stays (mind the name of css file)
 
-import { CausalGraphData } from "./stores/CausalGraphData"
+import { GraphData } from "./stores/GraphData"
 import AxesWithScales from "./components/AxesWithScales"
 import TicksGrid from "./components/TicksGrid"
 import { boundingBoxOfInterest, setBoundingBoxOfInterest, bounding_box_centering_view_transform } from "./stores/BoundingBoxOfInterest"
@@ -41,7 +41,7 @@ import chroma from "chroma-js";
 //------------------------------------------------------------------//
 //                            component                             //
 //------------------------------------------------------------------//
-function CausalGraph(props){
+function TrajectoryGraph(props){
   // define & initialize some signals
   const initSvgSize = { w: 1000, h: 1000 };
   const [ svgSize, setSvgSize ] = createSignal(initSvgSize);
@@ -97,7 +97,7 @@ function CausalGraph(props){
     // toast("Processing New Graph Data");
 
     // console.log("Processing new data:");
-    const graph = JSON.parse(JSON.stringify(CausalGraphData()));
+    const graph = JSON.parse(JSON.stringify(GraphData()));
     // console.log(graph);
     // REFACTOR_SEVERAL_GRAPHS: make it a larges objects of datas (and a Store rather than signal)
     //                          perhaps, it does not need to onMount
@@ -165,9 +165,9 @@ function CausalGraph(props){
   onMount(() =>{
     // register d3 selections (those element contents will be under d3 jurisdiction, not solidjs)
     d3selections.svg = d3.select("svg.trajectory-graph");
-    // d3selections.grid = d3.select("svg#CausalGraph g.grid");
-    // d3selections.axesScales = d3.select("svg#CausalGraph g.axes-scales");
-    d3selections.graph= d3.select("svg.trajectory-graph g.gCausalGraph");
+    // d3selections.grid = d3.select("svg#TrajectoryGraph g.grid");
+    // d3selections.axesScales = d3.select("svg#TrajectoryGraph g.axes-scales");
+    d3selections.graph= d3.select("svg.trajectory-graph g.gTrajectoryGraph");
     // create a tooltip
     d3selections.tooltip = d3.select("body").append("div").classed("tooltip-factor-graph", true);
     // REFACTOR_SEVERAL_GRAPHS: this paragraph stays here, except the graph
@@ -191,16 +191,16 @@ function CausalGraph(props){
       // console.log(transform);
       // the zoom transform is applied to factor graph group (not the whole svg)
       // if (hasTransition){
-      //   d3.select('g.gCausalGraph')
+      //   d3.select('g.gTrajectoryGraph')
       //     .transition().duration(1500)
       //     .attr("transform",transform);
       // }
       // else 
-      d3.select('g.gCausalGraph').attr("transform",e.transform);
+      d3.select('g.gTrajectoryGraph').attr("transform",e.transform);
       // record current transform for scales/axes/grid reactivity
       setZoomTransform(e.transform);
     }
-    // REFACTOR_SEVERAL_GRAPHS: this paragraph stays here, mind the .gCausalGraph name
+    // REFACTOR_SEVERAL_GRAPHS: this paragraph stays here, mind the .gTrajectoryGraph name
 
     
     const graphZoomTransform = ()=>{
@@ -335,7 +335,7 @@ function CausalGraph(props){
         gridOpacity={"50%"}
       />
     </Show>
-    <g class="gCausalGraph">
+    <g class="gTrajectoryGraph">
       <g class="covariances-group"
         style="display: inherit"
         stroke-width={covarianceStrokeWidth()}
@@ -366,4 +366,4 @@ function CausalGraph(props){
   )
 }
 
-export default CausalGraph;
+export default TrajectoryGraph;
