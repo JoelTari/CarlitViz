@@ -35,6 +35,8 @@ import { join_enter_factor as join_enter_arrow, join_update_factor as join_updat
 import {  objectify_marginals, objectify_factors, compute_separator_set, compute_factor_set,  estimation_data_massage } from "./update_patterns/graph_massage"
 // REFACTOR_SEVERAL_GRAPHS: these import goes in graph-group
 import toast from 'solid-toast';
+// chroma-js for some color effect
+import chroma from "chroma-js";
 
 //------------------------------------------------------------------//
 //                            component                             //
@@ -146,8 +148,14 @@ function CausalGraph(props){
   // stroke
   const vertexStrokeWidth = () => appliedUnitGraph()*0.12; // TODO: memo
   const vertexFontSize = () => appliedUnitGraph()*0.75;
+  const vertexStrokeColor= ()=> "#222"; // "#212F3C";
+  const vertexFill=()=> "#CDC7A3"; 
   // edge
   const edgeWidth = ()=> appliedUnitGraph()*0.4; // TODO: worth it to make it a memo ?
+  const edgeStrokeColor=()=> "#5B6F92";
+  // const edgeStrokeColor=()=> chroma('teal').darken().saturate(8).hex(); // VIDEO: put black here
+  // marker (using chroma)
+  const chromaMarkerScale= ()=> chroma.scale([edgeStrokeColor(),vertexStrokeColor()]).mode('lch').colors(10)[3];
   // covariance
   const covarianceStrokeWidth = () => appliedUnitGraph()*0.04;
   // extended vertex radius
@@ -299,7 +307,7 @@ function CausalGraph(props){
         refX="0" 
         refY="1.5" 
         orient="auto" 
-        fill="#212F3C">
+        fill={chromaMarkerScale()}>
           <polygon
             points={`0 0, ${3*1.618} 1.5, 0 3`} 
           />
@@ -335,15 +343,15 @@ function CausalGraph(props){
         fill="none">
       </g>
       <g class="directed-edges-group"
-        stroke="black"
+        stroke={edgeStrokeColor()}
         stroke-width={edgeWidth()}
         fill="grey">
       </g>
       <g class="vertices-group"
         font-size={vertexFontSize()} 
         stroke-width={vertexStrokeWidth()} 
-        stroke="#212F3C" 
-        style="text-anchor: middle;font-family: monospace;dominant-baseline: middle; cursor: pointer;fill: #fff"
+        stroke={vertexStrokeColor()}
+        style={`text-anchor: middle;font-family: monospace;dominant-baseline: middle; cursor: pointer;fill: ${vertexFill()}`}
         >
       </g>
     </g>
