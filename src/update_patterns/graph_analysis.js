@@ -54,6 +54,10 @@ const mean_distance_neighbours= function(graph){
   else return 1; // no neighbour: value is set to 1
 }
 
+/** @type compute the median distance between linked elements of the graph.
+  * This assumes that the function sqDist is applicable for every factor of the
+  * graph. This in turns implies that every factor has 2 nodes, which contains
+  * (at least) fields x and y */
 const median_distance_neighbours=function(graph){
   if(graph.factors.length > 1){
     const distances = graph.factors.map(f=>{

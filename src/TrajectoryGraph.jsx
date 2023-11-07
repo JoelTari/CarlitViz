@@ -114,8 +114,7 @@ function TrajectoryGraph(props){
 
     // compute the base unit given the mean euclidian distance between connected nodes in
     // the graph
-    // const canonical_base_unit = mean_distance_neighbours(graph)/10; // TODO: replace by median
-    const canonical_base_unit = median_distance_neighbours(graph)/10; // TODO: replace by median
+    const canonical_base_unit = median_distance_neighbours(graph)/10;
     // console.log(`base graph unit set to : ${canonical_base_unit}`);
     // initially the applied base unit is the canonical
     // REFACTOR_SEVERAL_GRAPHS: move this paragraph to graph-group

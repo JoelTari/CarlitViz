@@ -47815,7 +47815,7 @@
     }
   ],
   "factors": [
-    { "vars_id": ["x1"], "type": "FactorUni", "factor_id": "x1__f1" },
+    { "vars_id": ["x0","x1"], "type": "FactorUni", "factor_id": "x1__f1" },
     {
       "vars_id": ["x1", "x2"],
       "type": "FactorForwardMotion",

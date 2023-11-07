@@ -41,13 +41,14 @@ import * as fallbackData_M3500_unsolved_left from "./stores/fallbackData_M3500_u
 import * as fallbackData_M3500_unsolved_right from "./stores/fallbackData_M3500_unsolved_right.json"
 import * as fallbackData_M3500_odom_only_unsolved_left from "./stores/fallbackData_M3500_odom_only_unsolved_left.json"
 import * as fallbackData_M3500_odom_only_unsolved_right from "./stores/fallbackData_M3500_odom_only_unsolved_right.json"
+import * as ut3_path1_round1_batch_matrix_odom from "./stores/ut3_path1_round1_batch_matrix_odom.json"
 import * as fallbackData_M30_solved from "./stores/fallbackData_M30_solved.json"
 
 
 // update time (temporary, will be deprecated)
 const dt = 2667;
 
-const fallback_dataset = "M3500_left";
+const fallback_dataset = "ut3_path1_round1_batch_matrix_odom";
 
 if (!window.GraphData == null){  // given dataset
   setGraphData( window.GraphData )
@@ -73,6 +74,9 @@ else{
     setTimeout(()=>setGraphData(fallbackData_M3500_unsolved_right), dt/2);
     setTimeout(()=>setGraphData(fallbackData_M3500_solved_right), 3/2*dt);
   } 
+  else if (fallback_dataset == "ut3_path1_round1_batch_matrix_odom"){
+    setGraphData(ut3_path1_round1_batch_matrix_odom);
+  }
   else{ // M3500
     setGraphData(fallbackData_M3500_odom_only_unsolved);
     setTimeout(()=>setGraphData(fallbackData_M3500_unsolved),dt/2);
