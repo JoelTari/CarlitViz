@@ -48,7 +48,8 @@ import * as fallbackData_M30_solved from "./stores/fallbackData_M30_solved.json"
 // update time (temporary, will be deprecated)
 const dt = 2667;
 
-const fallback_dataset = "ut3_path1_round1_batch_matrix_odom";
+// const fallback_dataset = "ut3_path1_round1_batch_matrix_odom";
+const fallback_dataset = "M3500_left";
 
 if (!window.GraphData == null){  // given dataset
   setGraphData( window.GraphData )
