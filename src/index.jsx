@@ -42,11 +42,17 @@ import * as fallbackData_M3500_unsolved_right from "./stores/fallbackData_M3500_
 import * as fallbackData_M3500_odom_only_unsolved_left from "./stores/fallbackData_M3500_odom_only_unsolved_left.json"
 import * as fallbackData_M3500_odom_only_unsolved_right from "./stores/fallbackData_M3500_odom_only_unsolved_right.json"
 import * as ut3_path1_round1_batch_matrix_odom from "./stores/ut3_path1_round1_batch_matrix_odom.json"
+import * as ut3_path1_round1_batch_matrix_full from "./stores/ut3_path1_round1_batch_matrix_full.json"
 import * as fallbackData_M30_solved from "./stores/fallbackData_M30_solved.json"
 
 
-// update time (temporary, will be deprecated)
+// TODO: pass here a profil of colors/thickness in corresponding stores
+//       target: TrajectoryUI_opts
+
+
+// update time in ms (used to transition, time between change of graph)
 const dt = 2667;
+// const dt = 14667;
 
 // const fallback_dataset = "ut3_path1_round1_batch_matrix_odom";
 const fallback_dataset = "M3500_left";
@@ -77,6 +83,7 @@ else{
   } 
   else if (fallback_dataset == "ut3_path1_round1_batch_matrix_odom"){
     setGraphData(ut3_path1_round1_batch_matrix_odom);
+    setTimeout(()=>setGraphData(ut3_path1_round1_batch_matrix_full), dt);
   }
   else{ // M3500
     setGraphData(fallbackData_M3500_odom_only_unsolved);
