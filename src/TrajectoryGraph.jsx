@@ -135,6 +135,10 @@ function TrajectoryGraph(props){
     // REFACTOR_SEVERAL_GRAPHS: move this paragraph to graph-group
   });
 
+  // ********
+  // Start definition of UI values
+  // ********
+  // the basic dimension around which all other are defined
   const appliedUnitGraph = createMemo(()=>{
     const {unit_base} = processGraphData();
     // console.log(`unit base: ${unit_base}`);
@@ -143,20 +147,28 @@ function TrajectoryGraph(props){
   });
   // REFACTOR_SEVERAL_GRAPHS: this goes in graph-group but GoI might be needed (or do the GoI condition in the prop)
   //                          i.e. we just want to declutter the GoI graph not the others
-
-  // stroke
-  const vertexStrokeWidth = () => appliedUnitGraph()*0.12; // TODO: memo
-  const vertexFontSize = () => appliedUnitGraph()*0.75;
+  // TODO: 
+  const appliedUnitGraphCoef=1;
+  const vertexStrokeCoef=0.12;
+  const vertexFontSizeCoef=0.75;
   const vertexStrokeColor= ()=> "#222"; // "#212F3C";
   const vertexFill=()=> "#CDC7A3"; 
+  const edgeStrokeWidthCoef=0.4;
+  const edgeStrokeColor=()=> "#5B6F92";  // "black" for videos
+  const covarianceStrokeWidthCoef=0.04
+  // ********
+  // End: definition of UI values
+  // ********
+
+  // stroke
+  const vertexStrokeWidth = () => appliedUnitGraph()*vertexStrokeCoef; // TODO: memo
+  const vertexFontSize = () => appliedUnitGraph()*vertexFontSizeCoef;
   // edge
-  const edgeWidth = ()=> appliedUnitGraph()*0.4; // TODO: worth it to make it a memo ?
-  const edgeStrokeColor=()=> "#5B6F92";
-  // const edgeStrokeColor=()=> chroma('teal').darken().saturate(8).hex(); // VIDEO: put black here
+  const edgeWidth = ()=> appliedUnitGraph()*edgeStrokeWidthCoef; // TODO: worth it to make it a memo ?
   // marker (using chroma)
   const chromaMarkerScale= ()=> chroma.scale([edgeStrokeColor(),vertexStrokeColor()]).mode('lch').colors(10)[3];
   // covariance
-  const covarianceStrokeWidth = () => appliedUnitGraph()*0.04;
+  const covarianceStrokeWidth = () => appliedUnitGraph()*covarianceStrokeWidthCoef;
   // extended vertex radius
   const extendedVertexRadius = () => vertexStrokeWidth()/2+appliedUnitGraph();
 
