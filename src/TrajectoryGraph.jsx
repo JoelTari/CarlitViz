@@ -232,11 +232,12 @@ function TrajectoryGraph(props){
     //      bbox_oI -> zoomTransform -> d3 zoom effect
     let firstMountTime = true;
     createEffect(()=>{
-      const gzt = graphZoomTransform();
-      // const gzt = untrack(graphZoomTransform); // only on init
+      // const gzt = graphZoomTransform();  // TODO: make that choice (automove/dont) an option from props
+      const gzt = untrack(graphZoomTransform); // only on init, camera doesn't move automatically afterwards
 
       const {w, h} = untrack(svgSize);;
       const [mx, Mx, my, My] = untrack(boundingBoxOfInterest);
+      // console.log(`bbox:      [${[mx, Mx, my, My]}]`)
 
       d3selections.svg
         .transition("zt").duration(firstMountTime? 0:props.dt).ease(d3.easeLinear)

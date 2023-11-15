@@ -45,17 +45,25 @@ import * as ut3_path1_round1_batch_matrix_odom from "./stores/ut3_path1_round1_b
 import * as ut3_path1_round1_batch_matrix_full from "./stores/ut3_path1_round1_batch_matrix_full.json"
 import * as fallbackData_M30_solved from "./stores/fallbackData_M30_solved.json"
 
+import * as ut3_pAr1      from "./stores/fallbackMixedFG/ut3pres/ut3_CBN_pathA_round1.json"
+import * as ut3_pAr1_odom from "./stores/fallbackMixedFG/ut3pres/ut3_Odometry_pathA_round1.json"
+import * as ut3_pAr2      from "./stores/fallbackMixedFG/ut3pres/ut3_CBN_pathA_round2.json"
+import * as ut3_pAr2_odom from "./stores/fallbackMixedFG/ut3pres/ut3_Odometry_pathA_round2.json"
+import * as ut3_pBr1      from "./stores/fallbackMixedFG/ut3pres/ut3_CBN_pathB_round1.json"
+import * as ut3_pBr1_odom from "./stores/fallbackMixedFG/ut3pres/ut3_Odometry_pathB_round1.json"
+import * as ut3_pBr2      from "./stores/fallbackMixedFG/ut3pres/ut3_CBN_pathB_round2.json"
+import * as ut3_pBr2_odom from "./stores/fallbackMixedFG/ut3pres/ut3_Odometry_pathB_round2.json"
 
 // TODO: pass here a profil of colors/thickness in corresponding stores
 //       target: TrajectoryUI_opts
 
 
 // update time in ms (used to transition, time between change of graph)
-const dt = 2667;
+const dt = 5000;
 // const dt = 14667;
 
-// const fallback_dataset = "ut3_path1_round1_batch_matrix_odom";
-const fallback_dataset = "M3500_left";
+const fallback_dataset = "ut3_pBr2";
+// const fallback_dataset = "M3500_left";
 
 if (!window.GraphData == null){  // given dataset
   setGraphData( window.GraphData )
@@ -85,6 +93,22 @@ else{
     setGraphData(ut3_path1_round1_batch_matrix_odom);
     setTimeout(()=>setGraphData(ut3_path1_round1_batch_matrix_full), dt);
   }
+  else if (fallback_dataset == "ut3_pAr1"){
+    setGraphData(ut3_pAr1_odom);
+    setTimeout(()=>setGraphData(ut3_pAr1), dt);
+  }
+  else if (fallback_dataset == "ut3_pAr2"){
+    setGraphData(ut3_pAr2_odom);
+    setTimeout(()=>setGraphData(ut3_pAr2), dt);
+  }
+  else if (fallback_dataset == "ut3_pBr1"){
+    setGraphData(ut3_pBr1_odom);
+    setTimeout(()=>setGraphData(ut3_pBr1), dt);
+  }
+  else if (fallback_dataset == "ut3_pBr2"){
+    setGraphData(ut3_pBr2_odom);
+    setTimeout(()=>setGraphData(ut3_pBr2), dt);
+  }
   else{ // M3500
     setGraphData(fallbackData_M3500_odom_only_unsolved);
     setTimeout(()=>setGraphData(fallbackData_M3500_unsolved),dt/2);
@@ -92,21 +116,5 @@ else{
   }
 }
 
-
-// setInterval(
-//   ()=>{
-//     console.log("[Interval tests] new data : M27 unsolved");
-//     setGraphData(fallbackData_M27_unsolved)
-//     setTimeout(()=>{
-//       console.log("[Interval tests] new data : M27 solved");
-//       setGraphData(fallbackData_M27_solved)
-//     },3500)
-//     // setTimeout(()=>{
-//     //   console.log("[Interval tests] new data t3");
-//     //   setGraphData(fallback1_GraphData)
-//     // },5000)
-//   }
-//   ,7000
-// ) 
-
+// TODO: setDeclutter coefficient here
 render(() => <CarlitViz dt={dt}/>, document.getElementById('root'));
