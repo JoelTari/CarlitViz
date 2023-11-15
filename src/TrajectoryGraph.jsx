@@ -52,7 +52,7 @@ function TrajectoryGraph(props){
   //                          Used to track the current transform (is modified by 'zoomed' callback)
   //                          So that the scales can react on it.
 
-  const [declutterCoefficient, setDeclutterCoefficient] = createSignal(1);
+  const [declutterCoefficient, setDeclutterCoefficient] = createSignal(props.declutterCoefficient); 
   // REFACTOR_SEVERAL_GRAPHS: this stays here, but pass as props to graphs
 
   // UI input to change base unit (increment/decrement by 10% of baseline)
@@ -233,7 +233,10 @@ function TrajectoryGraph(props){
     let firstMountTime = true;
     createEffect(()=>{
       // const gzt = graphZoomTransform();  // TODO: make that choice (automove/dont) an option from props
-      const gzt = untrack(graphZoomTransform); // only on init, camera doesn't move automatically afterwards
+      let gzt = untrack(graphZoomTransform); // only on init, camera doesn't move automatically afterwards
+      if (props.autoMoveCamera){
+        gzt = graphZoomTransform();
+      } 
 
       const {w, h} = untrack(svgSize);;
       const [mx, Mx, my, My] = untrack(boundingBoxOfInterest);

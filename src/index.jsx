@@ -62,7 +62,10 @@ import * as ut3_pBr2_odom from "./stores/fallbackMixedFG/ut3pres/ut3_Odometry_pa
 const dt = 5000;
 // const dt = 14667;
 
-const fallback_dataset = "ut3_pBr2";
+let declCoefTraj=1; // declutter Coefficient for the trajectory, i.e. how much 'thickness' the elements displayed have
+const autoMoveCameraTraj=true;
+
+const fallback_dataset = "ut3_pAr1";
 // const fallback_dataset = "M3500_left";
 
 if (!window.GraphData == null){  // given dataset
@@ -96,18 +99,22 @@ else{
   else if (fallback_dataset == "ut3_pAr1"){
     setGraphData(ut3_pAr1_odom);
     setTimeout(()=>setGraphData(ut3_pAr1), dt);
+    declCoefTraj=150;
   }
   else if (fallback_dataset == "ut3_pAr2"){
     setGraphData(ut3_pAr2_odom);
     setTimeout(()=>setGraphData(ut3_pAr2), dt);
+    declCoefTraj=150;
   }
   else if (fallback_dataset == "ut3_pBr1"){
     setGraphData(ut3_pBr1_odom);
     setTimeout(()=>setGraphData(ut3_pBr1), dt);
+    declCoefTraj=150;
   }
   else if (fallback_dataset == "ut3_pBr2"){
     setGraphData(ut3_pBr2_odom);
     setTimeout(()=>setGraphData(ut3_pBr2), dt);
+    declCoefTraj=150;
   }
   else{ // M3500
     setGraphData(fallbackData_M3500_odom_only_unsolved);
@@ -117,4 +124,4 @@ else{
 }
 
 // TODO: setDeclutter coefficient here
-render(() => <CarlitViz dt={dt}/>, document.getElementById('root'));
+render(() => <CarlitViz dt={dt} declutterCoefficientTraj={declCoefTraj} autoMoveCameraTraj={autoMoveCameraTraj}/>, document.getElementById('root'));

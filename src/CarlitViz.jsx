@@ -47,6 +47,8 @@ function CarlitViz(props){
     console.log("open")
   };
 
+  console.log(`declutterCoefficientTraj : ${props.declutterCoefficientTraj}`)
+
   return (
     <>
       <Show when={sideMenuDisplayed()}>
@@ -55,15 +57,20 @@ function CarlitViz(props){
       <div class="content" style={{width:"100%",height:"100%", position:"relative"}}>
         <Router source={hashIntegration()}>
           <Routes>
-            <Route path="/" element={<TrajectoryGraph dt={props.dt} id="fg-0"/>}/>
-            <Route path="trajectory-graph" element={<TrajectoryGraph dt={props.dt} id="fg-0"/>}/>
+            <Route path="/" element={<TrajectoryGraph 
+                                        dt={props.dt} 
+                                        declutterCoefficient={props.declutterCoefficientTraj} 
+                                        autoMoveCamera={props.autoMoveCameraTraj}
+                                        id="fg-0"
+                                      />}/>
+            <Route path="trajectory-graph" element={<TrajectoryGraph dt={props.dt} declutterCoefficient={props.declutterCoefficientTraj} id="fg-0"/>}/>
             <Route path="clique-tree" component={CliqueTree}/>
             <Route path="trajectory-graph-and-clique" element={<TrajectoryGraphAndClique dt={props.dt}/>}/>
           </Routes>
         </Router>
-        <button 
-          style="position: absolute; top: 0px; left: 0px;" 
-          class="open-menu-button" 
+        <button
+          style="position: absolute; top: 0px; left: 0px;"
+          class="open-menu-button"
           onClick={open}>
           ☰
         </button>
