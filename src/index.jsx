@@ -53,6 +53,7 @@ import * as ut3_pBr1      from "./stores/fallbackMixedFG/ut3pres/ut3_CBN_pathB_r
 import * as ut3_pBr1_odom from "./stores/fallbackMixedFG/ut3pres/ut3_Odometry_pathB_round1.json"
 import * as ut3_pBr2      from "./stores/fallbackMixedFG/ut3pres/ut3_CBN_pathB_round2.json"
 import * as ut3_pBr2_odom from "./stores/fallbackMixedFG/ut3pres/ut3_Odometry_pathB_round2.json"
+import * as x2x6 from "./stores/x2x6_t9.json"
 
 // TODO: pass here a profil of colors/thickness in corresponding stores
 //       target: TrajectoryUI_opts
@@ -65,8 +66,8 @@ const dt = 5000;
 let declCoefTraj=1; // declutter Coefficient for the trajectory, i.e. how much 'thickness' the elements displayed have
 const autoMoveCameraTraj=true;
 
-const fallback_dataset = "ut3_pAr1";
-// const fallback_dataset = "M3500_left";
+// const fallback_dataset = "ut3_pAr1";
+const fallback_dataset = "M3500_left";
 
 if (!window.GraphData == null){  // given dataset
   setGraphData( window.GraphData )
@@ -114,6 +115,11 @@ else{
   else if (fallback_dataset == "ut3_pBr2"){
     setGraphData(ut3_pBr2_odom);
     setTimeout(()=>setGraphData(ut3_pBr2), dt);
+    declCoefTraj=150;
+  }
+  else if (fallback_dataset == "x2x6"){
+    setGraphData(x2x6);
+    // setTimeout(()=>setGraphData(), dt);
     declCoefTraj=150;
   }
   else{ // M3500
