@@ -6,7 +6,7 @@ Currently, it focuses on Causal Bayesian Networks and trees of cliques (a.k.a.
 junction trees) using [D3js](d3js.org). 
 
 Causal Graphs are an upcoming feature for the CARLIT system (Causal Approach To
-Represent Locomotion via Intermediary Transforms).
+Represent Localization and Internalized Topography).
 
 ## License
 
